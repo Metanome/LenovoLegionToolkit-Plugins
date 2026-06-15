@@ -15,6 +15,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public GlobalSettingsWindow(CustomFanCurveConfigManager configManager, bool isLegionDevice)
         {
+            var realCulture = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
+            this.Language = System.Windows.Markup.XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
             InitializeComponent();
             _viewModel = new GlobalSettingsViewModel(configManager, isLegionDevice);
             DataContext = _viewModel;

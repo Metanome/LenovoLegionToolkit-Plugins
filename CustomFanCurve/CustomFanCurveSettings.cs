@@ -4,7 +4,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
     public class CustomFanCurveSettings
     {
-        public string Language { get; set; } = "zh";
         public bool IsCustomFanEnabled { get; set; }
         public bool IsFullSpeed { get; set; }
         public bool ApplyToAllPowerModes { get; set; }

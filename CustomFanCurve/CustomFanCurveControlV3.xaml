@@ -3,6 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
+    xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="600" d:DesignWidth="800"
     FlowDirection="LeftToRight">
     <UserControl.Resources>
         <Style x:Key="NodeTextBox" TargetType="TextBox">
@@ -70,7 +75,7 @@
                 <TextBlock Grid.Row="10" HorizontalAlignment="Right" VerticalAlignment="Center"
                            FontSize="10" FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Text="{x:Static local:Strings.FanSpeed}"/>
+                           Text="{x:Static res:Resource.FanSpeed}"/>
             </Grid>
         </Border>
 
@@ -103,7 +108,7 @@
                                             HorizontalAlignment="Center" VerticalAlignment="Bottom"
                                             Command="{Binding DataContext.RemovePointCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding}" Cursor="Hand" FontSize="11"
-                                            ToolTip="{x:Static local:Strings.DeleteNode}">
+                                            ToolTip="{x:Static res:Resource.DeleteNode}">
                                         <Button.Style>
                                             <Style TargetType="Button">
                                                 <Setter Property="Background" Value="Transparent"/>
@@ -129,12 +134,12 @@
                                              DataObject.Pasting="NumericTextBox_Pasting"
                                              PreviewTextInput="NumericTextBox_PreviewTextInput"
                                              Text="{Binding TargetPercent}"
-                                             ToolTip="{x:Static local:Strings.TargetPercent}"/>
+                                             ToolTip="{x:Static res:Resource.TargetPercent}"/>
                                     <TextBox Grid.Row="3" Style="{StaticResource NodeTextBoxRTL}" Margin="0,2,0,0"
                                              DataObject.Pasting="NumericTextBox_Pasting"
                                              PreviewTextInput="TemperatureTextBox_PreviewTextInput"
                                              Text="{Binding Temperature, StringFormat=N0}"
-                                             ToolTip="{x:Static local:Strings.TemperatureUnit}"/>
+                                             ToolTip="{x:Static res:Resource.TemperatureUnit}"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -155,7 +160,7 @@
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8">
                 <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="{x:Static local:Strings.LiveMonitor}"/>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="{x:Static res:Resource.LiveMonitor}"/>
                     <Separator Margin="0,0,0,8" Opacity="0.3"/>
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
@@ -163,7 +168,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Static local:Strings.Temperature}"/>
+                                   Text="{x:Static res:Resource.Temperature}"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding DisplayTemp}"/>
                     </Grid>
@@ -173,7 +178,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Static local:Strings.CurrentSpeed}"/>
+                                   Text="{x:Static res:Resource.CurrentSpeed}"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
                                    Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Text="{Binding ActualRpmDisplay}"/>
                     </Grid>
@@ -183,7 +188,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Static local:Strings.TargetSpeed}"/>
+                                   Text="{x:Static res:Resource.TargetSpeed}"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding TargetRpmDisplay}"/>
                     </Grid>

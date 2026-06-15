@@ -7,6 +7,7 @@ using LenovoLegionToolkit.Lib.Controllers.Sensors;
 using LenovoLegionToolkit.Lib.Station.Core;
 using LenovoLegionToolkit.Lib.Station.Services;
 using LenovoLegionToolkit.Lib.Utils;
+using LenovoLegionToolkit.Plugin.CustomFanCurve.Resources;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
@@ -94,23 +95,29 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             ConfigManager = new CustomFanCurveConfigManager(_pluginSettings);
             Logger.Init(ConfigManager);
 
-            Strings.SetLanguage(ConfigManager.Settings.Language);
-
             var hardware = new CustomFanHardware();
             _sensorProvider = new SensorProvider(IoCContainer.Resolve<SensorsGroupController>());
             Monitoring = new CustomFanMonitoringService();
 
             ControlService = new CustomFanCurveService(ConfigManager, hardware, _sensorProvider, Monitoring);
 
+            var realCulture = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
+            LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.Culture = realCulture;
+
             context.Navigation.Register(new ExtensionNavigationItem
             {
                 Id = "custom-fan-curve-wmi",
-                Title = Strings.WindowTitle,
+                TitleGetter = () => 
+                {
+                    var rc = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
+                    LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.Culture = rc;
+                    return LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.WindowTitle;
+                },
                 Icon = ExtensionIcon.Gauge,
                 PageTag = "customFanCurveWmi",
                 PageType = typeof(CustomFanCurvePage)
             });
-
+            
             Runtime.Attach(this);
             _ = ControlService.InitializeAsync();
         }

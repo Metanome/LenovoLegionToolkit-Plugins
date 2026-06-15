@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Utils;
+using LenovoLegionToolkit.Plugin.CustomFanCurve.Resources;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
@@ -17,6 +18,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public CustomFanCurvePage()
         {
+            var realCulture = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
+            this.Language = System.Windows.Markup.XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
             InitializeComponent();
             Loaded += OnLoaded;
             Unloaded += (s, e) => _controlService?.OnUIClosed();
@@ -86,16 +89,16 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             if (isFullSpeed)
             {
-                _maxFanButton.Content = new TextBlock { Text = $"⚡ {Strings.FullSpeedActive}", FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.OrangeRed };
-                _maxFanButton.ToolTip = Strings.RecoverCurve;
+                _maxFanButton.Content = new TextBlock { Text = $"⚡ {Resource.FullSpeedActive}", FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.OrangeRed };
+                _maxFanButton.ToolTip = Resource.RecoverCurve;
             }
             else
             {
                 var sp = new StackPanel { Orientation = Orientation.Horizontal };
                 sp.Children.Add(new TextBlock { Text = "⚡", Margin = new Thickness(0, 0, 6, 0), FontSize = 14 });
-                sp.Children.Add(new TextBlock { Text = Strings.MaxSpeed });
+                sp.Children.Add(new TextBlock { Text = Resource.MaxSpeed });
                 _maxFanButton.Content = sp;
-                _maxFanButton.ToolTip = Strings.MaxSpeedTooltip;
+                _maxFanButton.ToolTip = Resource.MaxSpeedTooltip;
             }
         }
 

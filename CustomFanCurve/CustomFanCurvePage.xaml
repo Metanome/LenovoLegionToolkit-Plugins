@@ -2,7 +2,8 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
-      Title="{x:Static local:Strings.WindowTitle}"
+      xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+      Title="{x:Static res:Resource.WindowTitle}"
       Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <Style x:Key="ToolBarButton" TargetType="Button">
@@ -44,7 +45,7 @@
                 <CheckBox x:Name="_enableCustomFanToggle" Grid.Column="0" VerticalAlignment="Center"
                           Checked="EnableCustomFan_Changed" Unchecked="EnableCustomFan_Changed"
                           FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
-                    <TextBlock Text="{x:Static local:Strings.EnableCustomFanCurve}"
+                    <TextBlock Text="{x:Static res:Resource.EnableCustomFanCurve}"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 </CheckBox>
@@ -62,7 +63,7 @@
                                     Click="AddNode_Click" Background="Transparent"
                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}" BorderThickness="0"
                                     FontSize="18" FontWeight="Bold" Cursor="Hand"
-                                    ToolTip="{x:Static local:Strings.AddNodeTooltip}" Padding="8,0">
+                                    ToolTip="{x:Static res:Resource.AddNodeTooltip}" Padding="8,0">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Background" Value="Transparent"/>
@@ -83,18 +84,18 @@
                     <Border Width="1" Margin="14,6" VerticalAlignment="Stretch"
                             Background="{DynamicResource ControlStrokeColorDefaultBrush}"/>
                     <Button x:Name="_maxFanButton" Style="{StaticResource ToolBarButton}" MinWidth="140"
-                            Click="MaxFan_Click" ToolTip="{x:Static local:Strings.MaxSpeedTooltip}">
+                            Click="MaxFan_Click" ToolTip="{x:Static res:Resource.MaxSpeedTooltip}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="⚡" Margin="0,0,6,0" FontSize="15"/>
-                            <TextBlock Text="{x:Static local:Strings.MaxSpeed}"/>
+                            <TextBlock Text="{x:Static res:Resource.MaxSpeed}"/>
                         </StackPanel>
                     </Button>
                     <Button x:Name="_globalSettingsButton" Style="{StaticResource ToolBarAccentButton}"
                             Margin="10,0,0,0" Click="GlobalSettings_Click"
-                            ToolTip="{x:Static local:Strings.GlobalSettingsTooltip}">
+                            ToolTip="{x:Static res:Resource.GlobalSettingsTooltip}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="⚙" Margin="0,0,6,0" FontSize="15"/>
-                            <TextBlock Text="{x:Static local:Strings.GlobalSettings}"/>
+                            <TextBlock Text="{x:Static res:Resource.GlobalSettings}"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

@@ -1,0 +1,343 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EnableCustomFanCurve" xml:space="preserve">
+    <value>启用自定义风扇曲线</value>
+  </data>
+  <data name="MaxSpeed" xml:space="preserve">
+    <value>最大转速</value>
+  </data>
+  <data name="GlobalSettings" xml:space="preserve">
+    <value>全局设置</value>
+  </data>
+  <data name="LiveMonitor" xml:space="preserve">
+    <value>实时监控</value>
+  </data>
+  <data name="Temperature" xml:space="preserve">
+    <value>温度</value>
+  </data>
+  <data name="CurrentSpeed" xml:space="preserve">
+    <value>当前转速</value>
+  </data>
+  <data name="TargetSpeed" xml:space="preserve">
+    <value>目标转速</value>
+  </data>
+  <data name="FanSpeed" xml:space="preserve">
+    <value>风扇速度</value>
+  </data>
+  <data name="AddNodeTooltip" xml:space="preserve">
+    <value>在曲线末尾添加一个新的控制节点</value>
+  </data>
+  <data name="MaxSpeedTooltip" xml:space="preserve">
+    <value>立刻以最大转速运行所有风扇</value>
+  </data>
+  <data name="GlobalSettingsTooltip" xml:space="preserve">
+    <value>打开全局设置</value>
+  </data>
+  <data name="RecoverCurve" xml:space="preserve">
+    <value>点击恢复自定义曲线</value>
+  </data>
+  <data name="FullSpeedActive" xml:space="preserve">
+    <value>全速中...</value>
+  </data>
+  <data name="DeleteNode" xml:space="preserve">
+    <value>删除此节点</value>
+  </data>
+  <data name="TargetPercent" xml:space="preserve">
+    <value>目标转速百分比 (0-100)</value>
+  </data>
+  <data name="TemperatureUnit" xml:space="preserve">
+    <value>温度值 (°C)</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>全局设置</value>
+  </data>
+  <data name="Basic" xml:space="preserve">
+    <value>启停控制</value>
+  </data>
+  <data name="SensorAndCalc" xml:space="preserve">
+    <value>传感器 &amp; 计算</value>
+  </data>
+  <data name="SpinUpBoost" xml:space="preserve">
+    <value>加速启动</value>
+  </data>
+  <data name="ModeSwitch" xml:space="preserve">
+    <value>模式切换</value>
+  </data>
+  <data name="Advanced" xml:space="preserve">
+    <value>高级</value>
+  </data>
+  <data name="EnableCurve" xml:space="preserve">
+    <value>启用自定义风扇曲线</value>
+  </data>
+  <data name="EnableCurveDesc" xml:space="preserve">
+    <value>关闭后将恢复EC自动风扇控制</value>
+  </data>
+  <data name="ApplyToAllModes" xml:space="preserve">
+    <value>应用到所有性能模式</value>
+  </data>
+  <data name="ApplyToAllModesDesc" xml:space="preserve">
+    <value>为拯救者设备在任意模式下启用自定义风扇控制</value>
+  </data>
+  <data name="DebugMode" xml:space="preserve">
+    <value>调试模式</value>
+  </data>
+  <data name="DebugModeDesc" xml:space="preserve">
+    <value>启用后将输出详细的调试日志</value>
+  </data>
+  <data name="SensorPolling" xml:space="preserve">
+    <value>传感器轮询</value>
+  </data>
+  <data name="SensorInterval" xml:space="preserve">
+    <value>传感器轮询间隔 (ms)</value>
+  </data>
+  <data name="SensorIntervalDesc" xml:space="preserve">
+    <value>从硬件读取温度数据的间隔，默认 500ms</value>
+  </data>
+  <data name="IgnoreZeroTemp" xml:space="preserve">
+    <value>忽略零温度读数</value>
+  </data>
+  <data name="IgnoreZeroTempDesc" xml:space="preserve">
+    <value>传感器异常返回 0 时跳过处理</value>
+  </data>
+  <data name="CalcScheduling" xml:space="preserve">
+    <value>计算调度</value>
+  </data>
+  <data name="CalcInterval" xml:space="preserve">
+    <value>RPM 计算间隔 (ms)</value>
+  </data>
+  <data name="CalcIntervalDesc" xml:space="preserve">
+    <value>两次 RPM 计算之间的最小延迟，默认 500ms</value>
+  </data>
+  <data name="TempDeltaThreshold" xml:space="preserve">
+    <value>温度变化阈值 (°C)</value>
+  </data>
+  <data name="TempDeltaThresholdDesc" xml:space="preserve">
+    <value>触发 RPM 重算的最小温度变化，默认 0.5°C</value>
+  </data>
+  <data name="SpinUpDesc" xml:space="preserve">
+    <value>风扇停转后需要较高的初始 RPM 才能克服静摩擦力重新启动。
+启用加速启动后，系统会先短暂以较高 RPM 启动风扇，再降至目标值。</value>
+  </data>
+  <data name="EnableSpinUp" xml:space="preserve">
+    <value>启用加速启动</value>
+  </data>
+  <data name="SpinUpRpm" xml:space="preserve">
+    <value>启动 RPM</value>
+  </data>
+  <data name="SpinUpRpmDesc" xml:space="preserve">
+    <value>加速启动时的临时 RPM 值，默认 3000</value>
+  </data>
+  <data name="SpinUpDuration" xml:space="preserve">
+    <value>启动持续时间 (ms)</value>
+  </data>
+  <data name="SpinUpDurationDesc" xml:space="preserve">
+    <value>加速启动 RPM 的持续时间，默认 300ms</value>
+  </data>
+  <data name="ModeSwitchTitle" xml:space="preserve">
+    <value>电源/散热模式切换行为</value>
+  </data>
+  <data name="ForceRefreshOnSwitch" xml:space="preserve">
+    <value>模式切换后强制刷新</value>
+  </data>
+  <data name="ForceRefreshOnSwitchDesc" xml:space="preserve">
+    <value>切换电源模式后重新应用风扇控制</value>
+  </data>
+  <data name="RefreshCount" xml:space="preserve">
+    <value>刷新次数</value>
+  </data>
+  <data name="RefreshCountDesc" xml:space="preserve">
+    <value>模式切换后的刷新执行次数，默认 2</value>
+  </data>
+  <data name="RefreshInterval" xml:space="preserve">
+    <value>刷新间隔 (ms)</value>
+  </data>
+  <data name="RefreshIntervalDesc" xml:space="preserve">
+    <value>多次刷新之间的延迟，默认 250ms</value>
+  </data>
+  <data name="ForceRefreshOnEnable" xml:space="preserve">
+    <value>启用时强制刷新</value>
+  </data>
+  <data name="ClearCacheOnLeave" xml:space="preserve">
+    <value>离开自定义模式时清除缓存</value>
+  </data>
+  <data name="ClearCacheOnLeaveDesc" xml:space="preserve">
+    <value>清除缓存的 RPM/温度状态</value>
+  </data>
+  <data name="UiAndMonitoring" xml:space="preserve">
+    <value>UI 与监控</value>
+  </data>
+  <data name="UiUpdateInterval" xml:space="preserve">
+    <value>UI 更新间隔 (ms)</value>
+  </data>
+  <data name="UiUpdateIntervalDesc" xml:space="preserve">
+    <value>监控面板数据刷新间隔，默认 1000ms</value>
+  </data>
+  <data name="UseCachedSnapshot" xml:space="preserve">
+    <value>强制刷新使用缓存快照</value>
+  </data>
+  <data name="UseCachedSnapshotDesc" xml:space="preserve">
+    <value>而非等待新传感器读数</value>
+  </data>
+  <data name="WriteEachCycle" xml:space="preserve">
+    <value>全速模式每周期写入</value>
+  </data>
+  <data name="WriteEachCycleDesc" xml:space="preserve">
+    <value>全速模式下每个计算周期都写入最大 RPM</value>
+  </data>
+  <data name="ProtectionAndResponse" xml:space="preserve">
+    <value>保护与响应参数</value>
+  </data>
+  <data name="AccelResponse" xml:space="preserve">
+    <value>加速响应 (RPM/步)</value>
+  </data>
+  <data name="AccelResponseDesc" xml:space="preserve">
+    <value>每步允许的最大 RPM 上升量，默认 25</value>
+  </data>
+  <data name="DecelResponse" xml:space="preserve">
+    <value>减速响应 (RPM/步)</value>
+  </data>
+  <data name="DecelResponseDesc" xml:space="preserve">
+    <value>每步允许的最大 RPM 下降量，默认 12</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="SaveHint" xml:space="preserve">
+    <value>修改将在点击「保存」后立即生效。</value>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>自定义风扇曲线(WMI)</value>
+  </data>
+  <data name="SettingsWindowTitle" xml:space="preserve">
+    <value>全局设置 — 自定义风扇曲线(WMI)</value>
+  </data>
+  <data name="Over50MinRpm" xml:space="preserve">
+    <value>超过时全速运转</value>
+  </data>
+  <data name="AccelResponseHint" xml:space="preserve">
+    <value>每步最大RPM上升量</value>
+  </data>
+  <data name="DecelResponseHint" xml:space="preserve">
+    <value>每步最大RPM下降量</value>
+  </data>
+</root>

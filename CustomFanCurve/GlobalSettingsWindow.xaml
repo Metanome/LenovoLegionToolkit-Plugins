@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
-        Title="{x:Static local:Strings.SettingsWindowTitle}"
+        xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="{x:Static res:Resource.SettingsWindowTitle}"
         Width="780" Height="580" MinWidth="700" MinHeight="480"
         ResizeMode="CanResize" WindowStartupLocation="CenterOwner"
         ExtendsContentIntoTitleBar="True"
@@ -71,38 +73,38 @@
             <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="24,20,24,20"
                        FontSize="22" FontWeight="Medium" Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                       Text="{x:Static local:Strings.SettingsTitle}"/>
+                       Text="{x:Static res:Resource.SettingsTitle}"/>
 
             <Border Grid.Row="1" Grid.Column="0" Background="Transparent" BorderThickness="0" Margin="24,0,8,0">
                 <ListBox x:Name="_navListBox" Background="Transparent" BorderThickness="0" SelectionChanged="NavListBox_SelectionChanged">
                     <ListBoxItem Style="{StaticResource NavListBoxItem}" Tag="0" IsSelected="True">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="🔌" FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="{x:Static local:Strings.Basic}" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Static res:Resource.Basic}" FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Style="{StaticResource NavListBoxItem}" Tag="1">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="📡" FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="{x:Static local:Strings.SensorAndCalc}" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Static res:Resource.SensorAndCalc}" FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Style="{StaticResource NavListBoxItem}" Tag="2">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="🚀" FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="{x:Static local:Strings.SpinUpBoost}" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Static res:Resource.SpinUpBoost}" FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Style="{StaticResource NavListBoxItem}" Tag="3">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="🔄" FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="{x:Static local:Strings.ModeSwitch}" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Static res:Resource.ModeSwitch}" FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Style="{StaticResource NavListBoxItem}" Tag="4">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="🔧" FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="{x:Static local:Strings.Advanced}" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Static res:Resource.Advanced}" FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>
@@ -113,14 +115,14 @@
                     <StackPanel>
                         <!-- Panel 0: Basic -->
                         <StackPanel x:Name="_panelBasic" Visibility="Visible">
-                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static local:Strings.Basic}"/>
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.Basic}"/>
                             <Border Style="{StaticResource InfoCard}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.EnableCurve}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.EnableCurveDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.EnableCurve}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.EnableCurveDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsCustomFanEnabled}"/>
                                     </Grid>
@@ -128,8 +130,8 @@
                                     <Grid Margin="0,0,0,14" Visibility="{Binding IsLegionDevice, Converter={StaticResource BoolToVis}}">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.ApplyToAllModes}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.ApplyToAllModesDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.ApplyToAllModes}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.ApplyToAllModesDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ApplyToAllPowerModes}"/>
                                     </Grid>
@@ -137,8 +139,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.DebugMode}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.DebugModeDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.DebugMode}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.DebugModeDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding DebugMode}"/>
                                     </Grid>
@@ -148,14 +150,14 @@
 
                         <!-- Panel 1: Sensor & Calc -->
                         <StackPanel x:Name="_panelSensor" Visibility="Collapsed">
-                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static local:Strings.SensorPolling}"/>
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.SensorPolling}"/>
                             <Border Style="{StaticResource InfoCard}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.SensorInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.SensorIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.SensorInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.SensorIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding SensorIntervalMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -163,21 +165,21 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.IgnoreZeroTemp}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.IgnoreZeroTempDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.IgnoreZeroTemp}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.IgnoreZeroTempDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IgnoreZeroTemperature}"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
-                            <TextBlock Style="{StaticResource SubHeader}" Text="{x:Static local:Strings.CalcScheduling}"/>
+                            <TextBlock Style="{StaticResource SubHeader}" Text="{x:Static res:Resource.CalcScheduling}"/>
                             <Border Style="{StaticResource InfoCard}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.CalcInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.CalcIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.CalcInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.CalcIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding CalculationDelayMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -185,8 +187,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.TempDeltaThreshold}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.TempDeltaThresholdDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.TempDeltaThreshold}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.TempDeltaThresholdDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding TemperatureDeltaThreshold, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -196,9 +198,9 @@
 
                         <!-- Panel 2: Spin-Up Boost -->
                         <StackPanel x:Name="_panelSpinUp" Visibility="Collapsed">
-                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static local:Strings.SpinUpBoost}"/>
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.SpinUpBoost}"/>
                             <Border Style="{StaticResource InfoCard}">
-                                <TextBlock Text="{x:Static local:Strings.SpinUpDesc}" FontSize="12" TextWrapping="Wrap"
+                                <TextBlock Text="{x:Static res:Resource.SpinUpDesc}" FontSize="12" TextWrapping="Wrap"
                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" LineHeight="20"/>
                             </Border>
                             <Border Style="{StaticResource InfoCard}">
@@ -206,7 +208,7 @@
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.EnableSpinUp}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.EnableSpinUp}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding SpinUpBoostEnabled}"/>
                                     </Grid>
@@ -214,8 +216,8 @@
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.SpinUpRpm}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.SpinUpRpmDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.SpinUpRpm}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.SpinUpRpmDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding SpinUpBoostRpm, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -223,8 +225,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.SpinUpDuration}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.SpinUpDurationDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.SpinUpDuration}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.SpinUpDurationDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding SpinUpBoostDurationMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -234,14 +236,14 @@
 
                         <!-- Panel 3: Mode Switch -->
                         <StackPanel x:Name="_panelModeSwitch" Visibility="Collapsed">
-                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static local:Strings.ModeSwitchTitle}"/>
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.ModeSwitchTitle}"/>
                             <Border Style="{StaticResource InfoCard}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.ForceRefreshOnSwitch}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.ForceRefreshOnSwitchDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.ForceRefreshOnSwitch}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.ForceRefreshOnSwitchDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ForceRefreshOnModeSwitch}"/>
                                     </Grid>
@@ -249,8 +251,8 @@
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.RefreshCount}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.RefreshCountDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.RefreshCount}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.RefreshCountDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding ModeSwitchRefreshCount, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -258,8 +260,8 @@
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.RefreshInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.RefreshIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.RefreshInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.RefreshIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding ModeSwitchRefreshDelayMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -267,7 +269,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.ForceRefreshOnEnable}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.ForceRefreshOnEnable}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ForceRefreshOnEnable}"/>
                                     </Grid>
@@ -275,8 +277,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.ClearCacheOnLeave}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.ClearCacheOnLeaveDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.ClearCacheOnLeave}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.ClearCacheOnLeaveDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ClearCachedStateWhenLeavingCustomMode}"/>
                                     </Grid>
@@ -286,14 +288,14 @@
 
                         <!-- Panel 4: Advanced -->
                         <StackPanel x:Name="_panelAdvanced" Visibility="Collapsed">
-                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static local:Strings.UiAndMonitoring}"/>
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.UiAndMonitoring}"/>
                             <Border Style="{StaticResource InfoCard}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.UiUpdateInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.UiUpdateIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.UiUpdateInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.UiUpdateIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding UiUpdateIntervalMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
@@ -301,8 +303,8 @@
                                     <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.UseCachedSnapshot}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.UseCachedSnapshotDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.UseCachedSnapshot}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.UseCachedSnapshotDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding UseCachedSnapshotForForcedRefresh}"/>
                                     </Grid>
@@ -310,8 +312,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{x:Static local:Strings.WriteEachCycle}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static local:Strings.WriteEachCycleDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{x:Static res:Resource.WriteEachCycle}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.WriteEachCycleDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding EnableMaxFanWriteEachCycle}"/>
                                     </Grid>
@@ -328,7 +330,7 @@
             <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static local:Strings.SaveHint}"/>
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static res:Resource.SaveHint}"/>
                 <Button Grid.Column="1" MinWidth="120" Height="36" Click="Save_Click" FontSize="13" FontWeight="SemiBold" Cursor="Hand" IsDefault="True">
                     <Button.Style>
                         <Style TargetType="Button">
@@ -341,7 +343,7 @@
                     </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="💾" Margin="0,0,6,0" FontSize="14"/>
-                        <TextBlock Text="{x:Static local:Strings.Save}"/>
+                        <TextBlock Text="{x:Static res:Resource.Save}"/>
                     </StackPanel>
                 </Button>
                 <Button Grid.Column="2" MinWidth="100" Height="36" Margin="12,0,0,0" Click="Cancel_Click" FontSize="13" Cursor="Hand" IsCancel="True">
@@ -356,7 +358,7 @@
                     </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="✕" Margin="0,0,6,0" FontSize="14"/>
-                        <TextBlock Text="{x:Static local:Strings.Cancel}"/>
+                        <TextBlock Text="{x:Static res:Resource.Cancel}"/>
                     </StackPanel>
                 </Button>
             </Grid>
