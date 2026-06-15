@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows10.0.26100</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LenovoLegionToolkit.Plugin.CustomFanCurve</RootNamespace>
+    <AssemblyName>CustomFanCurve</AssemblyName>
+    <UseWPF>true</UseWPF>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LenovoLegionToolkit.Lib\LenovoLegionToolkit.Lib.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+
+    <PackageReference Include="System.Management" Version="10.0.7" />
+
+    <PackageReference Include="WPF-UI" Version="2.1.0">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>CA1416</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="PatchAssemblyVersion" AfterTargets="AfterBuild">
+    <Exec Command="dotnet run --project &quot;..\AssemblyVersionPatcher\AssemblyVersionPatcher.csproj&quot; -c $(Configuration) -- &quot;$(TargetPath)&quot; LenovoLegionToolkit.Lib" />
+  </Target>
+
+</Project>

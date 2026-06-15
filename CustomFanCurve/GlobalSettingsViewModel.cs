@@ -1,0 +1,369 @@
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace LenovoLegionToolkit.Plugin.CustomFanCurve
+{
+    public class GlobalSettingsViewModel : INotifyPropertyChanged
+    {
+        private readonly CustomFanCurveConfigManager _configManager;
+        public bool IsLegionDevice { get; }
+
+        public GlobalSettingsViewModel(CustomFanCurveConfigManager configManager, bool isLegionDevice)
+        {
+            _configManager = configManager;
+            IsLegionDevice = isLegionDevice;
+            var s = configManager.Settings;
+
+            _isCustomFanEnabled = s.IsCustomFanEnabled;
+            _applyToAllPowerModes = s.ApplyToAllPowerModes;
+            _debugMode = s.DebugMode;
+            _sensorIntervalMs = s.SensorIntervalMs;
+            _calculationDelayMs = s.CalculationDelayMs;
+            _temperatureDeltaThreshold = s.TemperatureDeltaThreshold;
+            _ignoreZeroTemperature = s.IgnoreZeroTemperature;
+            _alwaysWriteRpm = s.AlwaysWriteRpm;
+            _forceWriteWhenRpmZero = s.ForceWriteWhenRpmZero;
+            _minimumRpmChangeToApply = s.MinimumRpmChangeToApply;
+            _spinUpBoostEnabled = s.SpinUpBoostEnabled;
+            _spinUpBoostRpm = s.SpinUpBoostRpm;
+            _spinUpBoostDurationMs = s.SpinUpBoostDurationMs;
+            _forceRefreshOnModeSwitch = s.ForceRefreshOnModeSwitch;
+            _modeSwitchRefreshCount = s.ModeSwitchRefreshCount;
+            _modeSwitchRefreshDelayMs = s.ModeSwitchRefreshDelayMs;
+            _forceRefreshOnEnable = s.ForceRefreshOnEnable;
+            _clearCachedStateWhenLeavingCustomMode = s.ClearCachedStateWhenLeavingCustomMode;
+            _uiUpdateIntervalMs = s.UiUpdateIntervalMs;
+            _useCachedSnapshotForForcedRefresh = s.UseCachedSnapshotForForcedRefresh;
+            _enableMaxFanWriteEachCycle = s.EnableMaxFanWriteEachCycle;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void SaveAll()
+        {
+            Save(nameof(CustomFanCurveSettings.IsCustomFanEnabled), _isCustomFanEnabled);
+            Save(nameof(CustomFanCurveSettings.ApplyToAllPowerModes), _applyToAllPowerModes);
+            Save(nameof(CustomFanCurveSettings.DebugMode), _debugMode);
+            Save(nameof(CustomFanCurveSettings.SensorIntervalMs), _sensorIntervalMs);
+            Save(nameof(CustomFanCurveSettings.CalculationDelayMs), _calculationDelayMs);
+            Save(nameof(CustomFanCurveSettings.TemperatureDeltaThreshold), _temperatureDeltaThreshold);
+            Save(nameof(CustomFanCurveSettings.IgnoreZeroTemperature), _ignoreZeroTemperature);
+            Save(nameof(CustomFanCurveSettings.AlwaysWriteRpm), _alwaysWriteRpm);
+            Save(nameof(CustomFanCurveSettings.ForceWriteWhenRpmZero), _forceWriteWhenRpmZero);
+            Save(nameof(CustomFanCurveSettings.MinimumRpmChangeToApply), _minimumRpmChangeToApply);
+            Save(nameof(CustomFanCurveSettings.SpinUpBoostEnabled), _spinUpBoostEnabled);
+            Save(nameof(CustomFanCurveSettings.SpinUpBoostRpm), _spinUpBoostRpm);
+            Save(nameof(CustomFanCurveSettings.SpinUpBoostDurationMs), _spinUpBoostDurationMs);
+            Save(nameof(CustomFanCurveSettings.ForceRefreshOnModeSwitch), _forceRefreshOnModeSwitch);
+            Save(nameof(CustomFanCurveSettings.ModeSwitchRefreshCount), _modeSwitchRefreshCount);
+            Save(nameof(CustomFanCurveSettings.ModeSwitchRefreshDelayMs), _modeSwitchRefreshDelayMs);
+            Save(nameof(CustomFanCurveSettings.ForceRefreshOnEnable), _forceRefreshOnEnable);
+            Save(nameof(CustomFanCurveSettings.ClearCachedStateWhenLeavingCustomMode), _clearCachedStateWhenLeavingCustomMode);
+            Save(nameof(CustomFanCurveSettings.UiUpdateIntervalMs), _uiUpdateIntervalMs);
+            Save(nameof(CustomFanCurveSettings.UseCachedSnapshotForForcedRefresh), _useCachedSnapshotForForcedRefresh);
+            Save(nameof(CustomFanCurveSettings.EnableMaxFanWriteEachCycle), _enableMaxFanWriteEachCycle);
+        }
+
+        private void Save<T>(string name, T value) => _configManager.UpdateSetting(name, value);
+
+        private bool _isCustomFanEnabled;
+        public bool IsCustomFanEnabled
+        {
+            get => _isCustomFanEnabled;
+            set
+            {
+                if (_isCustomFanEnabled != value)
+                {
+                    _isCustomFanEnabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _applyToAllPowerModes;
+        public bool ApplyToAllPowerModes
+        {
+            get => _applyToAllPowerModes;
+            set
+            {
+                if (_applyToAllPowerModes != value)
+                {
+                    _applyToAllPowerModes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _debugMode;
+        public bool DebugMode
+        {
+            get => _debugMode;
+            set
+            {
+                if (_debugMode != value)
+                {
+                    _debugMode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _sensorIntervalMs;
+        public int SensorIntervalMs
+        {
+            get => _sensorIntervalMs;
+            set
+            {
+                if (_sensorIntervalMs != value)
+                {
+                    _sensorIntervalMs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _calculationDelayMs;
+        public int CalculationDelayMs
+        {
+            get => _calculationDelayMs;
+            set
+            {
+                if (_calculationDelayMs != value)
+                {
+                    _calculationDelayMs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _temperatureDeltaThreshold;
+        public double TemperatureDeltaThreshold
+        {
+            get => _temperatureDeltaThreshold;
+            set
+            {
+                if (Math.Abs(_temperatureDeltaThreshold - value) > 0.001)
+                {
+                    _temperatureDeltaThreshold = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _ignoreZeroTemperature;
+        public bool IgnoreZeroTemperature
+        {
+            get => _ignoreZeroTemperature;
+            set
+            {
+                if (_ignoreZeroTemperature != value)
+                {
+                    _ignoreZeroTemperature = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _alwaysWriteRpm;
+        public bool AlwaysWriteRpm
+        {
+            get => _alwaysWriteRpm;
+            set
+            {
+                if (_alwaysWriteRpm != value)
+                {
+                    _alwaysWriteRpm = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _forceWriteWhenRpmZero;
+        public bool ForceWriteWhenRpmZero
+        {
+            get => _forceWriteWhenRpmZero;
+            set
+            {
+                if (_forceWriteWhenRpmZero != value)
+                {
+                    _forceWriteWhenRpmZero = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _minimumRpmChangeToApply;
+        public int MinimumRpmChangeToApply
+        {
+            get => _minimumRpmChangeToApply;
+            set
+            {
+                if (_minimumRpmChangeToApply != value)
+                {
+                    _minimumRpmChangeToApply = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _spinUpBoostEnabled;
+        public bool SpinUpBoostEnabled
+        {
+            get => _spinUpBoostEnabled;
+            set
+            {
+                if (_spinUpBoostEnabled != value)
+                {
+                    _spinUpBoostEnabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _spinUpBoostRpm;
+        public int SpinUpBoostRpm
+        {
+            get => _spinUpBoostRpm;
+            set
+            {
+                if (_spinUpBoostRpm != value)
+                {
+                    _spinUpBoostRpm = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _spinUpBoostDurationMs;
+        public int SpinUpBoostDurationMs
+        {
+            get => _spinUpBoostDurationMs;
+            set
+            {
+                if (_spinUpBoostDurationMs != value)
+                {
+                    _spinUpBoostDurationMs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _forceRefreshOnModeSwitch;
+        public bool ForceRefreshOnModeSwitch
+        {
+            get => _forceRefreshOnModeSwitch;
+            set
+            {
+                if (_forceRefreshOnModeSwitch != value)
+                {
+                    _forceRefreshOnModeSwitch = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _modeSwitchRefreshCount;
+        public int ModeSwitchRefreshCount
+        {
+            get => _modeSwitchRefreshCount;
+            set
+            {
+                if (_modeSwitchRefreshCount != value)
+                {
+                    _modeSwitchRefreshCount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _modeSwitchRefreshDelayMs;
+        public int ModeSwitchRefreshDelayMs
+        {
+            get => _modeSwitchRefreshDelayMs;
+            set
+            {
+                if (_modeSwitchRefreshDelayMs != value)
+                {
+                    _modeSwitchRefreshDelayMs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _forceRefreshOnEnable;
+        public bool ForceRefreshOnEnable
+        {
+            get => _forceRefreshOnEnable;
+            set
+            {
+                if (_forceRefreshOnEnable != value)
+                {
+                    _forceRefreshOnEnable = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _clearCachedStateWhenLeavingCustomMode;
+        public bool ClearCachedStateWhenLeavingCustomMode
+        {
+            get => _clearCachedStateWhenLeavingCustomMode;
+            set
+            {
+                if (_clearCachedStateWhenLeavingCustomMode != value)
+                {
+                    _clearCachedStateWhenLeavingCustomMode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _uiUpdateIntervalMs;
+        public int UiUpdateIntervalMs
+        {
+            get => _uiUpdateIntervalMs;
+            set
+            {
+                if (_uiUpdateIntervalMs != value)
+                {
+                    _uiUpdateIntervalMs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _useCachedSnapshotForForcedRefresh;
+        public bool UseCachedSnapshotForForcedRefresh
+        {
+            get => _useCachedSnapshotForForcedRefresh;
+            set
+            {
+                if (_useCachedSnapshotForForcedRefresh != value)
+                {
+                    _useCachedSnapshotForForcedRefresh = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _enableMaxFanWriteEachCycle;
+        public bool EnableMaxFanWriteEachCycle
+        {
+            get => _enableMaxFanWriteEachCycle;
+            set
+            {
+                if (_enableMaxFanWriteEachCycle != value)
+                {
+                    _enableMaxFanWriteEachCycle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
