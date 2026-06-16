@@ -38,6 +38,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _monitoring = provider.Monitoring;
             _fanIds = provider.AvailableFanIds;
 
+            _machineInfo = await Compatibility.GetMachineInformationAsync().ConfigureAwait(true);
+
             _loadingOverlay.Visibility = Visibility.Visible;
             var sb = (System.Windows.Media.Animation.Storyboard)FindResource("SpinnerStoryboard");
             sb.Begin();
@@ -55,7 +57,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private async Task LoadFanControlsAsync()
         {
             _fanControlStackPanel.Children.Clear(); _fanControls.Clear(); _fanSelector.Items.Clear();
-            _machineInfo = await Compatibility.GetMachineInformationAsync().ConfigureAwait(true);
 
             foreach (var fanId in _fanIds)
             {
@@ -131,11 +132,13 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             var series = _machineInfo.LegionSeries;
             var isLegion = series != LegionSeries.ThinkBook && series != LegionSeries.Lenovo_Slim
                 && series != LegionSeries.IdeaPad && series != LegionSeries.IdeaPad_Gaming
-                && series != LegionSeries.LOQ && series != LegionSeries.YOGA
+                && series != LegionSeries.YOGA
                 && series != LegionSeries.Motorola && series != LegionSeries.Unknown;
-            var window = new GlobalSettingsWindow(_configManager, isLegion);
-            window.Owner = Window.GetWindow(this);
-            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            var window = new GlobalSettingsWindow(_configManager, isLegion)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             window.ShowDialog();
         }
     }
