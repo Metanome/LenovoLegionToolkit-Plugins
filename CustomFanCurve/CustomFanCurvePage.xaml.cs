@@ -131,7 +131,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             var series = _machineInfo.LegionSeries;
             var isLegion = series != LegionSeries.ThinkBook && series != LegionSeries.Lenovo_Slim
-                && series != LegionSeries.IdeaPad && series != LegionSeries.IdeaPad_Gaming
+                && series != LegionSeries.IdeaPad
                 && series != LegionSeries.YOGA
                 && series != LegionSeries.Motorola && series != LegionSeries.Unknown;
             var window = new GlobalSettingsWindow(_configManager, isLegion)
