@@ -2,6 +2,7 @@ name: Release
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  LLT_SOURCE: ${{ github.workspace }}\core-app
 
 on:
   workflow_dispatch:
@@ -51,8 +52,6 @@ jobs:
       run: dotnet restore LenovoLegionToolkit-Plugins.slnx
       
     - name: Build All Plugins
-      env:
-        LLT_SOURCE: ${{ github.workspace }}\core-app
       run: dotnet build LenovoLegionToolkit-Plugins.slnx -c Release --no-restore
       
     - name: Package Plugins
