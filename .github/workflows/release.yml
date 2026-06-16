@@ -103,8 +103,8 @@ jobs:
       run: |
         $changedPlugins = @()
         
-        # Check if the tag exists
-        $tagExists = git rev-parse $env:TAG_NAME 2>$null
+        # Check if the tag exists safely without throwing an error
+        $tagExists = git tag -l $env:TAG_NAME
         if ($tagExists) {
             Write-Host "Comparing HEAD against existing tag: $env:TAG_NAME"
             $changedFiles = git diff --name-only $env:TAG_NAME HEAD
