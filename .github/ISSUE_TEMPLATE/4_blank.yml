@@ -1,0 +1,17 @@
+name: Blank Issue
+description: Do not use this if you are reporting an issue.
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!IMPORTANT]
+        > This template is for documentation issues only. If you are reporting a bug, requesting a feature, or asking for compatibility support, please use the appropriate template.
+  - type: textarea
+    id: description
+    attributes:
+      label: Information
+      description: Provide informations.
+      placeholder: Provide informations.
+    validations:
+      required: true

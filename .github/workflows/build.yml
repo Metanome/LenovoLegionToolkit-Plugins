@@ -1,0 +1,63 @@
+name: Build
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout Plugins
+      uses: actions/checkout@v5
+      
+    - name: Checkout Core App
+      uses: actions/checkout@v5
+      with:
+        repository: 'LenovoLegionToolkit-Team/LenovoLegionToolkit'
+        path: 'core-app'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 9.0.x
+        cache: true
+        cache-dependency-path: '**/*.csproj'
+        
+    - name: Restore Plugins
+      run: dotnet restore LenovoLegionToolkit-Plugins.slnx
+      
+    - name: Build All Plugins
+      env:
+        LLT_SOURCE: ${{ github.workspace }}\core-app
+      run: dotnet build LenovoLegionToolkit-Plugins.slnx -c Release --no-restore
+      
+    - name: Package Plugins
+      run: |
+        $excludeDirs = @("AssemblyVersionPatcher", ".git", ".github", ".vs", "core-app")
+        $pluginDirs = Get-ChildItem -Directory | Where-Object { $_.Name -notin $excludeDirs }
+        
+        foreach ($dir in $pluginDirs) {
+            $csproj = "$($dir.Name)\$($dir.Name).csproj"
+            if (Test-Path $csproj) {
+                Write-Host "Publishing $($dir.Name)..."
+                dotnet publish $csproj -c Release --no-build -o "build_out\Plugins\$($dir.Name)"
+                
+                Write-Host "Zipping $($dir.Name)..."
+                Compress-Archive -Path "build_out\Plugins\$($dir.Name)\*" -DestinationPath "build_out\$($dir.Name).zip"
+            }
+        }
+      shell: powershell
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: plugins
+        path: build_out\*.zip

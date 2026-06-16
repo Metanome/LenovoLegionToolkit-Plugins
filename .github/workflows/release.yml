@@ -1,0 +1,86 @@
+name: Release
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name to attach to (e.g., latest)'
+        required: true
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout Plugins
+      uses: actions/checkout@v5
+      
+    - name: Checkout Core App
+      uses: actions/checkout@v5
+      with:
+        repository: 'LenovoLegionToolkit-Team/LenovoLegionToolkit'
+        path: 'core-app'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 9.0.x
+        cache: true
+        cache-dependency-path: '**/*.csproj'
+        
+    - name: Resolve tag name
+      id: release_meta
+      run: |
+        if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
+            $tagName = "${{ github.event.inputs.tag_name }}"
+        } else {
+            $tagName = "${{ github.event.release.tag_name }}"
+        }
+        "tag_name=$tagName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      shell: powershell
+
+    - name: Restore Plugins
+      run: dotnet restore LenovoLegionToolkit-Plugins.slnx
+      
+    - name: Build All Plugins
+      env:
+        LLT_SOURCE: ${{ github.workspace }}\core-app
+      run: dotnet build LenovoLegionToolkit-Plugins.slnx -c Release --no-restore
+      
+    - name: Package Plugins
+      run: |
+        $excludeDirs = @("AssemblyVersionPatcher", ".git", ".github", ".vs", "core-app")
+        $pluginDirs = Get-ChildItem -Directory | Where-Object { $_.Name -notin $excludeDirs }
+        
+        foreach ($dir in $pluginDirs) {
+            $csproj = "$($dir.Name)\$($dir.Name).csproj"
+            if (Test-Path $csproj) {
+                Write-Host "Publishing $($dir.Name)..."
+                dotnet publish $csproj -c Release --no-build -o "build_out\Plugins\$($dir.Name)"
+                
+                Write-Host "Zipping $($dir.Name)..."
+                Compress-Archive -Path "build_out\Plugins\$($dir.Name)\*" -DestinationPath "build_out\$($dir.Name).zip"
+            }
+        }
+      shell: powershell
+
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v2.0.8
+      with:
+        tag_name: ${{ steps.release_meta.outputs.tag_name }}
+        files: build_out/*.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: plugins-${{ steps.release_meta.outputs.tag_name }}
+        path: build_out/*.zip

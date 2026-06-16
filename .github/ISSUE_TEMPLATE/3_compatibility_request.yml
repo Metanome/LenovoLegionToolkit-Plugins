@@ -1,0 +1,85 @@
+name: Compatibility Request
+description: Request support for a device that is currently unsupported
+labels: ["compatibility"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!IMPORTANT]
+        > To verify compatibility across the 13 supported series, we require detailed hardware and software information.
+  
+  - type: input
+    id: plugin_name
+    attributes:
+      label: Plugin Name
+      description: Which plugin are you testing compatibility for?
+      placeholder: e.g. CustomFanCurve
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Which Lenovo Legion Toolkit version are you using?
+      placeholder: e.g. 2.14.0
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      description: Which operating system do you use?
+      placeholder: e.g. Windows 11 23H2 build 22631
+    validations:
+      required: true
+  - type: dropdown
+    id: device_series
+    attributes:
+      label: Device Series
+      description: Which Legion/Lenovo series are you using?
+      options:
+        - Legion 5 Series
+        - Legion 5 Pro Series
+        - Legion 7 Series
+        - Legion 7i/Slim Series
+        - Legion 9i Series
+        - LOQ Series
+        - IdeaPad Gaming Series
+        - Other (Specify in "Exact Model" below)
+    validations:
+      required: true
+  - type: input
+    id: device_exact
+    attributes:
+      label: Exact Model
+      description: Please provide your specific model number.
+      placeholder: e.g. 16IRX8
+    validations:
+      required: true
+  - type: input
+    id: bios
+    attributes:
+      label: BIOS version
+      description: Which BIOS version do you have?
+      placeholder: e.g. GKCN57WW
+    validations:
+      required: true
+  - type: textarea
+    id: what-was-tested
+    attributes:
+      label: Features Tested
+      description: |
+        Which features did you attempt to use? (Fan control, RGB, Power Modes, etc.)
+        **Note:** A short video showing the app behavior is extremely helpful for verifying hardware support.
+      placeholder: e.g. Fan control works, but custom power modes do not apply.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Hardware Logs
+      description: |
+        Attach your WMI/ACPI logs here. 
+        **Instruction:** Go to **Settings** in the app and **Enable logging** to generate these files.
+    validations:
+      required: true

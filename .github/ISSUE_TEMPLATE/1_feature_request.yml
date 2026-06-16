@@ -1,0 +1,79 @@
+name: Feature Request
+description: Suggest an idea for this project
+labels: ["feature request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!IMPORTANT]
+        > Before you start, read [the rules](https://github.com/LenovoLegionToolkit-Team/LenovoLegionToolkit-Plugins?tab=contributing-ov-file) for contributing.
+  
+  - type: input
+    id: plugin_name
+    attributes:
+      label: Plugin Name
+      description: Which plugin is this request for? (e.g. CustomFanCurve)
+      placeholder: e.g. CustomFanCurve
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Which Lenovo Legion Toolkit version do you use?
+      placeholder: e.g. 2.14.0
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      description: Which operating system do you use?
+      placeholder: e.g. Windows 11 23H2 build 22631
+    validations:
+      required: true
+  - type: dropdown
+    id: device_series
+    attributes:
+      label: Device Series
+      description: Which Legion/Lenovo series are you using?
+      options:
+        - Legion 5 Series
+        - Legion 5 Pro Series
+        - Legion 7 Series
+        - Legion 7i/Slim Series
+        - Legion 9i Series
+        - LOQ Series
+        - IdeaPad Gaming Series
+        - Other (Specify in "Exact Model" below)
+    validations:
+      required: true
+  - type: input
+    id: device_exact
+    attributes:
+      label: Exact Model
+      description: Please provide your specific model number.
+      placeholder: e.g. 16ACH6
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of what the problem is.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: How would you like the problem to be solved?
+      description: |
+        A clear and concise description of what you would like to happen.
+        **Note:** If suggesting a UI change, a mockup or a video of the current behavior is highly appreciated.
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional information
+      description: Attach screenshots, mockups, or videos here.
