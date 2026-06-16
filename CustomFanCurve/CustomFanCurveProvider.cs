@@ -99,7 +99,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             context.Navigation.Register(new ExtensionNavigationItem
             {
                 Id = "custom-fan-curve-wmi",
-                Title = LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.WindowTitle,
+                TitleGetter = () => 
+                {
+                    var rc = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
+                    LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.Culture = rc;
+                    return LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.WindowTitle;
+                },
                 Icon = ExtensionIcon.Gauge,
                 PageTag = "customFanCurveWmi",
                 PageType = typeof(CustomFanCurvePage)
