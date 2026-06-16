@@ -103,11 +103,12 @@ jobs:
       run: |
         $changedPlugins = @()
         
-        # Check if the tag exists safely without throwing an error
-        $tagExists = git tag -l $env:TAG_NAME
-        if ($tagExists) {
-            Write-Host "Comparing HEAD against existing tag: $env:TAG_NAME"
-            $changedFiles = git diff --name-only $env:TAG_NAME HEAD
+        # Find the most recent tag that is NOT the current tag being released
+        $prevTag = git tag --sort=-creatordate | Where-Object { $_ -ne $env:TAG_NAME } | Select-Object -First 1
+        
+        if ($prevTag) {
+            Write-Host "Comparing HEAD against previous tag: $prevTag"
+            $changedFiles = git diff --name-only $prevTag HEAD
             
             if ($changedFiles) {
                 # Extract top-level directories from changed files
@@ -121,7 +122,7 @@ jobs:
                 }
             }
         } else {
-            Write-Host "Tag $env:TAG_NAME not found locally. This might be the first release."
+            Write-Host "No previous tag found locally. This might be the first release."
         }
         
         $eof = "EOF"
