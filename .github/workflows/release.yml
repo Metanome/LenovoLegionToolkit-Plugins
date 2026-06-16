@@ -30,6 +30,8 @@ jobs:
         repository: 'LenovoLegionToolkit-Team/LenovoLegionToolkit'
         path: 'core-app'
         ref: 'dev'
+        sparse-checkout: |
+          LenovoLegionToolkit.Lib
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
@@ -63,11 +65,18 @@ jobs:
         foreach ($dir in $pluginDirs) {
             $csproj = "$($dir.Name)\$($dir.Name).csproj"
             if (Test-Path $csproj) {
-                Write-Host "Publishing $($dir.Name)..."
-                dotnet publish $csproj -c Release --no-build -o "build_out\Plugins\$($dir.Name)"
+                $pluginName = $($dir.Name)
+                Write-Host "Publishing $pluginName..."
+                dotnet publish $csproj -c Release -o "build_out\Plugins\$pluginName"
                 
-                Write-Host "Zipping $($dir.Name)..."
-                Compress-Archive -Path "build_out\Plugins\$($dir.Name)\*" -DestinationPath "build_out\$($dir.Name).zip"
+                Write-Host "Zipping $pluginName..."
+                $filesToZip = @(
+                    "build_out\Plugins\$pluginName\$pluginName.dll"
+                ) | Where-Object { Test-Path $_ }
+                
+                if ($filesToZip.Count -gt 0) {
+                    Compress-Archive -Path $filesToZip -DestinationPath "build_out\$pluginName.zip"
+                }
             }
         }
       shell: powershell
