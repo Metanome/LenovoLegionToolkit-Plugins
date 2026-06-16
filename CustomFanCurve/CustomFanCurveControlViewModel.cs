@@ -15,7 +15,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private readonly CustomFanCurveEntry _entry;
         private readonly CustomFanCurveConfigManager _configManager;
         private readonly ICustomFanMonitoringService _monitoring;
-        private FanType _currentFanType;
+        private int _fanId;
         private double _graphWidth, _graphHeight;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -25,7 +25,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _entry = entry;
             _configManager = configManager;
             _monitoring = monitoring;
-            _currentFanType = entry.Type;
+            _fanId = entry.FanId;
 
             CurveNodes = entry.CurveNodes;
             CurveNodeDisplays = new ObservableCollection<CurveNodeDisplay>();
@@ -58,7 +58,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _configManager.SaveEntry(_entry);
         }
 
-        public FanType CurrentFanType { get => _currentFanType; set { _currentFanType = value; OnPropertyChanged(); } }
+        public int FanId { get => _fanId; set { _fanId = value; OnPropertyChanged(); } }
         public ObservableCollection<CurveNode> CurveNodes { get; }
         public ObservableCollection<CurveNodeDisplay> CurveNodeDisplays { get; }
 
@@ -110,9 +110,9 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _configManager.SaveEntry(_entry);
         }
 
-        private void OnMonitoringUpdated(FanType type, FanMonitoringSnapshot snapshot)
+        private void OnMonitoringUpdated(int fanId, FanMonitoringSnapshot snapshot)
         {
-            if (type != _currentFanType) return;
+            if (fanId != _fanId) return;
             DisplayTemp = $"{snapshot.Temperature:F0} °C";
             ActualRpmDisplay = $"{snapshot.Rpm} RPM";
             TargetRpmDisplay = $"{snapshot.TargetRpm} RPM";

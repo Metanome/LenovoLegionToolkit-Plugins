@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -22,13 +23,28 @@ internal static class SatelliteAssemblyLoader
             return null;
 
         var asm = Assembly.GetExecutingAssembly();
-        var resourceName = $"{_prefix}{an.CultureInfo.Name}.{an.Name}.dll";
+        var resourceNames = asm.GetManifestResourceNames();
 
-        using var stream = asm.GetManifestResourceStream(resourceName);
-        if (stream == null) return null;
+        var culture = an.CultureInfo;
+        while (culture != null && culture != CultureInfo.InvariantCulture)
+        {
+            var suffix = $".{culture.Name}.{an.Name}.dll";
+            var match = resourceNames.FirstOrDefault(n =>
+                n.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
 
-        var bytes = new byte[stream.Length];
-        stream.ReadExactly(bytes);
-        return Assembly.Load(bytes);
+            if (match != null)
+            {
+                using var stream = asm.GetManifestResourceStream(match);
+                if (stream == null) break;
+
+                var bytes = new byte[stream.Length];
+                stream.ReadExactly(bytes);
+                return Assembly.Load(bytes);
+            }
+
+            culture = culture.Parent;
+        }
+
+        return null;
     }
 }

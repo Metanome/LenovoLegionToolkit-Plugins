@@ -33,20 +33,17 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private int _uiOpenCount;
         private long _lastUiUpdateTick;
 
-        private readonly Dictionary<FanType, int> _lastAppliedRpm = new();
-        private readonly Dictionary<FanType, float> _lastTemp = new();
-        private readonly Dictionary<FanType, int> _lastCalcRpm = new();
-        private readonly Dictionary<FanType, long> _lastCalcTick = new();
-        private readonly Dictionary<FanType, string> _lastFingerprint = new();
+        private readonly Dictionary<int, int> _lastAppliedRpm = new();
+        private readonly Dictionary<int, float> _lastTemp = new();
+        private readonly Dictionary<int, int> _lastCalcRpm = new();
+        private readonly Dictionary<int, long> _lastCalcTick = new();
+        private readonly Dictionary<int, string> _lastFingerprint = new();
 
         private readonly SemaphoreSlim _modeLock = new(1, 1);
 
         public bool IsActive
         {
-            get
-            {
-                return _isEnabled || _isFullSpeed;
-            }
+            get { return _isEnabled || _isFullSpeed; }
         }
 
         public CustomFanCurveService(CustomFanCurveConfigManager configManager, ICustomFanHardware hardware,
@@ -64,7 +61,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             {
                 try { _powerModeListener = IoCContainer.Resolve<PowerModeListener>(); }
                 catch { }
-
                 try { _thermalModeListener = IoCContainer.Resolve<ThermalModeListener>(); }
                 catch { }
             }
@@ -72,32 +68,20 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             {
                 try { _itsModeFeature = IoCContainer.Resolve<ITSModeFeature>(); }
                 catch { }
-
                 try { _itsModeListener = IoCContainer.Resolve<ITSModeListener>(); }
                 catch { }
             }
 
             if (_powerModeListener != null)
-            {
                 _powerModeListener.Changed += OnPowerModeChanged;
-            }
-
             if (_thermalModeListener != null)
-            {
                 _thermalModeListener.Changed += OnThermalModeChanged;
-            }
-
             if (_itsModeListener != null)
-            {
                 _itsModeListener.Changed += OnITSModeChanged;
-            }
 
             _configManager.SettingsChanged += () =>
             {
-                if (!_disposed)
-                {
-                    _ = ReevaluateStateAsync();
-                }
+                if (!_disposed) { _ = ReevaluateStateAsync(); }
             };
 
             MessagingCenter.Subscribe<FanStateMessage>(this, m => _ = SetEnabledAsync(m.State != FanState.Auto));
@@ -107,7 +91,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public async Task InitializeAsync()
         {
             await _hardware.InitializeAsync().ConfigureAwait(false);
-            InitMaxRpmFromHardware();
+            _configManager.EnsureEntriesForFans(_hardware.AvailableFanIds);
             await ReevaluateStateAsync();
         }
 
@@ -123,7 +107,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             if (_uiOpenCount <= 0)
             {
                 _uiOpenCount = 0;
-                StopSensorsIfNeeded();
+                if (!_isEnabled && !_isFullSpeed)
+                    StopSensorsIfNeeded();
             }
         }
 
@@ -135,9 +120,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             {
                 StartSensorsIfNeeded();
             }
-            else if (!_isEnabled && _uiOpenCount <= 0)
+            else
             {
-                StopSensorsIfNeeded();
+                if (!_isEnabled && _uiOpenCount <= 0)
+                    StopSensorsIfNeeded();
+                await RestoreAutoFanAsync();
             }
 
             await ReevaluateStateAsync();
@@ -151,35 +138,29 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private async Task SetEnabledAsync(bool enable)
         {
-            if (_disposed)
-            {
-                return;
-            }
+            if (_disposed) return;
 
             _isEnabled = enable;
             if (enable)
             {
                 StartSensorsIfNeeded();
                 if (_configManager.Settings.ForceRefreshOnEnable)
-                {
                     await ForceRefreshAsync();
-                }
             }
-            else if (!_isFullSpeed && _uiOpenCount <= 0)
+            else
             {
-                StopSensorsIfNeeded();
-                await RestoreAutoFanAsync();
+                if (!_isFullSpeed)
+                    await RestoreAutoFanAsync();
+                if (_uiOpenCount <= 0)
+                    StopSensorsIfNeeded();
             }
         }
 
         private async Task RestoreAutoFanAsync()
         {
-            foreach (var type in new[] { FanType.Cpu, FanType.Gpu, FanType.System })
+            foreach (var fanId in _hardware.AvailableFanIds)
             {
-                try
-                {
-                    await _hardware.SetFanRpmAsync(type, 0).ConfigureAwait(false);
-                }
+                try { await _hardware.SetFanRpmAsync(fanId, 0).ConfigureAwait(false); }
                 catch { }
             }
         }
@@ -187,117 +168,110 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private void StartSensorsIfNeeded()
         {
             if (!_sensorProvider.IsRunning)
-            {
                 _sensorProvider.Start(_configManager.Settings.SensorIntervalMs);
-            }
         }
 
         private void StopSensorsIfNeeded()
         {
             if (_sensorProvider.IsRunning)
-            {
                 _sensorProvider.Stop();
-            }
         }
 
         private async void OnSensorUpdated(HardwareSensorSnapshot snapshot)
         {
             if (_uiOpenCount > 0)
-            {
                 UpdateMonitoringOnly(snapshot);
-            }
 
             if (_isEnabled || _isFullSpeed)
-            {
                 await Task.Run(() => ProcessAsync(snapshot));
-            }
         }
 
         private async Task ProcessAsync(HardwareSensorSnapshot snapshot)
         {
-            if (!CanProcess(snapshot, out var cpu, out var gpu))
-            {
-                return;
-            }
+            if (!_isEnabled && !_isFullSpeed) return;
+
+            var cpuTemp = Math.Max(0, snapshot.CpuTemp);
+            var gpuTemp = Math.Max(0, snapshot.GpuTemp);
 
             foreach (var entry in _configManager.GetAllEntries())
             {
-                var temp = entry.Type == FanType.Gpu ? gpu : cpu;
+                var temp = GetTemperatureForFan(entry.FanId, _hardware.AvailableFanIds, cpuTemp, gpuTemp);
                 if (_isFullSpeed)
-                {
                     ProcessFullSpeed(entry, temp);
-                }
                 else
-                {
                     await ProcessCurveAsync(entry, temp);
-                }
             }
+        }
+
+        private static float GetTemperatureForFan(int fanId, IReadOnlyList<int> fanIds, float cpuTemp, float gpuTemp)
+        {
+            for (var i = 0; i < fanIds.Count; i++)
+            {
+                if (fanIds[i] == fanId)
+                    return i == 1 ? gpuTemp : cpuTemp;
+            }
+            return cpuTemp;
         }
 
         private void ProcessFullSpeed(CustomFanCurveEntry entry, float temp)
         {
-            var max = _hardware.GetMaxRpm(entry.Type);
-            _ = _hardware.SetFanRpmAsync(entry.Type, max);
+            var fanId = entry.FanId;
+            var max = _hardware.GetMaxRpm(fanId);
+            _ = _hardware.SetFanRpmAsync(fanId, max);
             var rpm = 0;
-            try { rpm = _hardware.GetFanRpmAsync(entry.Type).GetAwaiter().GetResult(); }
+            try { rpm = _hardware.GetFanRpmAsync(fanId).GetAwaiter().GetResult(); }
             catch { }
 
-            _lastAppliedRpm[entry.Type] = max;
-            TryUpdateMonitoring(entry.Type, temp, rpm, max, true);
+            _lastAppliedRpm[fanId] = max;
+            TryUpdateMonitoring(fanId, temp, rpm, max, true);
         }
 
         private async Task ProcessCurveAsync(CustomFanCurveEntry entry, float temp)
         {
+            var fanId = entry.FanId;
             var settings = _configManager.Settings;
             var now = DateTime.UtcNow.Ticks;
             var delayTicks = TimeSpan.FromMilliseconds(settings.CalculationDelayMs).Ticks;
 
-            _lastCalcTick.TryGetValue(entry.Type, out var lastTick);
-            _lastTemp.TryGetValue(entry.Type, out var lastTemp);
-            _lastCalcRpm.TryGetValue(entry.Type, out var cachedRpm);
+            _lastCalcTick.TryGetValue(fanId, out var lastTick);
+            _lastTemp.TryGetValue(fanId, out var lastTemp);
+            _lastCalcRpm.TryGetValue(fanId, out var cachedRpm);
 
-            var elapsed = !_lastCalcTick.ContainsKey(entry.Type) || now - lastTick >= delayTicks;
-            var tempDelta = _lastTemp.ContainsKey(entry.Type) ? Math.Abs(lastTemp - temp) : double.MaxValue;
+            var elapsed = !_lastCalcTick.ContainsKey(fanId) || now - lastTick >= delayTicks;
+            var tempDelta = _lastTemp.ContainsKey(fanId) ? Math.Abs(lastTemp - temp) : double.MaxValue;
 
             var fp = string.Join("|", entry.CurveNodes.OrderBy(n => n.Temperature).Select(n => $"{n.Temperature:F1}:{n.TargetPercent}"));
-            _lastFingerprint.TryGetValue(entry.Type, out var lastFp);
+            _lastFingerprint.TryGetValue(fanId, out var lastFp);
             if (lastFp != fp)
             {
-                _lastFingerprint[entry.Type] = fp;
-                _lastCalcRpm.Remove(entry.Type);
-                _lastTemp.Remove(entry.Type);
-                _lastCalcTick.Remove(entry.Type);
+                _lastFingerprint[fanId] = fp;
+                _lastCalcRpm.Remove(fanId);
+                _lastTemp.Remove(fanId);
+                _lastCalcTick.Remove(fanId);
                 cachedRpm = 0;
                 lastTemp = 0;
                 elapsed = true;
             }
 
-            var needRecalc = !_lastTemp.ContainsKey(entry.Type) || !_lastCalcRpm.ContainsKey(entry.Type)
+            var needRecalc = !_lastTemp.ContainsKey(fanId) || !_lastCalcRpm.ContainsKey(fanId)
                 || (elapsed && (tempDelta >= settings.TemperatureDeltaThreshold
-                    || !_lastAppliedRpm.ContainsKey(entry.Type) || _lastAppliedRpm[entry.Type] != cachedRpm));
-            if (!elapsed && _lastCalcRpm.ContainsKey(entry.Type))
-            {
+                    || !_lastAppliedRpm.ContainsKey(fanId) || _lastAppliedRpm[fanId] != cachedRpm));
+            if (!elapsed && _lastCalcRpm.ContainsKey(fanId))
                 needRecalc = false;
-            }
 
             int targetRpm;
             if (needRecalc)
             {
-                var r = CustomFanCurveCalculator.Calculate(entry, temp, settings.MaxRpm);
-                if (!r.HasValue)
-                {
-                    return;
-                }
+                var r = CustomFanCurveCalculator.Calculate(entry, temp, _hardware.GetMaxRpm(fanId));
+                if (!r.HasValue) return;
 
-                targetRpm = r.Value;
+                targetRpm = Math.Min(r.Value, _hardware.GetMaxRpm(fanId));
                 if (temp > 50)
-                {
-                    targetRpm = Math.Max(targetRpm, _hardware.GetMinRpm(entry.Type));
-                }
+                    targetRpm = Math.Max(targetRpm, _hardware.GetMinRpm(fanId));
 
-                _lastTemp[entry.Type] = temp;
-                _lastCalcRpm[entry.Type] = targetRpm;
-                _lastCalcTick[entry.Type] = now;
+                _lastTemp[fanId] = temp;
+                _lastCalcRpm[fanId] = targetRpm;
+                _lastCalcTick[fanId] = now;
             }
             else
             {
@@ -305,10 +279,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
 
             var rpm = 0;
-            try { rpm = await _hardware.GetFanRpmAsync(entry.Type).ConfigureAwait(false); }
+            try { rpm = await _hardware.GetFanRpmAsync(fanId).ConfigureAwait(false); }
             catch { }
 
-            var hadLast = _lastAppliedRpm.TryGetValue(entry.Type, out var lastApplied);
+            var hadLast = _lastAppliedRpm.TryGetValue(fanId, out var lastApplied);
             var delta = hadLast ? Math.Abs(lastApplied - targetRpm) : int.MaxValue;
             var shouldWrite = settings.AlwaysWriteRpm || (settings.ForceWriteWhenRpmZero && rpm == 0)
                 || !hadLast || delta >= settings.MinimumRpmChangeToApply;
@@ -317,68 +291,45 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             {
                 if (settings.SpinUpBoostEnabled && rpm == 0 && targetRpm < settings.SpinUpBoostRpm)
                 {
-                    await _hardware.SetFanRpmAsync(entry.Type, settings.SpinUpBoostRpm).ConfigureAwait(false);
+                    await _hardware.SetFanRpmAsync(fanId, settings.SpinUpBoostRpm).ConfigureAwait(false);
                     await Task.Delay(settings.SpinUpBoostDurationMs);
                 }
 
-                await _hardware.SetFanRpmAsync(entry.Type, targetRpm).ConfigureAwait(false);
-                try { rpm = await _hardware.GetFanRpmAsync(entry.Type).ConfigureAwait(false); }
+                await _hardware.SetFanRpmAsync(fanId, targetRpm).ConfigureAwait(false);
+                try { rpm = await _hardware.GetFanRpmAsync(fanId).ConfigureAwait(false); }
                 catch { }
 
-                _lastAppliedRpm[entry.Type] = targetRpm;
+                _lastAppliedRpm[fanId] = targetRpm;
             }
 
-            TryUpdateMonitoring(entry.Type, temp, rpm, targetRpm, false);
+            TryUpdateMonitoring(fanId, temp, rpm, targetRpm, false);
         }
 
-        private void TryUpdateMonitoring(FanType type, float temp, int rpm, int targetRpm, bool force)
+        private void TryUpdateMonitoring(int fanId, float temp, int rpm, int targetRpm, bool force)
         {
             var interval = TimeSpan.FromMilliseconds(_configManager.Settings.UiUpdateIntervalMs).Ticks;
             var now = DateTime.UtcNow.Ticks;
             if (force || now - _lastUiUpdateTick >= interval)
             {
-                _monitoring.Update(type, temp, rpm, targetRpm);
+                _monitoring.Update(fanId, temp, rpm, targetRpm);
                 _lastUiUpdateTick = now;
             }
         }
 
-        private static bool CanProcess(HardwareSensorSnapshot s, out float cpu, out float gpu)
-        {
-            cpu = Math.Max(0, s.CpuTemp);
-            gpu = Math.Max(0, s.GpuTemp);
-            return true;
-        }
-
         private void UpdateMonitoringOnly(HardwareSensorSnapshot snapshot)
         {
-            foreach (var type in new[] { FanType.Cpu, FanType.Gpu, FanType.System })
+            var cpuTemp = Math.Max(0, snapshot.CpuTemp);
+            var gpuTemp = Math.Max(0, snapshot.GpuTemp);
+
+            foreach (var fanId in _hardware.AvailableFanIds)
             {
-                var temp = type == FanType.Gpu ? snapshot.GpuTemp : snapshot.CpuTemp;
+                var temp = GetTemperatureForFan(fanId, _hardware.AvailableFanIds, cpuTemp, gpuTemp);
                 var rpm = 0;
-                try { rpm = _hardware.GetFanRpmAsync(type).GetAwaiter().GetResult(); }
+                try { rpm = _hardware.GetFanRpmAsync(fanId).GetAwaiter().GetResult(); }
                 catch { }
 
-                _monitoring.Update(type, temp, rpm, _lastAppliedRpm.TryGetValue(type, out var tr) ? tr : 0);
+                _monitoring.Update(fanId, temp, rpm, _lastAppliedRpm.TryGetValue(fanId, out var tr) ? tr : 0);
             }
-        }
-
-        private void InitMaxRpmFromHardware()
-        {
-            if (_configManager.Settings.IsMaxRpmInitialized)
-            {
-                return;
-            }
-
-            try
-            {
-                var maxRpm = _hardware.GetMaxRpm(FanType.Cpu);
-                if (maxRpm > 0)
-                {
-                    _configManager.UpdateSetting(nameof(CustomFanCurveSettings.MaxRpm), maxRpm);
-                    _configManager.UpdateSetting(nameof(CustomFanCurveSettings.IsMaxRpmInitialized), true);
-                }
-            }
-            catch { }
         }
 
         private async void OnPowerModeChanged(object? s, PowerModeListener.ChangedEventArgs e)
@@ -401,10 +352,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             await _modeLock.WaitAsync().ConfigureAwait(false);
             try
             {
-                if (_disposed)
-                {
-                    return;
-                }
+                if (_disposed) return;
 
                 _isMaxPerformanceMode = await CheckIsMaxPerformanceModeAsync().ConfigureAwait(false);
 
@@ -420,9 +368,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                     {
                         await ForceRefreshAsync();
                         if (i < settings.ModeSwitchRefreshCount - 1)
-                        {
                             await Task.Delay(settings.ModeSwitchRefreshDelayMs);
-                        }
                     }
                 }
                 else if (settings.ClearCachedStateWhenLeavingCustomMode && !shouldEnable && !_isFullSpeed)
@@ -437,9 +383,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             finally
             {
                 if (_modeLock.CurrentCount == 0)
-                {
                     _modeLock.Release();
-                }
             }
         }
 
@@ -483,27 +427,16 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public void Dispose()
         {
-            if (_disposed)
-            {
-                return;
-            }
+            if (_disposed) return;
 
             _disposed = true;
             _sensorProvider.SensorUpdated -= OnSensorUpdated;
             if (_powerModeListener != null)
-            {
                 _powerModeListener.Changed -= OnPowerModeChanged;
-            }
-
             if (_thermalModeListener != null)
-            {
                 _thermalModeListener.Changed -= OnThermalModeChanged;
-            }
-
             if (_itsModeListener != null)
-            {
                 _itsModeListener.Changed -= OnITSModeChanged;
-            }
 
             MessagingCenter.Unsubscribe(this);
             StopSensorsIfNeeded();

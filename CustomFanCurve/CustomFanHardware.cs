@@ -9,43 +9,61 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
     public interface ICustomFanHardware
     {
         bool IsSupported { get; }
+        IReadOnlyList<int> AvailableFanIds { get; }
         Task InitializeAsync();
-        int GetMaxRpm(FanType fanType);
-        int GetMinRpm(FanType fanType);
-        Task SetFanRpmAsync(FanType fanType, int rpm);
-        Task<int> GetFanRpmAsync(FanType fanType);
+        int GetMaxRpm(int fanId);
+        int GetMinRpm(int fanId);
+        Task SetFanRpmAsync(int fanId, int rpm);
+        Task<int> GetFanRpmAsync(int fanId);
     }
 
     internal class CustomFanHardware : ICustomFanHardware
     {
-        private readonly Dictionary<FanType, int> _maxRpms = new();
-        private readonly Dictionary<FanType, int> _minRpms = new();
+        private readonly Dictionary<int, int> _maxRpms = new();
+        private readonly Dictionary<int, int> _minRpms = new();
+        private readonly Dictionary<int, CapabilityID> _capabilityIds = new();
+        private readonly List<int> _fanIds = new();
 
         public bool IsSupported { get; private set; }
+        public IReadOnlyList<int> AvailableFanIds => _fanIds;
 
         public async Task InitializeAsync()
         {
-            foreach (var fanType in new[] { FanType.Cpu, FanType.Gpu, FanType.System })
+            for (var fanId = 0; fanId <= 5; fanId++)
             {
-                var fanId = GetFanId(fanType);
                 try
                 {
                     var maxRpm = await WMI.LenovoFanTestData.GetFanMaxSpeedAsync(fanId).ConfigureAwait(false);
                     if (maxRpm > 0)
                     {
-                        _maxRpms[fanType] = maxRpm;
+                        _fanIds.Add(fanId);
+                        _maxRpms[fanId] = maxRpm;
+                    }
+                    else
+                    {
+                        continue;
                     }
 
                     var minRpm = await WMI.LenovoFanTestData.GetFanMinSpeedAsync(fanId).ConfigureAwait(false);
                     if (minRpm > 0)
                     {
-                        _minRpms[fanType] = minRpm;
+                        _minRpms[fanId] = minRpm;
                     }
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"FanHardware init fail {fanType}: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"FanHardware probe fail fanId={fanId}: {ex.Message}");
                 }
+            }
+
+            foreach (var fanId in _fanIds)
+            {
+                _capabilityIds[fanId] = fanId switch
+                {
+                    2 => CapabilityID.GpuCurrentFanSpeed,
+                    4 => CapabilityID.PchCurrentFanSpeed,
+                    _ => CapabilityID.CpuCurrentFanSpeed,
+                };
             }
 
             IsSupported = await CheckSupportAsync().ConfigureAwait(false);
@@ -53,7 +71,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private async Task<bool> CheckSupportAsync()
         {
-            if (_maxRpms.Count == 0 && _minRpms.Count == 0)
+            if (_maxRpms.Count == 0)
             {
                 return false;
             }
@@ -69,53 +87,41 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
         }
 
-        public int GetMaxRpm(FanType fanType)
+        public int GetMaxRpm(int fanId)
         {
-            return _maxRpms.TryGetValue(fanType, out var r) ? r : 6400;
+            return _maxRpms.TryGetValue(fanId, out var r) ? r : 6400;
         }
 
-        public int GetMinRpm(FanType fanType)
+        public int GetMinRpm(int fanId)
         {
-            return _minRpms.TryGetValue(fanType, out var r) ? r : 1200;
+            return _minRpms.TryGetValue(fanId, out var r) ? r : 1200;
         }
 
-        public async Task SetFanRpmAsync(FanType fanType, int rpm)
+        public async Task SetFanRpmAsync(int fanId, int rpm)
         {
-            await WMI.LenovoOtherMethod.SetFeatureValueAsync(GetCapabilityId(fanType), Math.Max(0, rpm)).ConfigureAwait(false);
+            if (!_capabilityIds.TryGetValue(fanId, out var cid))
+            {
+                return;
+            }
+
+            await WMI.LenovoOtherMethod.SetFeatureValueAsync(cid, Math.Max(0, rpm)).ConfigureAwait(false);
         }
 
-        public async Task<int> GetFanRpmAsync(FanType fanType)
+        public async Task<int> GetFanRpmAsync(int fanId)
         {
+            if (!_capabilityIds.TryGetValue(fanId, out var cid))
+            {
+                return 0;
+            }
+
             try
             {
-                return await WMI.LenovoOtherMethod.GetFeatureValueAsync(GetCapabilityId(fanType)).ConfigureAwait(false);
+                return await WMI.LenovoOtherMethod.GetFeatureValueAsync(cid).ConfigureAwait(false);
             }
             catch
             {
                 return 0;
             }
-        }
-
-        private static int GetFanId(FanType fanType)
-        {
-            return fanType switch
-            {
-                FanType.Cpu => 0,
-                FanType.Gpu => 1,
-                FanType.System => 2,
-                _ => 0
-            };
-        }
-
-        private static CapabilityID GetCapabilityId(FanType fanType)
-        {
-            return fanType switch
-            {
-                FanType.Cpu => CapabilityID.CpuCurrentFanSpeed,
-                FanType.Gpu => CapabilityID.GpuCurrentFanSpeed,
-                FanType.System => CapabilityID.PchCurrentFanSpeed,
-                _ => CapabilityID.CpuCurrentFanSpeed
-            };
         }
     }
 }

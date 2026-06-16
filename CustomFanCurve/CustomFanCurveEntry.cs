@@ -56,18 +56,15 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private FanType _type = FanType.Cpu;
-        public FanType Type
+        private int _fanId;
+        public int FanId
         {
-            get
-            {
-                return _type;
-            }
+            get => _fanId;
             set
             {
-                if (_type != value)
+                if (_fanId != value)
                 {
-                    _type = value;
+                    _fanId = value;
                     OnPropertyChanged();
                 }
             }
@@ -89,7 +86,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public string ExportToJson()
         {
-            return JsonConvert.SerializeObject(new { Type, CurveNodes = CurveNodes.ToList() }, Formatting.Indented);
+            return JsonConvert.SerializeObject(new { FanId, CurveNodes = CurveNodes.ToList() }, Formatting.Indented);
         }
 
         public static CustomFanCurveEntry ImportFromJson(string json)
@@ -101,9 +98,9 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
 
             var entry = new CustomFanCurveEntry();
-            if (data.Type != null)
+            if (data.FanId != null)
             {
-                entry.Type = data.Type;
+                entry.FanId = (int)data.FanId;
             }
 
             if (data.CurveNodes != null)

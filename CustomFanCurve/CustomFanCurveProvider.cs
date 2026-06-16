@@ -32,19 +32,16 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
     internal static class Runtime
     {
         private static readonly object _lock = new();
-        private static readonly Dictionary<FanType, FanMonitoringSnapshot> _data = new();
+        private static readonly Dictionary<int, FanMonitoringSnapshot> _data = new();
 
         public static event EventHandler? MonitoringUpdated;
         public static IExtensionProvider? Provider { get; private set; }
 
-        public static IReadOnlyDictionary<FanType, FanMonitoringSnapshot> Monitoring
+        public static IReadOnlyDictionary<int, FanMonitoringSnapshot> Monitoring
         {
             get
             {
-                lock (_lock)
-                {
-                    return new Dictionary<FanType, FanMonitoringSnapshot>(_data);
-                }
+                lock (_lock) { return new Dictionary<int, FanMonitoringSnapshot>(_data); }
             }
         }
 
@@ -56,37 +53,36 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public static void Detach(IExtensionProvider provider)
         {
             if (ReferenceEquals(Provider, provider))
-            {
                 Provider = null;
-            }
 
-            lock (_lock)
-            {
-                _data.Clear();
-            }
+            lock (_lock) { _data.Clear(); }
 
             MonitoringUpdated?.Invoke(null, EventArgs.Empty);
         }
 
-        public static void Update(FanType type, float temp, int rpm, int targetRpm)
+        public static void Update(int fanId, float temp, int rpm, int targetRpm)
         {
-            lock (_lock)
-            {
-                _data[type] = new FanMonitoringSnapshot(temp, rpm, targetRpm);
-            }
-
+            lock (_lock) { _data[fanId] = new FanMonitoringSnapshot(temp, rpm, targetRpm); }
             MonitoringUpdated?.Invoke(null, EventArgs.Empty);
         }
     }
 
     public class CustomFanCurveProvider : IExtensionProvider, IDisposable
     {
+        private readonly CustomFanHardware _hardware;
+
         public CustomFanCurveConfigManager ConfigManager { get; private set; }
         internal CustomFanCurveService ControlService { get; private set; }
         public ICustomFanMonitoringService Monitoring { get; private set; }
+        public IReadOnlyList<int> AvailableFanIds => _hardware.AvailableFanIds;
 
         private PluginSettings _pluginSettings;
         private SensorProvider _sensorProvider;
+
+        public CustomFanCurveProvider()
+        {
+            _hardware = new CustomFanHardware();
+        }
 
         public void Initialize(IExtensionContext context)
         {
@@ -95,11 +91,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             ConfigManager = new CustomFanCurveConfigManager(_pluginSettings);
             Logger.Init(ConfigManager);
 
-            var hardware = new CustomFanHardware();
             _sensorProvider = new SensorProvider(IoCContainer.Resolve<SensorsGroupController>());
             Monitoring = new CustomFanMonitoringService();
 
-            ControlService = new CustomFanCurveService(ConfigManager, hardware, _sensorProvider, Monitoring);
+            ControlService = new CustomFanCurveService(ConfigManager, _hardware, _sensorProvider, Monitoring);
 
             var realCulture = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
             LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.Culture = realCulture;
@@ -112,21 +107,13 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 PageTag = "customFanCurveWmi",
                 PageType = typeof(CustomFanCurvePage)
             });
-            
+
             Runtime.Attach(this);
             _ = ControlService.InitializeAsync();
         }
 
-        public Task ExecuteAsync(string action, params object[] args)
-        {
-            return Task.CompletedTask;
-        }
-
-        public object? GetData(string key)
-        {
-            return null;
-        }
-
+        public Task ExecuteAsync(string action, params object[] args) => Task.CompletedTask;
+        public object? GetData(string key) => null;
         public void SetData(string key, object? value) { }
 
         public void Dispose()

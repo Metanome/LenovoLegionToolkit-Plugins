@@ -60,6 +60,14 @@
           SkipUnchangedFiles="true" />
   </Target>
 
+  <Target Name="RebuildWithSatellites" AfterTargets="StageSatelliteDlls"
+          Condition="'$(SatelliteEmbeddingComplete)' != 'true' And
+                     Exists('$(MSBuildProjectDirectory)\Resources\Satellites\$(AssemblyName).resources.dll')">
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="SatelliteEmbeddingComplete=true"
+             Targets="Build" />
+  </Target>
+
   <PropertyGroup>
     <NoWarn>CA1416;CA2255</NoWarn>
   </PropertyGroup>

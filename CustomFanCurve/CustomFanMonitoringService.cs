@@ -6,18 +6,18 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
     public interface ICustomFanMonitoringService
     {
-        event Action<FanType, FanMonitoringSnapshot>? MonitoringUpdated;
-        IReadOnlyDictionary<FanType, FanMonitoringSnapshot> Current { get; }
-        void Update(FanType type, float temp, int rpm, int targetRpm);
+        event Action<int, FanMonitoringSnapshot>? MonitoringUpdated;
+        IReadOnlyDictionary<int, FanMonitoringSnapshot> Current { get; }
+        void Update(int fanId, float temp, int rpm, int targetRpm);
     }
 
     public class CustomFanMonitoringService : ICustomFanMonitoringService
     {
-        private readonly Dictionary<FanType, FanMonitoringSnapshot> _data = new();
+        private readonly Dictionary<int, FanMonitoringSnapshot> _data = new();
 
-        public event Action<FanType, FanMonitoringSnapshot>? MonitoringUpdated;
+        public event Action<int, FanMonitoringSnapshot>? MonitoringUpdated;
 
-        public IReadOnlyDictionary<FanType, FanMonitoringSnapshot> Current
+        public IReadOnlyDictionary<int, FanMonitoringSnapshot> Current
         {
             get
             {
@@ -25,14 +25,14 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
         }
 
-        public void Update(FanType type, float temp, int rpm, int targetRpm)
+        public void Update(int fanId, float temp, int rpm, int targetRpm)
         {
             lock (_data)
             {
-                _data[type] = new FanMonitoringSnapshot(temp, rpm, targetRpm);
+                _data[fanId] = new FanMonitoringSnapshot(temp, rpm, targetRpm);
             }
 
-            MonitoringUpdated?.Invoke(type, _data[type]);
+            MonitoringUpdated?.Invoke(fanId, _data[fanId]);
         }
     }
 

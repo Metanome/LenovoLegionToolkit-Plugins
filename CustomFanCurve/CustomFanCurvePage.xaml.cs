@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private CustomFanCurveService _controlService;
         private CustomFanCurveConfigManager _configManager;
         private ICustomFanMonitoringService _monitoring;
+        private IReadOnlyList<int> _fanIds = System.Array.Empty<int>();
         private readonly List<CustomFanCurveControlV3> _fanControls = new();
         private MachineInformation _machineInfo;
 
@@ -33,6 +35,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _controlService = provider.ControlService;
             _configManager = provider.ConfigManager;
             _monitoring = provider.Monitoring;
+            _fanIds = provider.AvailableFanIds;
 
             _controlService.OnUIOpened();
             await LoadFanControlsAsync();
@@ -42,26 +45,28 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private async Task LoadFanControlsAsync()
         {
             _fanControlStackPanel.Children.Clear(); _fanControls.Clear(); _fanSelector.Items.Clear();
-
             _machineInfo = await Compatibility.GetMachineInformationAsync().ConfigureAwait(true);
-            var showSystemFan = _machineInfo.LegionSeries == LegionSeries.Legion_Pro_7 && _machineInfo.Generation >= 10;
 
-            var types = new List<FanType> { FanType.Cpu, FanType.Gpu };
-            if (showSystemFan) types.Add(FanType.System);
-
-            foreach (var type in types)
+            foreach (var fanId in _fanIds)
             {
-                var entry = _configManager.GetEntry(type);
-                if (entry == null) continue;
+                var entry = _configManager.GetEntry(fanId);
+                if (entry == null)
+                {
+                    entry = new CustomFanCurveEntry { FanId = fanId };
+                    _configManager.SaveEntry(entry);
+                }
+
+                if (entry.CurveNodes.Count == 0) continue;
 
                 var vm = new CustomFanCurveControlViewModel(entry, _configManager, _monitoring);
                 var control = new CustomFanCurveControlV3();
                 control.SetViewModel(vm);
-                control.Tag = type.ToString();
+                control.Tag = fanId;
                 control.Visibility = Visibility.Collapsed;
                 _fanControls.Add(control);
                 _fanControlStackPanel.Children.Add(control);
-                _fanSelector.Items.Add(type.ToString());
+
+                _fanSelector.Items.Add($"Fan {fanId}");
             }
             if (_fanSelector.Items.Count > 0) _fanSelector.SelectedIndex = 0;
         }
