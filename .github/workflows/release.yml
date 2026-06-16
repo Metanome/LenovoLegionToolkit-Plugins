@@ -10,6 +10,14 @@ on:
       tag_name:
         description: 'Release tag name to attach to (e.g., latest)'
         required: true
+      channel:
+        description: 'Release channel'
+        required: true
+        default: Stable
+        type: choice
+        options:
+          - Stable
+          - Beta
   release:
     types: [published]
 
@@ -40,14 +48,49 @@ jobs:
         cache: true
         cache-dependency-path: '**/*.csproj'
         
-    - name: Resolve tag name
+    - name: Resolve release metadata
       id: release_meta
+      env:
+        INPUT_TAG_NAME: ${{ github.event.inputs.tag_name }}
+        INPUT_CHANNEL: ${{ github.event.inputs.channel }}
+        EVENT_NAME: ${{ github.event_name }}
       run: |
-        if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
-            $tagName = "${{ github.event.inputs.tag_name }}"
+        $channel = "Stable"
+        $prerelease = "false"
+        $targetCommitish = "main"
+
+        if ($env:EVENT_NAME -eq "workflow_dispatch") {
+            $tagName = $env:INPUT_TAG_NAME
+            $channel = $env:INPUT_CHANNEL
         } else {
             $tagName = "${{ github.event.release.tag_name }}"
+            $isPrerelease = "${{ github.event.release.prerelease }}"
+            
+            if ($isPrerelease -eq "true") {
+                $channel = "Beta"
+            } else {
+                $channel = "Stable"
+            }
         }
+
+        switch ($channel) {
+            "Stable" {
+                $prerelease = "false"
+                $targetCommitish = "main"
+            }
+            "Beta" {
+                $prerelease = "true"
+                $targetCommitish = "main"
+            }
+            default {
+                Write-Error "Unsupported channel: $channel"
+                exit 1
+            }
+        }
+
+        "channel=$channel" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "prerelease=$prerelease" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "target_commitish=$targetCommitish" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         "tag_name=$tagName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
       shell: powershell
 
@@ -81,13 +124,31 @@ jobs:
         }
       shell: powershell
 
-    - name: Upload to Release
+    - name: Update Release (Published)
+      if: github.event_name == 'release'
       uses: softprops/action-gh-release@v2.0.8
       with:
         tag_name: ${{ steps.release_meta.outputs.tag_name }}
+        target_commitish: ${{ steps.release_meta.outputs.target_commitish }}
+        prerelease: ${{ steps.release_meta.outputs.prerelease }}
+        name: Lenovo Legion Toolkit Plugins
         files: build_out/*.zip
         token: ${{ secrets.GITHUB_TOKEN }}
-        
+
+    - name: Create Draft Release (Manual)
+      if: github.event_name == 'workflow_dispatch'
+      uses: softprops/action-gh-release@v2.0.8
+      with:
+        draft: true
+        tag_name: ${{ steps.release_meta.outputs.tag_name }}
+        target_commitish: ${{ steps.release_meta.outputs.target_commitish }}
+        prerelease: ${{ steps.release_meta.outputs.prerelease }}
+        name: Lenovo Legion Toolkit Plugins
+        body: |
+          ## Plugins Update
+          Channel: ${{ steps.release_meta.outputs.channel }}
+        files: build_out/*.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
