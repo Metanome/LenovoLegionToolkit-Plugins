@@ -3,14 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
       xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       Title="{x:Static res:Resource.WindowTitle}"
       Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
-        <Storyboard x:Key="SpinnerStoryboard" RepeatBehavior="Forever" Duration="0:0:1.5">
-            <DoubleAnimation Storyboard.TargetName="_spinner"
-                             Storyboard.TargetProperty="(Border.RenderTransform).(RotateTransform.Angle)"
-                             From="0" To="360" Duration="0:0:1.5"/>
-        </Storyboard>
         <Style x:Key="ToolBarButton" TargetType="Button">
             <Setter Property="Height" Value="36"/><Setter Property="MinWidth" Value="110"/>
             <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}"/>
@@ -82,7 +78,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
-                                <TextBlock Text="＋"/>
+                                <ui:SymbolIcon Symbol="Add24" />
                             </Button>
                         </StackPanel>
                     </Border>
@@ -91,7 +87,7 @@
                     <Button x:Name="_maxFanButton" Style="{StaticResource ToolBarButton}" MinWidth="140"
                             Click="MaxFan_Click" ToolTip="{x:Static res:Resource.MaxSpeedTooltip}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚡" Margin="0,0,6,0" FontSize="15"/>
+                            <ui:SymbolIcon Symbol="Flash24" Margin="0,0,6,0" FontSize="15" />
                             <TextBlock Text="{x:Static res:Resource.MaxSpeed}"/>
                         </StackPanel>
                     </Button>
@@ -99,7 +95,7 @@
                             Margin="10,0,0,0" Click="GlobalSettings_Click"
                             ToolTip="{x:Static res:Resource.GlobalSettingsTooltip}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚙" Margin="0,0,6,0" FontSize="15"/>
+                            <ui:SymbolIcon Symbol="Settings24" Margin="0,0,6,0" FontSize="15" />
                             <TextBlock Text="{x:Static res:Resource.GlobalSettings}"/>
                         </StackPanel>
                     </Button>
@@ -109,15 +105,8 @@
 
         <Grid x:Name="_loadingOverlay" Grid.Row="1" Visibility="Collapsed"
               Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
-            <Border x:Name="_spinner" Width="40" Height="40" CornerRadius="20"
-                    BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
-                    BorderThickness="4" HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    RenderTransformOrigin="0.5,0.5">
-                <Border.RenderTransform>
-                    <RotateTransform/>
-                </Border.RenderTransform>
-            </Border>
+            <ui:ProgressRing Width="40" Height="40" IsIndeterminate="True"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
 
         <StackPanel x:Name="_fanControlStackPanel" Grid.Row="1" Visibility="Collapsed"/>

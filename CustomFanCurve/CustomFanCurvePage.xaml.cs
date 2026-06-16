@@ -41,14 +41,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _machineInfo = await Compatibility.GetMachineInformationAsync().ConfigureAwait(true);
 
             _loadingOverlay.Visibility = Visibility.Visible;
-            var sb = (System.Windows.Media.Animation.Storyboard)FindResource("SpinnerStoryboard");
-            sb.Begin();
 
             await _controlService.InitializationTask;
             _fanIds = provider.AvailableFanIds;
             _controlService.OnUIOpened();
             await LoadFanControlsAsync();
-            sb.Stop();
             _loadingOverlay.Visibility = Visibility.Collapsed;
             _fanControlStackPanel.Visibility = Visibility.Visible;
             _enableCustomFanToggle.IsChecked = _configManager.Settings.IsCustomFanEnabled;
@@ -105,14 +102,17 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             if (isFullSpeed)
             {
-                _maxFanButton.Content = new TextBlock { Text = $"⚡ {Resource.FullSpeedActive}", FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.OrangeRed };
+                var sp = new StackPanel { Orientation = Orientation.Horizontal };
+                sp.Children.Add(new Wpf.Ui.Controls.SymbolIcon { Symbol = Wpf.Ui.Common.SymbolRegular.Flash24, Margin = new Thickness(0, 0, 6, 0), FontSize = 15, Foreground = System.Windows.Media.Brushes.OrangeRed });
+                sp.Children.Add(new TextBlock { Text = Resource.FullSpeedActive, FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.OrangeRed, VerticalAlignment = VerticalAlignment.Center });
+                _maxFanButton.Content = sp;
                 _maxFanButton.ToolTip = Resource.RecoverCurve;
             }
             else
             {
                 var sp = new StackPanel { Orientation = Orientation.Horizontal };
-                sp.Children.Add(new TextBlock { Text = "⚡", Margin = new Thickness(0, 0, 6, 0), FontSize = 14 });
-                sp.Children.Add(new TextBlock { Text = Resource.MaxSpeed });
+                sp.Children.Add(new Wpf.Ui.Controls.SymbolIcon { Symbol = Wpf.Ui.Common.SymbolRegular.Flash24, Margin = new Thickness(0, 0, 6, 0), FontSize = 15 });
+                sp.Children.Add(new TextBlock { Text = Resource.MaxSpeed, VerticalAlignment = VerticalAlignment.Center });
                 _maxFanButton.Content = sp;
                 _maxFanButton.ToolTip = Resource.MaxSpeedTooltip;
             }
