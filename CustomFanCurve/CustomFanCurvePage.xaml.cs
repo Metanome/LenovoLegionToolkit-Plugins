@@ -77,6 +77,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
                 _fanSelector.IsEnabled = isCustomFanEnabled && !isSmartAuto;
                 _addNodeButton.IsEnabled = isCustomFanEnabled && !isSmartAuto;
+                _maxFanButton.IsEnabled = isCustomFanEnabled && !isSmartAuto;
 
                 if (isSmartAuto && !isCustomFanEnabled)
                 {

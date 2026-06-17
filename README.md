@@ -12,6 +12,8 @@ Provides advanced, algorithm-driven control over the cooling system on supported
 - **Predictive Engine:** Calculus-based derivative lookahead ($dT/dt$) to proactively spool up fans before thermal saturation.
 - **Acoustic Tuning:** Harmonic interference prevention that mathematically shifts fan RPMs to cancel out annoying beat frequencies.
 - **Thermal Smoothing & Hysteresis:** Exponential Moving Average (EMA) and deadzone buffers to prevent rapid fan cycling and jitter.
+- **Smart Auto Mode:** Fuzzy-logic powered auto control that smoothly scales fans using continuous thermal and power load gradients.
+- **Asymmetric Step-Down:** Smooth fan deceleration curves to mitigate audible chopping and prevent physical bearing wear.
 
 ## Developing a Plugin
 

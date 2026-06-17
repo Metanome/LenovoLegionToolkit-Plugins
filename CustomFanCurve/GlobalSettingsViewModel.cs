@@ -431,7 +431,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public double EmaAlpha
         {
             get => _emaAlpha;
-            // BUG-16: clamp to valid EMA range [0.0001, 1.0] — any value outside this is meaningless
             set { var v = Math.Clamp(value, 0.0001, 1.0); if (Math.Abs(_emaAlpha - v) > 0.00001) { _emaAlpha = v; OnPropertyChanged(); } }
         }
 

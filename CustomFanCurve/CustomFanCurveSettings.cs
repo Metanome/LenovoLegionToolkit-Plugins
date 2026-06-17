@@ -13,7 +13,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public int CalculationDelayMs { get; set; } = 500;
         public double TemperatureDeltaThreshold { get; set; } = 0.5;
         public double PowerDeltaThreshold { get; set; } = 5.0;
-        public bool IgnoreZeroTemperature { get; set; }
+        public bool IgnoreZeroTemperature { get; set; } = true;
 
         public Dictionary<int, int> FanMaxRpms { get; set; } = new();
         public bool FallbackProbeDone { get; set; }
@@ -33,8 +33,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public int UiUpdateIntervalMs { get; set; } = 1000;
         public bool UseCachedSnapshotForForcedRefresh { get; set; } = true;
-        public bool EnableMaxFanWriteEachCycle { get; set; } = true;
-        public int CriticalTemp { get; set; } = 120;
+        public bool EnableMaxFanWriteEachCycle { get; set; } = false;
+        public int CriticalTemp { get; set; } = 95;
 
         public double EmaAlpha { get; set; } = 0.2;
         public int StepDownRateRpmPerSec { get; set; } = 400;
@@ -42,7 +42,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public int UiDebounceDelayMs { get; set; } = 300;
         public int SafeMinTemp { get; set; } = 75;
         public int SafeMaxTemp { get; set; } = 90;
-        public int SafeMaxPercentAtMaxTemp { get; set; } = 50;
+        public int SafeMaxPercentAtMaxTemp { get; set; } = 80;
 
         public bool EnableAcousticOffset { get; set; } = false;
         public int AcousticOffsetDeltaRpm { get; set; } = 100;

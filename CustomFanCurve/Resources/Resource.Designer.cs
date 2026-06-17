@@ -124,6 +124,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Always Write RPM.
+        /// </summary>
+        public static string AlwaysWriteRpm {
+            get {
+                return ResourceManager.GetString("AlwaysWriteRpm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force write the fan speed to the EC every cycle even if unchanged..
+        /// </summary>
+        public static string AlwaysWriteRpmDesc {
+            get {
+                return ResourceManager.GetString("AlwaysWriteRpmDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply to All Power Modes.
         /// </summary>
         public static string ApplyToAllModes {
@@ -439,6 +457,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Force Write When Target is 0.
+        /// </summary>
+        public static string ForceWriteWhenRpmZero {
+            get {
+                return ResourceManager.GetString("ForceWriteWhenRpmZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always write to the EC if the target RPM is 0 to ensure fans actually stop..
+        /// </summary>
+        public static string ForceWriteWhenRpmZeroDesc {
+            get {
+                return ResourceManager.GetString("ForceWriteWhenRpmZeroDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Full Speed....
         /// </summary>
         public static string FullSpeedActive {
@@ -552,6 +588,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         public static string MaxSpeedTooltip {
             get {
                 return ResourceManager.GetString("MaxSpeedTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum RPM Change to Apply.
+        /// </summary>
+        public static string MinimumRpmChangeToApply {
+            get {
+                return ResourceManager.GetString("MinimumRpmChangeToApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore target RPM changes smaller than this value to reduce EC writes..
+        /// </summary>
+        public static string MinimumRpmChangeToApplyDesc {
+            get {
+                return ResourceManager.GetString("MinimumRpmChangeToApplyDesc", resourceCulture);
             }
         }
         
@@ -673,7 +727,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The critical maximum hardware temperature before the safety net forcefully overrides the fan curve..
+        ///   Looks up a localized string similar to The temperature at which the safety net enforces its maximum guaranteed minimum fan speed..
         /// </summary>
         public static string SafeMaxTempDesc {
             get {

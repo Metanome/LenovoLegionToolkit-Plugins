@@ -184,13 +184,22 @@
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding CalculationDelayMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
                                     <Separator Opacity="0.3" Margin="0,0,0,14"/>
-                                    <Grid>
+                                    <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="{x:Static res:Resource.TempDeltaThreshold}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                                             <TextBlock Text="{x:Static res:Resource.TempDeltaThresholdDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding TemperatureDeltaThreshold}"/>
+                                    </Grid>
+                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                            <TextBlock Text="{x:Static res:Resource.PowerDeltaThreshold}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.PowerDeltaThresholdDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding PowerDeltaThreshold, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -301,15 +310,7 @@
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsSmartAutoEnabled}"/>
                                     </Grid>
-                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                                            <TextBlock Text="{x:Static res:Resource.PowerDeltaThreshold}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="{x:Static res:Resource.PowerDeltaThresholdDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
-                                        </StackPanel>
-                                        <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding PowerDeltaThreshold, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </Grid>
+
                                 </StackPanel>
                             </Border>
 
@@ -334,13 +335,40 @@
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding UseCachedSnapshotForForcedRefresh}"/>
                                     </Grid>
                                     <Separator Opacity="0.3" Margin="0,0,0,14"/>
-                                    <Grid>
+                                    <Grid Margin="0,0,0,14">
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="{x:Static res:Resource.WriteEachCycle}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                                             <TextBlock Text="{x:Static res:Resource.WriteEachCycleDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding EnableMaxFanWriteEachCycle}"/>
+                                    </Grid>
+                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
+                                    <Grid Margin="0,0,0,14">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{x:Static res:Resource.AlwaysWriteRpm}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.AlwaysWriteRpmDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AlwaysWriteRpm}"/>
+                                    </Grid>
+                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
+                                    <Grid Margin="0,0,0,14">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{x:Static res:Resource.ForceWriteWhenRpmZero}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.ForceWriteWhenRpmZeroDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ForceWriteWhenRpmZero}"/>
+                                    </Grid>
+                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                            <TextBlock Text="{x:Static res:Resource.MinimumRpmChangeToApply}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.MinimumRpmChangeToApplyDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding MinimumRpmChangeToApply, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>

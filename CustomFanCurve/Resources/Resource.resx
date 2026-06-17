@@ -452,7 +452,7 @@ With spin-up boost enabled, the system briefly runs the fan at a higher RPM befo
     <value>The minimum bound for safe hardware temperature evaluation.</value>
   </data>
   <data name="SafeMaxTempDesc" xml:space="preserve">
-    <value>The critical maximum hardware temperature before the safety net forcefully overrides the fan curve.</value>
+    <value>The temperature at which the safety net enforces its maximum guaranteed minimum fan speed.</value>
   </data>
   <data name="SafeMaxPercentAtMaxTempDesc" xml:space="preserve">
     <value>The guaranteed minimum fan percentage when the hardware reaches the critical maximum temperature.</value>
@@ -471,5 +471,23 @@ With spin-up boost enabled, the system briefly runs the fan at a higher RPM befo
   </data>
   <data name="CriticalTempDesc" xml:space="preserve">
     <value>Force maximum fan speed regardless of curve at this temperature.</value>
+  </data>
+  <data name="AlwaysWriteRpm" xml:space="preserve">
+    <value>Always Write RPM</value>
+  </data>
+  <data name="AlwaysWriteRpmDesc" xml:space="preserve">
+    <value>Force write the fan speed to the EC every cycle even if unchanged.</value>
+  </data>
+  <data name="ForceWriteWhenRpmZero" xml:space="preserve">
+    <value>Force Write When Target is 0</value>
+  </data>
+  <data name="ForceWriteWhenRpmZeroDesc" xml:space="preserve">
+    <value>Always write to the EC if the target RPM is 0 to ensure fans actually stop.</value>
+  </data>
+  <data name="MinimumRpmChangeToApply" xml:space="preserve">
+    <value>Minimum RPM Change to Apply</value>
+  </data>
+  <data name="MinimumRpmChangeToApplyDesc" xml:space="preserve">
+    <value>Ignore target RPM changes smaller than this value to reduce EC writes.</value>
   </data>
 </root>

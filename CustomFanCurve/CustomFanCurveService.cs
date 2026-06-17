@@ -45,6 +45,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private readonly ConcurrentDictionary<int, long> _lastUiUpdateTicks = new();
         private readonly ConcurrentDictionary<int, double> _emaTemp = new();
         private readonly ConcurrentDictionary<int, int> _lastIdealRpm = new();
+        private readonly ConcurrentDictionary<int, long> _lastWriteTick = new();
 
         private readonly ConcurrentDictionary<int, float> _lastRawTemp = new();
         private readonly ConcurrentDictionary<int, long> _lastRawTempTick = new();
@@ -288,7 +289,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             var cpuTemp = Math.Max(0, snapshot.CpuTemp);
             var gpuTemp = Math.Max(0, snapshot.GpuTemp);
 
-            // BUG-03: Guard against sensor dropout — skip processing if temperatures are zero
             if (_configManager.Settings.IgnoreZeroTemperature && cpuTemp <= 0 && gpuTemp <= 0)
             {
                 Logger.Debug("Skipping cycle: both CPU and GPU temps are zero (sensor dropout)");
@@ -304,7 +304,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             {
                 var temp = GetTemperatureForFan(entry, _hardware.AvailableFanIds, cpuTemp, gpuTemp);
 
-                // BUG-04: Force max RPM at critical temperature regardless of curve
                 if (!_isFullSpeed && criticalTemp > 0 && Math.Max(cpuTemp, gpuTemp) >= criticalTemp)
                 {
                     await ProcessFullSpeed(entry, temp).ConfigureAwait(false);
@@ -356,10 +355,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                         bool isSteppingDown = _lastIdealRpm.TryGetValue(fan1, out var ideal) && _lastCalcRpm.TryGetValue(fan1, out var calc) && ideal < calc;
                         var requiredDelta = isSteppingDown ? _configManager.Settings.StepDownSpamProtectionDelta : _configManager.Settings.MinimumRpmChangeToApply;
                         
+                        var isSameOrClose = hadLast && (delta < requiredDelta || newTargetRpm1 == lastApplied);
+                        if (isSameOrClose)
+                        {
+                            newTargetRpm1 = lastApplied;
+                        }
+
+                        _lastWriteTick.TryGetValue(fan1, out var lastWrite);
+                        bool isKeepAlive = (DateTime.UtcNow.Ticks - lastWrite) >= TimeSpan.FromSeconds(2.5).Ticks;
+
+                        bool isFanStuck = Math.Abs(r1.CurrentRpm - newTargetRpm1) > 500;
+
                         bool shouldWrite = _configManager.Settings.EnableMaxFanWriteEachCycle
-                            || (!isSteppingDown && _configManager.Settings.AlwaysWriteRpm) 
-                            || (_configManager.Settings.ForceWriteWhenRpmZero && r1.CurrentRpm == 0)
-                            || !hadLast || delta >= requiredDelta;
+                            || (!isSameOrClose)
+                            || (_configManager.Settings.ForceWriteWhenRpmZero && newTargetRpm1 == 0 && isKeepAlive)
+                            || (_configManager.Settings.AlwaysWriteRpm && isKeepAlive)
+                            || (isFanStuck && isKeepAlive);
+
+                        if (shouldWrite) _lastWriteTick[fan1] = DateTime.UtcNow.Ticks;
 
                         results[fan1] = (shouldWrite, newTargetRpm1, r1.CurrentRpm, r1.Temp);
                     }
@@ -368,15 +381,22 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
             if (!_isFullSpeed)
             {
-                foreach (var kvp in results)
+                foreach (var fanId in results.Keys.ToList())
                 {
-                    int fanId = kvp.Key;
-                    var r = kvp.Value;
+                    var r = results[fanId];
                     int finalRpm = r.CurrentRpm;
+                    
                     if (r.ShouldWrite)
                     {
                         finalRpm = await WriteFanRpmAsync(fanId, r.TargetRpm, r.CurrentRpm);
                     }
+                    else if (finalRpm == 0 && r.TargetRpm > 0 && _lastAppliedRpm.TryGetValue(fanId, out var lastApplied))
+                    {
+                        finalRpm = lastApplied;
+                    }
+                    
+                    results[fanId] = (r.ShouldWrite, r.TargetRpm, finalRpm, r.Temp);
+                    
                     TryUpdateMonitoring(fanId, r.Temp, finalRpm, r.TargetRpm, false);
                 }
             }
@@ -387,7 +407,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 var outputStr = string.Join(" | ", results.OrderBy(kv => kv.Key).Select(kv => 
                 {
                     string fanName = kv.Key switch { 2 => "GPU Fan", 4 => "PCH Fan", 1 => "CPU Fan", _ => $"Fan {kv.Key}" };
-                    return $"{fanName}: {kv.Value.CurrentRpm} RPM";
+                    return $"{fanName}: {kv.Value.CurrentRpm} RPM (Target: {kv.Value.TargetRpm})";
                 }));
                 MessagingCenter.Publish(new SmartAutoTelemetryMessage(telemetry.ThermalState, telemetry.PowerLoad, telemetry.Decision, outputStr));
             }
@@ -410,7 +430,17 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             var fanId = entry.FanId;
             var max = _hardware.GetMaxRpm(fanId);
-            await _hardware.SetFanRpmAsync(fanId, max).ConfigureAwait(false);
+            
+            _lastWriteTick.TryGetValue(fanId, out var lastWrite);
+            var hadLast = _lastAppliedRpm.TryGetValue(fanId, out var lastApplied);
+            
+            bool shouldWrite = !hadLast || lastApplied != max || (DateTime.UtcNow.Ticks - lastWrite) >= TimeSpan.FromSeconds(2.5).Ticks;
+
+            if (shouldWrite)
+            {
+                await _hardware.SetFanRpmAsync(fanId, max).ConfigureAwait(false);
+                _lastWriteTick[fanId] = DateTime.UtcNow.Ticks;
+            }
 
             _lastAppliedRpm[fanId] = max;
             TryUpdateMonitoring(fanId, temp, max, max, true);
@@ -423,8 +453,16 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             var now = DateTime.UtcNow.Ticks;
             var delayTicks = TimeSpan.FromMilliseconds(settings.CalculationDelayMs).Ticks;
 
+            // Exponential Moving Average (EMA) Smoothing: Low-pass filter to ignore brief temperature fluctuations.
+            double alpha = settings.EmaAlpha;
+            double smoothedTemp = _emaTemp.TryGetValue(fanId, out var lastEma)
+                ? (temp * alpha) + (lastEma * (1.0 - alpha))
+                : temp;
+            _emaTemp[fanId] = smoothedTemp;
+            
+            float calcTemp = (float)smoothedTemp;
+
             // Derivative Spike Predictor: Forecasts thermal spikes using temperature rate-of-change (°C/s) to ramp fans early.
-            float rawCalcTemp = temp;
             if (settings.DerivativeSpikeThreshold > 0)
             {
                 _lastRawTempTick.TryGetValue(fanId, out var lastRawTick);
@@ -435,28 +473,20 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                     if (dtSeconds > 0)
                     {
                         double rateOfChange = (temp - lastRaw) / dtSeconds;
-                        // BUG-02: was >= which fires at exactly the threshold on every normal tick; use > so it only fires on genuine spikes
+
                         if (rateOfChange > settings.DerivativeSpikeThreshold)
                         {
                             float predictedTemp = (float)(temp + (rateOfChange * settings.DerivativeLookaheadSeconds));
                             float maxAllowed = Math.Max(temp, (float)settings.SafeMaxTemp);
-                            rawCalcTemp = Math.Clamp(predictedTemp, temp, maxAllowed);
-                            Logger.Debug($"Fan{fanId}: DerivativePredictor fired rateOfChange={rateOfChange:F1}°C/s predicted={rawCalcTemp:F1}°C");
+                            float spikeTemp = Math.Clamp(predictedTemp, temp, maxAllowed);
+                            calcTemp = Math.Max(calcTemp, spikeTemp);
+                            Logger.Debug($"Fan{fanId}: DerivativePredictor fired rateOfChange={rateOfChange:F1}°C/s predicted={spikeTemp:F1}°C");
                         }
                     }
                 }
                 _lastRawTemp[fanId] = temp;
                 _lastRawTempTick[fanId] = now;
             }
-
-            // Exponential Moving Average (EMA) Smoothing: Low-pass filter to ignore brief temperature fluctuations.
-            double alpha = settings.EmaAlpha;
-            double smoothedTemp = _emaTemp.TryGetValue(fanId, out var lastEma)
-                ? (temp * alpha) + (lastEma * (1.0 - alpha))
-                : temp;
-            _emaTemp[fanId] = smoothedTemp;
-            
-            float calcTemp = (float)Math.Max(smoothedTemp, rawCalcTemp);
 
             _lastCalcTick.TryGetValue(fanId, out var lastTick);
             _lastTemp.TryGetValue(fanId, out var lastTemp);
@@ -474,6 +504,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 _lastTemp.TryRemove(fanId, out _);
                 _lastCalcTick.TryRemove(fanId, out _);
                 _lastIdealRpm.TryRemove(fanId, out _);
+                _lastWriteTick.TryRemove(fanId, out _);
                 cachedRpm = 0;
                 lastTemp = 0;
                 elapsed = true;
@@ -499,11 +530,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 float evalTemp = calcTemp;
                 if (settings.IsSmartAutoEnabled)
                 {
-                    // BUG-07: pass positional index (0=CPU, 1=GPU) not raw hardware fanId
                     var availIds = _hardware.AvailableFanIds;
                     int fanIndex = 0;
                     for (int fi = 0; fi < availIds.Count; fi++) { if (availIds[fi] == fanId) { fanIndex = fi; break; } }
-                    idealRpm = FuzzyLogicFanController.CalculateSmartRpm(snapshot, _hardware.GetMaxRpm(fanId), cachedRpm, fanIndex);
+                    idealRpm = FuzzyLogicFanController.CalculateSmartRpm(snapshot, evalTemp, _hardware.GetMaxRpm(fanId), cachedRpm, fanIndex);
                 }
                 else
                 {
@@ -532,9 +562,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
                 if (idealRpm < lastCalcRpm)
                 {
-                    // BUG-08: use the current loop's elapsed time (since last calc tick), capped to avoid jumps after long pauses
                     double rawDt = (now - lastTick) / (double)TimeSpan.TicksPerSecond;
-                    double dtSeconds = Math.Min(rawDt, 2.0); // cap at 2s to prevent huge drops after a long stall
+                    double dtSeconds = Math.Min(rawDt, 2.0);
                     int maxDrop = (int)(settings.StepDownRateRpmPerSec * dtSeconds);
                     targetRpm = Math.Max(idealRpm, lastCalcRpm - maxDrop);
                     Logger.Debug($"Fan{fanId}: stepDown ideal={idealRpm} current={lastCalcRpm} maxDrop={maxDrop} dtSec={dtSeconds:F4} -> target={targetRpm}");
@@ -564,14 +593,26 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
             var requiredDelta = isSteppingDown ? settings.StepDownSpamProtectionDelta : settings.MinimumRpmChangeToApply;
             var isSameOrClose = hadLast && (delta < requiredDelta || targetRpm == lastApplied);
+            if (isSameOrClose)
+            {
+                targetRpm = lastApplied;
+            }
+
             var isSteppingToZero = isSteppingDown && targetRpm <= 0;
 
-            // BUG-05: wire up EnableMaxFanWriteEachCycle — forces a write every cycle regardless of delta/spam checks
+            _lastWriteTick.TryGetValue(fanId, out var lastWrite);
+            bool isKeepAlive = (now - lastWrite) >= TimeSpan.FromSeconds(2.5).Ticks;
+
+            bool isFanStuck = Math.Abs(currentRpm - targetRpm) > 500;
+
             var shouldWrite = settings.EnableMaxFanWriteEachCycle
                 || !isSameOrClose
                 || isSteppingToZero
-                || (settings.ForceWriteWhenRpmZero && currentRpm == 0)
-                || (!isSteppingDown && settings.AlwaysWriteRpm);
+                || (settings.ForceWriteWhenRpmZero && targetRpm == 0 && isKeepAlive)
+                || (settings.AlwaysWriteRpm && isKeepAlive)
+                || (isFanStuck && isKeepAlive);
+
+            if (shouldWrite) _lastWriteTick[fanId] = now;
 
             Logger.Debug($"Fan{fanId}: shouldWrite={shouldWrite} targetRpm={targetRpm} currentRpm={currentRpm} lastApplied={lastApplied} delta={delta} requiredDelta={requiredDelta} isSteppingDown={isSteppingDown}");
 
@@ -591,7 +632,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 }
 
                 await _hardware.SetFanRpmAsync(fanId, targetRpm).ConfigureAwait(false);
-
                 _lastAppliedRpm[fanId] = targetRpm;
                 
                 try
@@ -744,9 +784,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private async Task ForceRefreshAsync()
         {
-            // BUG-06: honour UseCachedSnapshotForForcedRefresh:
-            //   true  → use last cached snapshot (fastest, may be slightly stale)
-            //   false → use an empty snapshot so ProcessAsync skips curve math and just re-asserts last known RPM
             var snapshot = _configManager.Settings.UseCachedSnapshotForForcedRefresh
                 ? _sensorProvider.LatestSnapshot
                 : null;
@@ -756,6 +793,21 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private async Task ReevaluateStateAsync()
         {
             await HandleModeChangeAsync();
+        }
+
+        public async Task TeardownAsync()
+        {
+            if (_isEnabled || _isFullSpeed)
+            {
+                try
+                {
+                    await _hardware.RestoreAutoAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Debug($"Failed to restore auto fan during teardown: {ex.Message}");
+                }
+            }
         }
 
         public void Dispose()
