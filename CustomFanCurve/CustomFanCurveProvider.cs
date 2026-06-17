@@ -128,8 +128,15 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public async ValueTask DisposeAsync()
         {
-            Dispose();
-            await ValueTask.CompletedTask;
+            if (ControlService != null)
+            {
+                await ControlService.ShutdownAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                Dispose();
+            }
+            Runtime.Detach(this);
         }
     }
 }
