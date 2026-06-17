@@ -17,6 +17,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         int GetMinRpm(int fanId);
         Task SetFanRpmAsync(int fanId, int rpm);
         Task<int> GetFanRpmAsync(int fanId);
+        Task RestoreAutoAsync();
     }
 
     internal class CustomFanHardware : ICustomFanHardware
@@ -203,7 +204,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public int GetMinRpm(int fanId)
         {
-            return _minRpms.TryGetValue(fanId, out var r) ? r : 1200;
+            return _minRpms.TryGetValue(fanId, out var r) ? r : 1000;
         }
 
         public async Task SetFanRpmAsync(int fanId, int rpm)
@@ -230,6 +231,19 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             catch
             {
                 return 0;
+            }
+        }
+
+        public async Task RestoreAutoAsync()
+        {
+            foreach (var fanId in _fanIds)
+            {
+                try
+                {
+                    var cid = GetCapabilityForFanId(fanId);
+                    await WMI.LenovoOtherMethod.SetFeatureValueAsync(cid, 0).ConfigureAwait(false);
+                }
+                catch { }
             }
         }
     }
