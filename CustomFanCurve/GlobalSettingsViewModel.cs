@@ -22,6 +22,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _debugMode = s.DebugMode;
             _sensorIntervalMs = s.SensorIntervalMs;
             _calculationDelayMs = s.CalculationDelayMs;
+            _isSmartAutoEnabled = s.IsSmartAutoEnabled;
+            _powerDeltaThreshold = s.PowerDeltaThreshold;
             _temperatureDeltaThreshold = s.TemperatureDeltaThreshold;
             _ignoreZeroTemperature = s.IgnoreZeroTemperature;
             _alwaysWriteRpm = s.AlwaysWriteRpm;
@@ -45,6 +47,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _uiDebounceDelayMs = s.UiDebounceDelayMs;
             _safeMinTemp = s.SafeMinTemp;
             _safeMaxTemp = s.SafeMaxTemp;
+            _criticalTemp = s.CriticalTemp;
             _safeMaxPercentAtMaxTemp = s.SafeMaxPercentAtMaxTemp;
 
             _enableAcousticOffset = s.EnableAcousticOffset;
@@ -64,6 +67,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             Save(nameof(CustomFanCurveSettings.DebugMode), _debugMode);
             Save(nameof(CustomFanCurveSettings.SensorIntervalMs), _sensorIntervalMs);
             Save(nameof(CustomFanCurveSettings.CalculationDelayMs), _calculationDelayMs);
+            Save(nameof(CustomFanCurveSettings.IsSmartAutoEnabled), _isSmartAutoEnabled);
+            Save(nameof(CustomFanCurveSettings.PowerDeltaThreshold), _powerDeltaThreshold);
             Save(nameof(CustomFanCurveSettings.TemperatureDeltaThreshold), _temperatureDeltaThreshold);
             Save(nameof(CustomFanCurveSettings.IgnoreZeroTemperature), _ignoreZeroTemperature);
             Save(nameof(CustomFanCurveSettings.AlwaysWriteRpm), _alwaysWriteRpm);
@@ -87,6 +92,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             Save(nameof(CustomFanCurveSettings.UiDebounceDelayMs), _uiDebounceDelayMs);
             Save(nameof(CustomFanCurveSettings.SafeMinTemp), _safeMinTemp);
             Save(nameof(CustomFanCurveSettings.SafeMaxTemp), _safeMaxTemp);
+            Save(nameof(CustomFanCurveSettings.CriticalTemp), _criticalTemp);
             Save(nameof(CustomFanCurveSettings.SafeMaxPercentAtMaxTemp), _safeMaxPercentAtMaxTemp);
 
             Save(nameof(CustomFanCurveSettings.EnableAcousticOffset), _enableAcousticOffset);
@@ -164,6 +170,34 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 if (_calculationDelayMs != value)
                 {
                     _calculationDelayMs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isSmartAutoEnabled;
+        public bool IsSmartAutoEnabled
+        {
+            get => _isSmartAutoEnabled;
+            set
+            {
+                if (_isSmartAutoEnabled != value)
+                {
+                    _isSmartAutoEnabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _powerDeltaThreshold;
+        public double PowerDeltaThreshold
+        {
+            get => _powerDeltaThreshold;
+            set
+            {
+                if (Math.Abs(_powerDeltaThreshold - value) > 0.001)
+                {
+                    _powerDeltaThreshold = value;
                     OnPropertyChanged();
                 }
             }
@@ -397,7 +431,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public double EmaAlpha
         {
             get => _emaAlpha;
-            set { if (_emaAlpha != value) { _emaAlpha = value; OnPropertyChanged(); } }
+            // BUG-16: clamp to valid EMA range [0.0001, 1.0] — any value outside this is meaningless
+            set { var v = Math.Clamp(value, 0.0001, 1.0); if (Math.Abs(_emaAlpha - v) > 0.00001) { _emaAlpha = v; OnPropertyChanged(); } }
         }
 
         private int _stepDownRateRpmPerSec;
@@ -433,6 +468,13 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             get => _safeMaxTemp;
             set { if (_safeMaxTemp != value) { _safeMaxTemp = value; OnPropertyChanged(); } }
+        }
+
+        private int _criticalTemp;
+        public int CriticalTemp
+        {
+            get => _criticalTemp;
+            set { if (_criticalTemp != value) { _criticalTemp = value; OnPropertyChanged(); } }
         }
 
         private int _safeMaxPercentAtMaxTemp;

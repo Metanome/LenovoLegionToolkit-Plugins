@@ -108,8 +108,9 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private async Task ProbeFansAsync()
         {
-            Logger.Debug("Slow probe: scanning fan IDs 1, 2, 4...");
-            var tasks = new[] { 1, 2, 4 }.Select(async fanId =>
+            Logger.Debug("Slow probe: scanning fan IDs 1, 2, 4 sequentially...");
+            // BUG-09: WMI/EC is a singleton — run probes sequentially to avoid overlapping commands
+            foreach (var fanId in new[] { 1, 2, 4 })
             {
                 var cid = GetCapabilityForFanId(fanId);
                 Logger.Debug($"Slow probe: starting probe for fanId={fanId} capability={cid}");
@@ -117,12 +118,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 var maxRpm = await ProbeMaxRpmAsync(cid).ConfigureAwait(false);
                 await WMI.LenovoOtherMethod.SetFeatureValueAsync(cid, 0).ConfigureAwait(false);
                 Logger.Debug($"Slow probe: fanId={fanId} capability={cid} maxRpm={maxRpm}");
-                return (fanId, maxRpm);
-            });
 
-            var all = await Task.WhenAll(tasks);
-            foreach (var (fanId, maxRpm) in all)
-            {
                 if (maxRpm > 0)
                 {
                     _fanIds.Add(fanId);

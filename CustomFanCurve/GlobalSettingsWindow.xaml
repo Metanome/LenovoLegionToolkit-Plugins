@@ -290,6 +290,29 @@
 
                         <!-- Panel 4: Advanced -->
                         <StackPanel x:Name="_panelAdvanced" Visibility="Collapsed">
+                            <TextBlock Style="{StaticResource SubHeader}" Text="Fuzzy Logic Engine" Margin="0,0,0,12"/>
+                            <Border Style="{StaticResource InfoCard}">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,14">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{x:Static res:Resource.EnableSmartAuto}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{x:Static res:Resource.SmartAutoDescription}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsSmartAutoEnabled}"/>
+                                    </Grid>
+                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                            <TextBlock Text="{x:Static res:Resource.PowerDeltaThreshold}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.PowerDeltaThresholdDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding PowerDeltaThreshold, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
                             <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.UiAndMonitoring}"/>
                             <Border Style="{StaticResource InfoCard}">
                                 <StackPanel>
@@ -444,6 +467,15 @@
                                             <TextBlock Text="{x:Static res:Resource.SafeMaxTempDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding SafeMaxTemp, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Grid>
+                                    <Separator Opacity="0.3" Margin="0,0,0,14"/>
+                                    <Grid Margin="0,0,0,14">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{x:Static res:Resource.CriticalTemp}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Static res:Resource.CriticalTempDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBox Grid.Column="1" Style="{StaticResource SettingsTextBox}" Text="{Binding CriticalTemp, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
                                     <Separator Opacity="0.3" Margin="0,0,0,14"/>
                                     <Grid>

@@ -27,9 +27,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public CustomFanCurveSettings Load()
         {
+            // BUG-15: Use double-check lock to safely share the cached instance across threads
             if (_cached != null) return _cached;
+            _fileLock.Wait();
             try
             {
+                if (_cached != null) return _cached;
                 if (File.Exists(_filePath))
                 {
                     var json = File.ReadAllText(_filePath);
@@ -40,6 +43,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             catch (Exception ex)
             {
                 Log.Instance.Trace($"CustomFanCurve load error: {ex.Message}");
+            }
+            finally
+            {
+                _fileLock.Release();
             }
 
             _cached = new CustomFanCurveSettings();

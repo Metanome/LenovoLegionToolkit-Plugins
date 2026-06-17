@@ -214,6 +214,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Critical Temperature (°C).
+        /// </summary>
+        public static string CriticalTemp {
+            get {
+                return ResourceManager.GetString("CriticalTemp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force maximum fan speed regardless of curve at this temperature..
+        /// </summary>
+        public static string CriticalTempDesc {
+            get {
+                return ResourceManager.GetString("CriticalTempDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current Speed.
         /// </summary>
         public static string CurrentSpeed {
@@ -345,6 +363,15 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         public static string EnableCustomFanCurve {
             get {
                 return ResourceManager.GetString("EnableCustomFanCurve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Smart Auto (Experimental).
+        /// </summary>
+        public static string EnableSmartAuto {
+            get {
+                return ResourceManager.GetString("EnableSmartAuto", resourceCulture);
             }
         }
         
@@ -543,6 +570,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         public static string ModeSwitchTitle {
             get {
                 return ResourceManager.GetString("ModeSwitchTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power Delta Threshold (W).
+        /// </summary>
+        public static string PowerDeltaThreshold {
+            get {
+                return ResourceManager.GetString("PowerDeltaThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum change in wattage before forcing a recalculation.
+        /// </summary>
+        public static string PowerDeltaThresholdDesc {
+            get {
+                return ResourceManager.GetString("PowerDeltaThresholdDesc", resourceCulture);
             }
         }
         
@@ -768,6 +813,69 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         public static string SettingsWindowTitle {
             get {
                 return ResourceManager.GetString("SettingsWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manual fan curves are disabled. The Fuzzy Logic engine is managing thermals based on power consumption..
+        /// </summary>
+        public static string SmartAutoDashboardSubtitle {
+            get {
+                return ResourceManager.GetString("SmartAutoDashboardSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Autonomous Thermal Control.
+        /// </summary>
+        public static string SmartAutoDashboardTitle {
+            get {
+                return ResourceManager.GetString("SmartAutoDashboardTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decision:.
+        /// </summary>
+        public static string SmartAutoDecision {
+            get {
+                return ResourceManager.GetString("SmartAutoDecision", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Autonomously controls fan speeds using Fuzzy Logic based on hardware temperature and power draw. Disables manual fan curves..
+        /// </summary>
+        public static string SmartAutoDescription {
+            get {
+                return ResourceManager.GetString("SmartAutoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power Load:.
+        /// </summary>
+        public static string SmartAutoPowerLoad {
+            get {
+                return ResourceManager.GetString("SmartAutoPowerLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fan Speed:.
+        /// </summary>
+        public static string SmartAutoTargetOutput {
+            get {
+                return ResourceManager.GetString("SmartAutoTargetOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thermal State:.
+        /// </summary>
+        public static string SmartAutoThermalState {
+            get {
+                return ResourceManager.GetString("SmartAutoThermalState", resourceCulture);
             }
         }
         

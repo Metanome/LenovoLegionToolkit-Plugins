@@ -110,5 +110,38 @@
         </Grid>
 
         <StackPanel x:Name="_fanControlStackPanel" Grid.Row="1" Visibility="Collapsed"/>
+
+        <Grid x:Name="_smartAutoDashboard" Grid.Row="1" Visibility="Collapsed" Margin="0,20,0,0">
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="24">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <ui:SymbolIcon x:Name="_dashboardIcon" Symbol="BrainCircuit24" FontSize="48" Margin="0,0,0,16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+                    <TextBlock x:Name="_dashboardTitle" Text="{x:Static res:Resource.SmartAutoDashboardTitle}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static res:Resource.SmartAutoDashboardSubtitle}" FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="500" Margin="0,0,0,32"/>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/><ColumnDefinition Width="16"/><ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="12"/><RowDefinition Height="Auto"/>
+                            <RowDefinition Height="12"/><RowDefinition Height="Auto"/><RowDefinition Height="12"/><RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoThermalState}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
+                        <TextBlock x:Name="_dashboardThermalState" Grid.Row="0" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoPowerLoad}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
+                        <TextBlock x:Name="_dashboardPowerLoad" Grid.Row="2" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoDecision}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
+                        <TextBlock x:Name="_dashboardDecision" Grid.Row="4" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoTargetOutput}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
+                        <TextBlock x:Name="_dashboardOutput" Grid.Row="6" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

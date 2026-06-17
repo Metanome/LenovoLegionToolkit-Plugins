@@ -12,6 +12,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public int SensorIntervalMs { get; set; } = 500;
         public int CalculationDelayMs { get; set; } = 500;
         public double TemperatureDeltaThreshold { get; set; } = 0.5;
+        public double PowerDeltaThreshold { get; set; } = 5.0;
         public bool IgnoreZeroTemperature { get; set; }
 
         public Dictionary<int, int> FanMaxRpms { get; set; } = new();
@@ -47,8 +48,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public int AcousticOffsetDeltaRpm { get; set; } = 100;
         public int AcousticOffsetAddRpm { get; set; } = 150;
         public int HysteresisDeadzoneTemp { get; set; } = 3;
-        public int DerivativeSpikeThreshold { get; set; } = 10;
+        public int DerivativeSpikeThreshold { get; set; } = 0;
         public int DerivativeLookaheadSeconds { get; set; } = 2;
+
+        public bool IsSmartAutoEnabled { get; set; } = false;
 
         public List<CustomFanCurveEntry> Entries { get; set; } = new();
     }

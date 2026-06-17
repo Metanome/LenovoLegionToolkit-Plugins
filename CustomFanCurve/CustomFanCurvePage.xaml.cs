@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using LenovoLegionToolkit.Lib;
+using LenovoLegionToolkit.Lib.Messaging;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.Plugin.CustomFanCurve.Resources;
 
@@ -25,7 +26,14 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             this.Language = System.Windows.Markup.XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
             InitializeComponent();
             Loaded += OnLoaded;
-            Unloaded += (s, e) => _controlService?.OnUIClosed();
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _controlService?.OnUIClosed();
+            MessagingCenter.Unsubscribe<SmartAutoTelemetryMessage>(this);
+            if (_configManager != null) _configManager.SettingsChanged -= UpdateDashboardVisibility;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -47,8 +55,72 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _controlService.OnUIOpened();
             await LoadFanControlsAsync();
             _loadingOverlay.Visibility = Visibility.Collapsed;
-            _fanControlStackPanel.Visibility = Visibility.Visible;
             _enableCustomFanToggle.IsChecked = _configManager.Settings.IsCustomFanEnabled;
+            
+            _configManager.SettingsChanged += UpdateDashboardVisibility;
+            MessagingCenter.Subscribe<SmartAutoTelemetryMessage>(this, OnSmartAutoTelemetry);
+            UpdateDashboardVisibility();
+        }
+
+        private void UpdateDashboardVisibility()
+        {
+            Dispatcher.InvokeAsync(() => 
+            {
+                bool isSmartAuto = _configManager.Settings.IsSmartAutoEnabled;
+                bool isCustomFanEnabled = _configManager.Settings.IsCustomFanEnabled;
+
+                _smartAutoDashboard.Visibility = isSmartAuto ? Visibility.Visible : Visibility.Collapsed;
+                _smartAutoDashboard.Opacity = isCustomFanEnabled ? 1.0 : 0.5;
+
+                _fanControlStackPanel.Visibility = isSmartAuto ? Visibility.Collapsed : Visibility.Visible;
+                _fanControlStackPanel.IsEnabled = isCustomFanEnabled;
+
+                _fanSelector.IsEnabled = isCustomFanEnabled && !isSmartAuto;
+                _addNodeButton.IsEnabled = isCustomFanEnabled && !isSmartAuto;
+
+                if (isSmartAuto && !isCustomFanEnabled)
+                {
+                    _dashboardThermalState.Text = "-";
+                    _dashboardPowerLoad.Text = "-";
+                    _dashboardDecision.Text = "Custom Fan Curve Disabled";
+                    _dashboardOutput.Text = "-";
+
+                    var defaultBrush = (System.Windows.Media.Brush)FindResource("TextFillColorPrimaryBrush");
+                    _dashboardIcon.Foreground = (System.Windows.Media.Brush)FindResource("AccentTextFillColorPrimaryBrush");
+                    _dashboardTitle.Foreground = defaultBrush;
+                    _dashboardThermalState.Foreground = defaultBrush;
+                    _dashboardPowerLoad.Foreground = defaultBrush;
+                    _dashboardDecision.Foreground = defaultBrush;
+                    _dashboardOutput.Foreground = defaultBrush;
+                }
+            });
+        }
+
+        private void OnSmartAutoTelemetry(SmartAutoTelemetryMessage msg)
+        {
+            Dispatcher.InvokeAsync(() => 
+            {
+                _dashboardThermalState.Text = msg.ThermalState;
+                System.Windows.Media.Brush thermalBrush;
+                if (msg.ThermalState.StartsWith("Critical")) thermalBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 69, 58));
+                else if (msg.ThermalState.StartsWith("Hot")) thermalBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 159, 10));
+                else if (msg.ThermalState.StartsWith("Warm")) thermalBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 214, 10));
+                else thermalBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(48, 209, 88));
+                _dashboardThermalState.Foreground = thermalBrush;
+                _dashboardIcon.Foreground = thermalBrush;
+                _dashboardTitle.Foreground = thermalBrush;
+
+                _dashboardPowerLoad.Text = msg.PowerLoad;
+                if (msg.PowerLoad.StartsWith("Heavy")) _dashboardPowerLoad.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 69, 58));
+                else if (msg.PowerLoad.StartsWith("Light")) _dashboardPowerLoad.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 159, 10));
+                else _dashboardPowerLoad.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(48, 209, 88));
+
+                _dashboardDecision.Text = msg.Decision;
+                _dashboardDecision.Foreground = (System.Windows.Media.Brush)FindResource("AccentTextFillColorPrimaryBrush");
+
+                _dashboardOutput.Text = msg.OutputState;
+                _dashboardOutput.Foreground = (System.Windows.Media.Brush)FindResource("TextFillColorPrimaryBrush");
+            });
         }
 
         private async Task LoadFanControlsAsync()

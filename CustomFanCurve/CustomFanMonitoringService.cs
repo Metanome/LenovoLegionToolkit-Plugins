@@ -27,12 +27,14 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public void Update(int fanId, float temp, int rpm, int targetRpm)
         {
+            FanMonitoringSnapshot snapshot;
             lock (_data)
             {
-                _data[fanId] = new FanMonitoringSnapshot(temp, rpm, targetRpm);
+                snapshot = new FanMonitoringSnapshot(temp, rpm, targetRpm);
+                _data[fanId] = snapshot;
             }
 
-            MonitoringUpdated?.Invoke(fanId, _data[fanId]);
+            MonitoringUpdated?.Invoke(fanId, snapshot);
         }
     }
 

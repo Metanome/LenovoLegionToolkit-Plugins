@@ -53,14 +53,13 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             {
                 int safeMin = CustomFanCurveCalculator.GetSafeMinPercent(_temperature);
                 int clampedValue = Math.Clamp(value, safeMin, 100);
-                
+
+                // BUG-14: Only fire PropertyChanged when the backing field actually changes.
+                // The old else-if fired even when clampedValue == _targetPercent (e.g. slider below safe-min floor),
+                // causing a debounced save on every drag event without any real data change.
                 if (_targetPercent != clampedValue)
                 {
                     _targetPercent = clampedValue;
-                    OnPropertyChanged();
-                }
-                else if (value != clampedValue)
-                {
                     OnPropertyChanged();
                 }
             }
@@ -144,9 +143,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 entry.SensorSource = (SensorSource)Enum.Parse(typeof(SensorSource), (string)data.SensorSource, true);
             }
 
+            // BUG-13: Always clear existing nodes before import, even if JSON has no nodes,
+            // so default 6 nodes from the constructor don't survive a partial/empty import.
+            entry.CurveNodes.Clear();
             if (data.CurveNodes != null)
             {
-                entry.CurveNodes.Clear();
                 foreach (var node in data.CurveNodes)
                 {
                     entry.CurveNodes.Add(new CurveNode { Temperature = node.Temperature, TargetPercent = node.TargetPercent });
