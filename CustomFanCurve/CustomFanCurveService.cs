@@ -228,6 +228,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 }
             }
 
+            // Harmonic interference mitigation
             if (!_isFullSpeed && _configManager.Settings.EnableAcousticOffset && _hardware.AvailableFanIds.Count >= 2)
             {
                 int fan0 = _hardware.AvailableFanIds[0];
@@ -313,7 +314,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             var now = DateTime.UtcNow.Ticks;
             var delayTicks = TimeSpan.FromMilliseconds(settings.CalculationDelayMs).Ticks;
 
-            // Derivative Spike Predictor
+            // Derivative Spike Predictor: Forecasts thermal spikes using temperature rate-of-change (°C/s) to ramp fans early.
             float rawCalcTemp = temp;
             if (settings.DerivativeSpikeThreshold > 0)
             {
@@ -337,7 +338,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 _lastRawTempTick[fanId] = now;
             }
 
-            // EMA Smoothing
+            // Exponential Moving Average (EMA) Smoothing: Low-pass filter to ignore brief temperature fluctuations.
             double alpha = settings.EmaAlpha;
             double smoothedTemp = _emaTemp.TryGetValue(fanId, out var lastEma)
                 ? (temp * alpha) + (lastEma * (1.0 - alpha))
@@ -379,6 +380,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             int targetRpm;
             if (needRecalc)
             {
+                // Hysteresis Deadzone: Artificially pads temperature when the fan is spinning to prevent rapid on/off pulsing.
                 float evalTemp = calcTemp;
                 if (settings.HysteresisDeadzoneTemp > 0 && cachedRpm > 0)
                 {
@@ -397,7 +399,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 int safeMinRpm = (int)Math.Round(safeMinPercent / 100.0 * _hardware.GetMaxRpm(fanId));
                 idealRpm = Math.Max(idealRpm, safeMinRpm);
 
-                // Asymmetric Step-Down
+                // Asymmetric Step-Down: Smooths fan deceleration to prevent bearing wear and audible chopping.
                 int currentRpm = _lastCalcRpm.TryGetValue(fanId, out int value) ? value : idealRpm;
                 targetRpm = idealRpm;
 

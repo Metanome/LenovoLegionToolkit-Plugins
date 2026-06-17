@@ -8,6 +8,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
     {
         public static int? Calculate(CustomFanCurveEntry entry, float temperature, int maxRpm)
         {
+            // Linear Interpolation: Calculates proportional fan speed percentage between curve nodes.
             var nodes = entry.CurveNodes;
             if (nodes.Count == 0)
             {
@@ -45,6 +46,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public static int GetSafeMinPercent(float temperature)
         {
+
             var settings = CustomFanCurveProvider.InstanceConfigManager?.Settings;
             if (settings == null)
             {
