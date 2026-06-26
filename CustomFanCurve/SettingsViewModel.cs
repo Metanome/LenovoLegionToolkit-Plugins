@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
-    public class GlobalSettingsViewModel : INotifyPropertyChanged
+    public class SettingsViewModel : INotifyPropertyChanged
     {
         private readonly CustomFanCurveConfigManager _configManager;
         public bool IsLegionDevice { get; }
         public bool ShowApplyToAllPowerModes { get; }
 
-        public GlobalSettingsViewModel(CustomFanCurveConfigManager configManager, bool isLegionDevice, bool isITSModeDevice)
+        public SettingsViewModel(CustomFanCurveConfigManager configManager, bool isLegionDevice, bool isITSModeDevice)
         {
             _configManager = configManager;
             IsLegionDevice = isLegionDevice;
@@ -57,6 +57,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _hysteresisDeadzoneTemp = s.HysteresisDeadzoneTemp;
             _derivativeSpikeThreshold = s.DerivativeSpikeThreshold;
             _derivativeLookaheadSeconds = s.DerivativeLookaheadSeconds;
+
+            _enablePredictiveEngine = s.EnablePredictiveEngine;
+            _enableHysteresis = s.EnableHysteresis;
+            _enableStepDownGlide = s.EnableStepDownGlide;
+            _enableThermalSafetyNet = s.EnableThermalSafetyNet;
+            _enableEma = s.EnableEma;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -103,6 +109,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             Save(nameof(CustomFanCurveSettings.HysteresisDeadzoneTemp), _hysteresisDeadzoneTemp);
             Save(nameof(CustomFanCurveSettings.DerivativeSpikeThreshold), _derivativeSpikeThreshold);
             Save(nameof(CustomFanCurveSettings.DerivativeLookaheadSeconds), _derivativeLookaheadSeconds);
+
+            Save(nameof(CustomFanCurveSettings.EnablePredictiveEngine), _enablePredictiveEngine);
+            Save(nameof(CustomFanCurveSettings.EnableHysteresis), _enableHysteresis);
+            Save(nameof(CustomFanCurveSettings.EnableStepDownGlide), _enableStepDownGlide);
+            Save(nameof(CustomFanCurveSettings.EnableThermalSafetyNet), _enableThermalSafetyNet);
+            Save(nameof(CustomFanCurveSettings.EnableEma), _enableEma);
         }
 
         private void Save<T>(string name, T value) => _configManager.UpdateSetting(name, value);
@@ -539,6 +551,41 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             get => _derivativeLookaheadSeconds;
             set { var v = Math.Max(0, value); if (_derivativeLookaheadSeconds != v) { _derivativeLookaheadSeconds = v; OnPropertyChanged(); } }
+        }
+
+        private bool _enablePredictiveEngine;
+        public bool EnablePredictiveEngine
+        {
+            get => _enablePredictiveEngine;
+            set { if (_enablePredictiveEngine != value) { _enablePredictiveEngine = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enableHysteresis;
+        public bool EnableHysteresis
+        {
+            get => _enableHysteresis;
+            set { if (_enableHysteresis != value) { _enableHysteresis = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enableStepDownGlide;
+        public bool EnableStepDownGlide
+        {
+            get => _enableStepDownGlide;
+            set { if (_enableStepDownGlide != value) { _enableStepDownGlide = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enableThermalSafetyNet;
+        public bool EnableThermalSafetyNet
+        {
+            get => _enableThermalSafetyNet;
+            set { if (_enableThermalSafetyNet != value) { _enableThermalSafetyNet = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enableEma;
+        public bool EnableEma
+        {
+            get => _enableEma;
+            set { if (_enableEma != value) { _enableEma = value; OnPropertyChanged(); } }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

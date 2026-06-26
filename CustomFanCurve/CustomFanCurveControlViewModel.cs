@@ -23,12 +23,13 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public CustomFanCurveControlViewModel(CustomFanCurveEntry entry, CustomFanCurveConfigManager configManager, ICustomFanMonitoringService monitoring)
+        public CustomFanCurveControlViewModel(CustomFanCurveEntry entry, CustomFanCurveConfigManager configManager, ICustomFanMonitoringService monitoring, string displayName = "")
         {
             _entry = entry;
             _configManager = configManager;
             _monitoring = monitoring;
             _fanId = entry.FanId;
+            DisplayName = displayName;
 
             CurveNodes = entry.CurveNodes;
             CurveNodeDisplays = new ObservableCollection<CurveNodeDisplay>();
@@ -52,6 +53,18 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private async void OnCurveNodePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (sender is CurveNode changedNode && _graphWidth > 0 && _graphHeight > 0)
+            {
+                var display = CurveNodeDisplays.FirstOrDefault(d => d.Node == changedNode);
+                if (display != null)
+                {
+                    double nx = Math.Clamp(changedNode.Temperature / 100.0, 0, 1);
+                    double ny = 1.0 - Math.Clamp(changedNode.TargetPercent / 100.0, 0, 1);
+                    display.DisplayX = nx * _graphWidth;
+                    display.DisplayY = ny * _graphHeight;
+                }
+            }
+
             UpdateGraphPointsFromNodes();
             
             _saveCts?.Cancel();
@@ -70,6 +83,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
         }
 
+        public string DisplayName { get; }
         public int FanId { get => _fanId; set { _fanId = value; OnPropertyChanged(); } }
         public ObservableCollection<CurveNode> CurveNodes { get; }
         public ObservableCollection<CurveNodeDisplay> CurveNodeDisplays { get; }
@@ -105,6 +119,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private IList<Point> _graphPoints = Array.Empty<Point>();
         public IList<Point> GraphPoints { get => _graphPoints; set { _graphPoints = value; OnPropertyChanged(); } }
 
+        private CurveNodeDisplay? _selectedNodeDisplay;
+        public CurveNodeDisplay? SelectedNodeDisplay { get => _selectedNodeDisplay; set { if (_selectedNodeDisplay != value) { _selectedNodeDisplay = value; OnPropertyChanged(); } } }
+
+        public int MaxRpm => _configManager.Settings.FanMaxRpms.TryGetValue(FanId, out var rpm) && rpm > 0 ? rpm : 6400;
+
         public ICommand AddPointCommand { get; }
         public ICommand RemovePointCommand { get; }
 
@@ -112,7 +131,16 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private void RemovePoint(object? param)
         {
-            if (param is CurveNode node && CurveNodes.Contains(node)) { CurveNodes.Remove(node); _configManager.SaveEntry(_entry); RefreshGraphPoints(); }
+            if (param is CurveNode node && CurveNodes.Contains(node))
+            {
+                if (SelectedNodeDisplay?.Node == node)
+                {
+                    SelectedNodeDisplay = null;
+                }
+                CurveNodes.Remove(node);
+                _configManager.SaveEntry(_entry);
+                RefreshGraphPoints();
+            }
         }
 
         public void SetGraphSize(double width, double height)
@@ -161,35 +189,88 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public void RefreshGraphPoints()
         {
-            if (CurveNodes.Count == 0) { GraphPoints = Array.Empty<Point>(); CurveNodeDisplays.Clear(); return; }
+            if (CurveNodes.Count == 0)
+            {
+                GraphPoints = Array.Empty<Point>();
+                foreach (var d in CurveNodeDisplays) d.Dispose();
+                CurveNodeDisplays.Clear();
+                SelectedNodeDisplay = null;
+                return;
+            }
             var sorted = CurveNodes.OrderBy(n => n.Temperature).ToList();
             var points = new List<Point>();
             var displays = new List<CurveNodeDisplay>();
             var hasSize = _graphWidth > 0 && _graphHeight > 0;
+            var selectedNode = SelectedNodeDisplay?.Node;
             foreach (var node in sorted)
             {
                 double nx = Math.Clamp(node.Temperature / 100.0, 0, 1), ny = 1.0 - Math.Clamp(node.TargetPercent / 100.0, 0, 1);
                 points.Add(new Point(nx, ny));
-                displays.Add(new CurveNodeDisplay(node, hasSize ? nx * _graphWidth : 0, hasSize ? ny * _graphHeight : 0));
+                var display = new CurveNodeDisplay(node, hasSize ? nx * _graphWidth : 0, hasSize ? ny * _graphHeight : 0, MaxRpm);
+                if (node == selectedNode)
+                {
+                    display.IsSelected = true;
+                }
+                displays.Add(display);
             }
             GraphPoints = points;
+            foreach (var d in CurveNodeDisplays) d.Dispose();
             CurveNodeDisplays.Clear();
             foreach (var d in displays) CurveNodeDisplays.Add(d);
+            SelectedNodeDisplay = CurveNodeDisplays.FirstOrDefault(d => d.IsSelected);
         }
 
-        public void Detach() { _monitoring.MonitoringUpdated -= OnMonitoringUpdated; }
+        public void Detach()
+        {
+            _monitoring.MonitoringUpdated -= OnMonitoringUpdated;
+            CurveNodes.CollectionChanged -= OnCurveNodesCollectionChanged;
+            foreach (var node in CurveNodes)
+            {
+                node.PropertyChanged -= OnCurveNodePropertyChanged;
+            }
+            foreach (var d in CurveNodeDisplays)
+            {
+                d.Dispose();
+            }
+        }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public class CurveNodeDisplay : INotifyPropertyChanged
+    public class CurveNodeDisplay : INotifyPropertyChanged, IDisposable
     {
         public CurveNode Node { get; }
+        private readonly int _maxRpm;
         private double _displayX, _displayY;
+        private bool _isSelected;
+        private readonly PropertyChangedEventHandler _nodePropertyChangedHandler;
+
         public double DisplayX { get => _displayX; set { if (Math.Abs(_displayX - value) > 0.01) { _displayX = value; OnPropertyChanged(); } } }
         public double DisplayY { get => _displayY; set { if (Math.Abs(_displayY - value) > 0.01) { _displayY = value; OnPropertyChanged(); } } }
+        public bool IsSelected { get => _isSelected; set { if (_isSelected != value) { _isSelected = value; OnPropertyChanged(); } } }
+        public int Rpm => (int)(_maxRpm * (Node.TargetPercent / 100.0));
         public event PropertyChangedEventHandler? PropertyChanged;
-        public CurveNodeDisplay(CurveNode node, double x, double y) { Node = node; _displayX = x; _displayY = y; }
+
+        public CurveNodeDisplay(CurveNode node, double x, double y, int maxRpm)
+        {
+            Node = node;
+            _displayX = x;
+            _displayY = y;
+            _maxRpm = maxRpm;
+            _nodePropertyChangedHandler = (s, e) => {
+                if (e.PropertyName == nameof(CurveNode.TargetPercent))
+                {
+                    OnPropertyChanged(nameof(Rpm));
+                }
+            };
+            Node.PropertyChanged += _nodePropertyChangedHandler;
+        }
+
+        public void Dispose()
+        {
+            Node.PropertyChanged -= _nodePropertyChangedHandler;
+        }
+
         protected void OnPropertyChanged([CallerMemberName] string? p = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
     }
 

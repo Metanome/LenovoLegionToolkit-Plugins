@@ -136,6 +136,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public void Dispose()
         {
             ControlService?.Dispose();
+            _sensorProvider?.Dispose();
             Runtime.Detach(this);
         }
 

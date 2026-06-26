@@ -1,0 +1,61 @@
+<UserControl
+    x:Class="LenovoLegionToolkit.Plugin.CustomFanCurve.Pages.GeneralSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <wpfui:DynamicScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.General}"/>
+                            
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.EnableCurve}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.EnableCurveDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding IsCustomFanEnabled}"/>
+                                    </wpfui:CardControl>
+                                    
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12" Visibility="{Binding ShowApplyToAllPowerModes, Converter={StaticResource BoolToVis}}">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.ApplyToAllModes}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.ApplyToAllModesDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding ApplyToAllPowerModes}"/>
+                                    </wpfui:CardControl>
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.SyncFanLevel}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.SyncFanLevelDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding SyncFanLevel}"/>
+                                    </wpfui:CardControl>
+                                    
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.DebugMode}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.DebugModeDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding DebugMode}"/>
+                                    </wpfui:CardControl>
+                                
+        </StackPanel>
+    </wpfui:DynamicScrollViewer>
+</UserControl>

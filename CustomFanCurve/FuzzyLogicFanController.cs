@@ -40,23 +40,23 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 loadFactor = Math.Clamp((power - 20f) / (65f - 20f), 0f, 1f);
             }
 
-            float thermalPercent = Math.Clamp((temp - 50f) / (85f - 50f) * 60f, 0f, 60f);
+            float thermalPercent = Math.Clamp((temp - 50f) / (85f - 50f) * (OutputMax - OutputSlightRamp), 0f, OutputMax - OutputSlightRamp);
 
-            float powerPercent = loadFactor * 40f;
+            float powerPercent = loadFactor * OutputSlightRamp;
 
             targetPercent = thermalPercent + powerPercent;
 
-            if (temp >= 55 && targetPercent < 15)
+            if (temp >= 55 && targetPercent < OutputSilent)
             {
-                targetPercent = 15;
+                targetPercent = OutputSilent;
             }
 
-            if (temp < 45 && targetPercent < 15)
+            if (temp < 45 && targetPercent < OutputSilent)
             {
                 targetPercent = 0;
             }
 
-            return (int)(maxRpm * (Math.Clamp(targetPercent, 0f, 100f) / 100.0));
+            return (int)(maxRpm * (Math.Clamp(targetPercent, 0f, OutputMax) / OutputMax));
         }
 
         public static (string ThermalState, string PowerLoad, string Decision) GetGlobalTelemetryStrings(HardwareSensorSnapshot snapshot)

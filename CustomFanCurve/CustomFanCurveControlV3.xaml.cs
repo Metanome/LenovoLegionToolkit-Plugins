@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -20,113 +17,174 @@ public partial class CustomFanCurveControlV3 : UserControl
     public CustomFanCurveControlV3()
     {
         InitializeComponent();
-        SizeChanged += (s, e) => RequestDraw();
         Loaded += (s, e) => RequestDraw();
+        DataContextChanged += OnDataContextChanged;
     }
 
-    public void SetViewModel(CustomFanCurveControlViewModel viewModel)
+    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-        _viewModel = viewModel;
-        DataContext = _viewModel;
-        if (_viewModel != null)
+        if (e.OldValue is CustomFanCurveControlViewModel oldVm)
         {
-            _viewModel.CurveNodes.CollectionChanged += (s, e) => RequestDraw();
-            _viewModel.PropertyChanged += (s, e) => { if (e.PropertyName == nameof(CustomFanCurveControlViewModel.GraphPoints)) RequestDraw(); };
+            oldVm.CurveNodes.CollectionChanged -= OnCurveNodesCollectionChanged;
+            oldVm.PropertyChanged -= OnViewModelPropertyChanged;
+        }
+
+        if (e.NewValue is CustomFanCurveControlViewModel newVm)
+        {
+            _viewModel = newVm;
+            _viewModel.CurveNodes.CollectionChanged += OnCurveNodesCollectionChanged;
+            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            if (_canvas.ActualWidth > 0 && _canvas.ActualHeight > 0)
+                _viewModel.SetGraphSize(_canvas.ActualWidth, _canvas.ActualHeight);
             RequestDraw();
+        }
+        else
+        {
+            _viewModel = null;
         }
     }
 
-    private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) => RequestDraw();
+
+    private void OnCurveNodesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        => RequestDraw();
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(CustomFanCurveControlViewModel.GraphPoints))
+            RequestDraw();
+    }
+
+    private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (_canvas.ActualWidth > 0 && _canvas.ActualHeight > 0)
+            _viewModel?.SetGraphSize(_canvas.ActualWidth, _canvas.ActualHeight);
+        RequestDraw();
+    }
 
     private void RequestDraw()
     {
-        if (_drawRequested || _viewModel == null || _canvas.ActualWidth <= 0 || _canvas.ActualHeight <= 0) return;
+        if (_drawRequested || _viewModel == null || _canvas.ActualWidth <= 0 || _canvas.ActualHeight <= 0)
+            return;
         _drawRequested = true;
-        Dispatcher.InvokeAsync(() => { _drawRequested = false; DrawGraph(); }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        Dispatcher.InvokeAsync(() =>
+        {
+            _drawRequested = false;
+            DrawGraph();
+        }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
     }
 
     private void DrawGraph()
     {
         if (_viewModel == null || _canvas.ActualWidth <= 0 || _canvas.ActualHeight <= 0) return;
-        var nodes = _viewModel.CurveNodes;
-        if (nodes == null || nodes.Count < 2) return;
 
-        var color = Application.Current.Resources["ControlFillColorDefaultBrush"] as SolidColorBrush ?? new SolidColorBrush(Colors.CornflowerBlue);
+        var points = _viewModel.GraphPoints;
+        if (points == null || points.Count < 2) return;
+
         _canvas.Children.Clear();
 
-        var sliders = FindVisualChildren<Slider>(_nodeItemsControl).ToList();
-        if (sliders.Count == 0 || sliders.Count != nodes.Count) return;
+        double w = _canvas.ActualWidth;
+        double h = _canvas.ActualHeight;
 
-        var points = new List<Point>();
-        foreach (var slider in sliders)
+        for (int i = 0; i <= 100; i += 10)
         {
-            var thumb = FindVisualChild<Thumb>(slider);
-            if (thumb is { IsLoaded: true, ActualHeight: > 0 })
-                points.Add(thumb.TranslatePoint(new Point(thumb.ActualWidth / 2, thumb.ActualHeight / 2), _canvas));
-            else
+            double y = h * (1.0 - i / 100.0);
+            var hLine = new Line
             {
-                var ratio = (slider.Value - slider.Minimum) / (slider.Maximum - slider.Minimum);
-                points.Add(slider.TranslatePoint(new Point(slider.ActualWidth / 2, slider.ActualHeight * (1 - ratio)), _canvas));
+                X1 = 0, Y1 = y, X2 = w, Y2 = y,
+                StrokeThickness = 1,
+                StrokeDashArray = new DoubleCollection { 3, 3 },
+                IsHitTestVisible = false
+            };
+            hLine.SetResourceReference(Shape.StrokeProperty, "ControlStrokeColorDefaultBrush");
+            _canvas.Children.Add(hLine);
+
+            double x = w * (i / 100.0);
+            var vLine = new Line
+            {
+                X1 = x, Y1 = 0, X2 = x, Y2 = h,
+                StrokeThickness = 1,
+                StrokeDashArray = new DoubleCollection { 3, 3 },
+                IsHitTestVisible = false
+            };
+            vLine.SetResourceReference(Shape.StrokeProperty, "ControlStrokeColorDefaultBrush");
+            _canvas.Children.Add(vLine);
+        }
+
+        var px = points.Select(p => new Point(p.X * w, p.Y * h)).ToList();
+
+        var fillPts = new PointCollection { new(px[0].X, h) };
+        foreach (var pt in px) fillPts.Add(pt);
+        fillPts.Add(new(px[^1].X, h));
+        var poly = new Polygon
+        {
+            Opacity = 0.18,
+            Points = fillPts,
+            IsHitTestVisible = false
+        };
+        poly.SetResourceReference(Shape.FillProperty, "GraphAccentPrimaryBrush");
+        _canvas.Children.Add(poly);
+
+        for (int i = 0; i < px.Count - 1; i++)
+        {
+            var segment = new Line
+            {
+                X1 = px[i].X, Y1 = px[i].Y,
+                X2 = px[i + 1].X, Y2 = px[i + 1].Y,
+                StrokeThickness = 2,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
+                IsHitTestVisible = false
+            };
+            segment.SetResourceReference(Shape.StrokeProperty, "GraphAccentPrimaryBrush");
+            _canvas.Children.Add(segment);
+        }
+    }
+
+    private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
+    {
+        if (!IsEnabled) return;
+        if (sender is not Thumb thumb) return;
+        if (thumb.DataContext is not CurveNodeDisplay display) return;
+        if (_canvas.ActualWidth <= 0 || _canvas.ActualHeight <= 0) return;
+        if (!display.IsSelected) SelectNode(display);
+
+        double newX = Math.Clamp(display.DisplayX + e.HorizontalChange, 0, _canvas.ActualWidth);
+        double newY = Math.Clamp(display.DisplayY + e.VerticalChange, 0, _canvas.ActualHeight);
+
+        float temp = (float)(newX / _canvas.ActualWidth * 100.0);
+        int pct = (int)Math.Round((1.0 - newY / _canvas.ActualHeight) * 100.0);
+
+        _viewModel?.MovePoint(display, temp, pct);
+        RequestDraw();
+    }
+
+    private void GraphContainer_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (!IsEnabled) return;
+        var hitElement = e.OriginalSource as DependencyObject;
+        while (hitElement != null && hitElement != _graphContainer)
+        {
+            if (hitElement == _floatingEditor)
+            {
+                return;
             }
-        }
-        if (points.Count < 2) return;
-
-        var gridBrush = new SolidColorBrush(Color.FromArgb(30, color.Color.R, color.Color.G, color.Color.B));
-        for (int i = 0; i <= 100; i += 20)
-        {
-            _canvas.Children.Add(new Line
+            if (hitElement is Thumb thumb && thumb.DataContext is CurveNodeDisplay display)
             {
-                X1 = 0, Y1 = _canvas.ActualHeight * (1 - i / 100.0), X2 = _canvas.ActualWidth, Y2 = _canvas.ActualHeight * (1 - i / 100.0),
-                Stroke = gridBrush, StrokeThickness = 1, StrokeDashArray = new DoubleCollection { 2, 2 }
-            });
+                SelectNode(display);
+                return;
+            }
+            hitElement = VisualTreeHelper.GetParent(hitElement);
         }
-
-        var fig = new PathFigure { StartPoint = points[0] };
-        foreach (var pt in points.Skip(1)) fig.Segments.Add(new LineSegment { Point = pt });
-        _canvas.Children.Add(new Path { StrokeThickness = 2, Stroke = color, StrokeStartLineCap = PenLineCap.Round, StrokeEndLineCap = PenLineCap.Round, Data = new PathGeometry { Figures = { fig } } });
-
-        var fillPts = new List<Point> { new(points[0].X, _canvas.ActualHeight) };
-        fillPts.AddRange(points);
-        fillPts.Add(new(points[^1].X, _canvas.ActualHeight));
-        _canvas.Children.Add(new Polygon { Fill = new SolidColorBrush(Color.FromArgb(50, color.Color.R, color.Color.G, color.Color.B)), Points = new PointCollection(fillPts) });
-
-        foreach (var pt in points)
-        {
-            var e = new Ellipse { Width = 10, Height = 10, Fill = color, Stroke = new SolidColorBrush(Colors.White), StrokeThickness = 2 };
-            Canvas.SetLeft(e, pt.X - 5); Canvas.SetTop(e, pt.Y - 5);
-            _canvas.Children.Add(e);
-        }
+        SelectNode(null);
     }
 
-    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject? depObj) where T : DependencyObject
+    private void SelectNode(CurveNodeDisplay? display)
     {
-        if (depObj == null) yield break;
-        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+        if (_viewModel == null) return;
+        foreach (var d in _viewModel.CurveNodeDisplays)
         {
-            var child = VisualTreeHelper.GetChild(depObj, i);
-            if (child is T t) yield return t;
-            foreach (var c in FindVisualChildren<T>(child)) yield return c;
+            d.IsSelected = (d == display);
         }
-    }
-
-    private static T? FindVisualChild<T>(DependencyObject? parent) where T : DependencyObject
-    {
-        if (parent == null) return null;
-        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-        {
-            var child = VisualTreeHelper.GetChild(parent, i);
-            if (child is T t) return t;
-            var r = FindVisualChild<T>(child); if (r != null) return r;
-        }
-        return null;
-    }
-
-    private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) => e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
-    private void TemperatureTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) => e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
-
-    private void NumericTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
-    {
-        if (e.DataObject.GetDataPresent(DataFormats.Text) && Regex.IsMatch((string)e.DataObject.GetData(DataFormats.Text), "^[0-9]+$")) return;
-        e.CancelCommand();
+        _viewModel.SelectedNodeDisplay = display;
     }
 }

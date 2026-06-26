@@ -485,16 +485,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             var delayTicks = TimeSpan.FromMilliseconds(settings.CalculationDelayMs).Ticks;
 
             // Exponential Moving Average (EMA) Smoothing: Low-pass filter to ignore brief temperature fluctuations.
-            double alpha = settings.EmaAlpha;
-            double smoothedTemp = _emaTemp.TryGetValue(fanId, out var lastEma)
-                ? (temp * alpha) + (lastEma * (1.0 - alpha))
-                : temp;
-            _emaTemp[fanId] = smoothedTemp;
+            double smoothedTemp = temp;
+            if (settings.EnableEma)
+            {
+                double alpha = settings.EmaAlpha;
+                smoothedTemp = _emaTemp.TryGetValue(fanId, out var lastEma)
+                    ? (temp * alpha) + (lastEma * (1.0 - alpha))
+                    : temp;
+                _emaTemp[fanId] = smoothedTemp;
+            }
+            else
+            {
+                _emaTemp.TryRemove(fanId, out _);
+            }
             
             float calcTemp = (float)smoothedTemp;
 
             // Derivative Spike Predictor: Forecasts thermal spikes using temperature rate-of-change (°C/s) to ramp fans early.
-            if (settings.DerivativeSpikeThreshold > 0)
+            if (settings.EnablePredictiveEngine && settings.DerivativeSpikeThreshold > 0)
             {
                 _lastRawTempTick.TryGetValue(fanId, out var lastRawTick);
                 _lastRawTemp.TryGetValue(fanId, out var lastRaw);
@@ -545,7 +553,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             bool isSteppingDown = _lastIdealRpm.ContainsKey(fanId) && _lastCalcRpm.ContainsKey(fanId) && _lastIdealRpm[fanId] < _lastCalcRpm[fanId];
 
             _lastPower.TryGetValue(fanId, out var lastPower);
-            float currentRelevantPower = fanId == 1 ? snapshot.GpuPower : Math.Max(snapshot.CpuPower, snapshot.GpuPower);
+            float currentRelevantPower = fanId == 2 ? snapshot.GpuPower : snapshot.CpuPower;
             var powerDelta = _lastPower.ContainsKey(fanId) ? Math.Abs(lastPower - currentRelevantPower) : double.MaxValue;
 
             var needRecalc = !_lastTemp.ContainsKey(fanId) || !_lastCalcRpm.ContainsKey(fanId) || isSteppingDown
@@ -569,7 +577,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 else
                 {
                     // Hysteresis Deadzone: Artificially pads temperature when the fan is spinning to prevent rapid on/off pulsing.
-                    if (settings.HysteresisDeadzoneTemp > 0 && cachedRpm > 0)
+                    if (settings.EnableHysteresis && settings.HysteresisDeadzoneTemp > 0 && cachedRpm > 0)
                     {
                         evalTemp += settings.HysteresisDeadzoneTemp;
                     }
@@ -591,7 +599,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 int lastCalcRpm = _lastCalcRpm.TryGetValue(fanId, out int value) ? value : idealRpm;
                 targetRpm = idealRpm;
 
-                if (idealRpm < lastCalcRpm)
+                if (settings.EnableStepDownGlide && settings.StepDownRateRpmPerSec > 0 && idealRpm < lastCalcRpm)
                 {
                     double rawDt = (now - lastTick) / (double)TimeSpan.TicksPerSecond;
                     double dtSeconds = Math.Min(rawDt, 2.0);
@@ -619,9 +627,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 targetRpm = cachedRpm;
             }
 
-            // When the fan curve says stop (targetRpm ≤ 0) but the fan is still
-            // spinning, the EC refuse a direct 0-RPM write because another fan still holds an
-            // active override flag. Step down 100 RPM per cycle until minRpm, then write 0.
             if (targetRpm <= 0 && currentRpm > 0)
             {
                 int baseRpm = _lastCalcRpm.TryGetValue(fanId, out int lc) && lc > 0 ? lc : currentRpm;
@@ -738,6 +743,15 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 catch { /* Ignore */ }
 
                 _monitoring.Update(fanId, temp, rpm, _lastAppliedRpm.TryGetValue(fanId, out var tr) ? tr : 0);
+            }
+
+            if (_configManager.Settings.IsSmartAutoEnabled)
+            {
+                var telemetry = FuzzyLogicFanController.GetGlobalTelemetryStrings(snapshot);
+                var decision = _hardware.IsSupported 
+                    ? Resources.Resource.SmartAutoInactiveRequiresCustom 
+                    : Resources.Resource.SmartAutoHardwareNotSupported;
+                MessagingCenter.Publish(new SmartAutoTelemetryMessage(telemetry.ThermalState, telemetry.PowerLoad, decision, "-"));
             }
         }
 

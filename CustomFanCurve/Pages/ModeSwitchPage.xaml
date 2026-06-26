@@ -1,0 +1,73 @@
+<UserControl
+    x:Class="LenovoLegionToolkit.Plugin.CustomFanCurve.Pages.ModeSwitchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
+    xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SettingsPageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <wpfui:DynamicScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static res:Resource.ModeSwitchTitle}"/>
+                            
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.ForceRefreshOnSwitch}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.ForceRefreshOnSwitchDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding ForceRefreshOnModeSwitch}"/>
+                                    </wpfui:CardControl>
+                                    
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12" IsEnabled="{Binding ForceRefreshOnModeSwitch}">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.RefreshCount}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.RefreshCountDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:TextBox Width="80" VerticalAlignment="Center" local:TextBoxBehavior.NumericOnly="True" Text="{Binding ModeSwitchRefreshCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </wpfui:CardControl>
+                                    
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12" IsEnabled="{Binding ForceRefreshOnModeSwitch}">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.RefreshInterval}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.RefreshIntervalDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:TextBox Width="80" VerticalAlignment="Center" local:TextBoxBehavior.NumericOnly="True" Text="{Binding ModeSwitchRefreshDelayMs, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </wpfui:CardControl>
+                                    
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.ForceRefreshOnEnable}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.ForceRefreshOnEnableDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding ForceRefreshOnEnable}"/>
+                                    </wpfui:CardControl>
+                                    
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                        <wpfui:CardControl.Header>
+                                            <StackPanel Margin="0,0,16,0">
+                                                <TextBlock Text="{x:Static res:Resource.ClearCacheOnLeave}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Static res:Resource.ClearCacheOnLeaveDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </wpfui:CardControl.Header>
+                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding ClearCachedStateWhenLeavingCustomMode}"/>
+                                    </wpfui:CardControl>
+                                
+        </StackPanel>
+    </wpfui:DynamicScrollViewer>
+</UserControl>

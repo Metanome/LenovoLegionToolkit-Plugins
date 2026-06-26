@@ -15,12 +15,17 @@ Provides advanced, algorithm-driven control over the cooling system on supported
 - **Smart Auto Mode:** Fuzzy-logic powered auto control that smoothly scales fans using continuous thermal and power load gradients.
 - **Asymmetric Step-Down:** Smooth fan deceleration curves to mitigate audible chopping and prevent physical bearing wear.
 
+# Screenshots
+
+### CustomFanCurve
+<img src="assets/Dashboard.png" width="49%" /> <img src="assets/Settings.png" width="49%" />
+
 ## Developing a Plugin
 
 To create a new plugin for LLT:
 
 1. **Create a .NET Class Library**: Target the same .NET framework as the core LLT application (e.g., `net9.0-windows10.0.26100`).
-2. **Add Project References**: Reference `LenovoLegionToolkit.Lib` and `LenovoLegionToolkit.WPF` in your `.csproj`. Set `<Private>false</Private>` and `<ExcludeAssets>runtime</ExcludeAssets>` to prevent bundling core dependencies into your plugin.
+2. **Add Project References**: Reference `LenovoLegionToolkit.Lib` in your `.csproj`. Set `<Private>false</Private>` and `<ExcludeAssets>runtime</ExcludeAssets>` to prevent bundling core dependencies into your plugin.
 3. **Implement `IExtensionProvider`**: Create a public class that implements `LenovoLegionToolkit.Lib.Station.Core.IExtensionProvider`. The application discovers plugins by scanning for this interface at load time.
 4. **Register Navigation**: In your `Initialize(IExtensionContext context)` method, register your UI pages via `context.Navigation.Register()`. Use `TitleGetter` to return localized strings from your `.resx` files.
 

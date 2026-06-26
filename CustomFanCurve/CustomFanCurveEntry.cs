@@ -51,8 +51,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
             set
             {
-                int safeMin = CustomFanCurveCalculator.GetSafeMinPercent(_temperature);
-                int clampedValue = Math.Clamp(value, safeMin, 100);
+                int clampedValue = Math.Clamp(value, 0, 100);
 
                 if (_targetPercent != clampedValue)
                 {
@@ -107,12 +106,17 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public CustomFanCurveEntry()
         {
-            CurveNodes.Add(new CurveNode { Temperature = 40, TargetPercent = 0 });
-            CurveNodes.Add(new CurveNode { Temperature = 50, TargetPercent = 30 });
-            CurveNodes.Add(new CurveNode { Temperature = 60, TargetPercent = 50 });
+            CurveNodes.Add(new CurveNode { Temperature = 0, TargetPercent = 0 });
+            CurveNodes.Add(new CurveNode { Temperature = 10, TargetPercent = 10 });
+            CurveNodes.Add(new CurveNode { Temperature = 20, TargetPercent = 20 });
+            CurveNodes.Add(new CurveNode { Temperature = 30, TargetPercent = 30 });
+            CurveNodes.Add(new CurveNode { Temperature = 40, TargetPercent = 40 });
+            CurveNodes.Add(new CurveNode { Temperature = 50, TargetPercent = 50 });
+            CurveNodes.Add(new CurveNode { Temperature = 60, TargetPercent = 60 });
             CurveNodes.Add(new CurveNode { Temperature = 70, TargetPercent = 70 });
-            CurveNodes.Add(new CurveNode { Temperature = 80, TargetPercent = 85 });
-            CurveNodes.Add(new CurveNode { Temperature = 90, TargetPercent = 100 });
+            CurveNodes.Add(new CurveNode { Temperature = 80, TargetPercent = 80 });
+            CurveNodes.Add(new CurveNode { Temperature = 90, TargetPercent = 90 });
+            CurveNodes.Add(new CurveNode { Temperature = 100, TargetPercent = 100 });
             CurveNodes.CollectionChanged += (s, e) => OnPropertyChanged(nameof(CurveNodes));
         }
 

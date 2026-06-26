@@ -1,0 +1,103 @@
+<wpfui:UiWindow x:Class="LenovoLegionToolkit.Plugin.CustomFanCurve.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
+        xmlns:pages="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Pages"
+        xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
+        Title="{x:Static res:Resource.Settings}"
+        Width="720" Height="580" MinWidth="650" MinHeight="480"
+        ResizeMode="CanResize" WindowStartupLocation="CenterOwner"
+        ExtendsContentIntoTitleBar="True"
+        Background="{DynamicResource ApplicationBackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <wpfui:TitleBar
+            x:Name="_titleBar"
+            Grid.Row="0"
+            Title="{x:Static res:Resource.Settings}"
+            CanMaximize="false"
+            ShowMaximize="false"
+            ShowMinimize="false"
+            UseSnapLayout="false" />
+
+        <TabControl
+            x:Name="_tabControl"
+            Grid.Row="1"
+            Margin="16,16,16,16"
+            ItemContainerStyle="{DynamicResource SidebarTabItemStyle}"
+            Style="{DynamicResource SidebarTabControlStyle}">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="4,0">
+                        <wpfui:SymbolIcon Symbol="FlashSettings24" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static res:Resource.General}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <pages:GeneralSettingsPage />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="4,0">
+                        <wpfui:SymbolIcon Symbol="ArrowSync24" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static res:Resource.ModeSwitch}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <pages:ModeSwitchPage />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="4,0">
+                        <wpfui:SymbolIcon Symbol="Gauge24" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static res:Resource.SensorAndCalc}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <pages:SensorCalcSettingsPage />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="4,0">
+                        <wpfui:SymbolIcon Symbol="Rocket24" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static res:Resource.SpinUpBoost}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <pages:SpinUpBoostPage />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="4,0">
+                        <wpfui:SymbolIcon Symbol="Settings24" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static res:Resource.Advanced}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <pages:AdvancedSettingsPage />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="4,0">
+                        <wpfui:SymbolIcon Symbol="Wrench24" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static res:Resource.Tuning}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <pages:TuningSettingsPage />
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="2" Padding="24,16" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{x:Static res:Resource.SaveHint}"/>
+                <wpfui:Button Grid.Column="1" Appearance="Primary" MinWidth="120" Click="Save_Click" IsDefault="True" Content="{x:Static res:Resource.Save}"/>
+                <wpfui:Button Grid.Column="2" Appearance="Secondary" MinWidth="120" Margin="8,0,0,0" Click="Cancel_Click" IsCancel="True" Content="{x:Static res:Resource.Cancel}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</wpfui:UiWindow>

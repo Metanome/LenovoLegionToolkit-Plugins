@@ -56,6 +56,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 return (int)Math.Round(r * 50);
             }
 
+            if (!settings.EnableThermalSafetyNet) return 0;
+
             if (temperature <= settings.SafeMinTemp) return 0;
             if (temperature >= settings.SafeMaxTemp) return settings.SafeMaxPercentAtMaxTemp;
             

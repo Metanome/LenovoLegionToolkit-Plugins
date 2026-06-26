@@ -6,162 +6,274 @@
     xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
     mc:Ignorable="d"
-    d:DesignHeight="600" d:DesignWidth="800"
+    d:DesignHeight="600" d:DesignWidth="900"
     FlowDirection="LeftToRight">
     <UserControl.Resources>
-        <local:EnumDisplayNameConverter x:Key="EnumDisplayNameConverter" />
-        <Style x:Key="NodeTextBox" TargetType="TextBox">
-            <Setter Property="Width" Value="64"/>
-            <Setter Property="Height" Value="28"/>
-            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Padding" Value="4,2"/>
-        </Style>
-        <Style x:Key="NodeTextBoxRTL" TargetType="TextBox" BasedOn="{StaticResource NodeTextBox}">
-            <Setter Property="FlowDirection" Value="LeftToRight"/>
-        </Style>
-        <Style x:Key="SidePanelTextBox" TargetType="TextBox" BasedOn="{StaticResource NodeTextBoxRTL}">
-            <Setter Property="Width" Value="72"/>
-        </Style>
-        <Style x:Key="CardTitle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
-        </Style>
+        <local:EnumDisplayNameConverter x:Key="EnumDisplayNameConverter"/>
+        <SolidColorBrush x:Key="GraphAccentPrimaryBrush" Color="{DynamicResource SystemAccentColorPrimary}"/>
+        <SolidColorBrush x:Key="GraphAccentSecondaryBrush" Color="{DynamicResource SystemAccentColorSecondary}"/>
     </UserControl.Resources>
 
     <Grid Margin="0,2">
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.55"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="256"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Grid.Column="0" Padding="0,0,8,0" Background="Transparent">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="11" FontWeight="Medium"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="100%"/>
-                <TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="11" FontWeight="Medium"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="80%"/>
-                <TextBlock Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="11" FontWeight="Medium"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="60%"/>
-                <TextBlock Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="11" FontWeight="Medium"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="40%"/>
-                <TextBlock Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="11" FontWeight="Medium"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="20%"/>
-                <TextBlock Grid.Row="10" HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="10" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Text="{x:Static res:Resource.FanSpeed}"/>
-            </Grid>
-        </Border>
+        <Grid Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="1" MinHeight="240">
-            <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
-            <Border Grid.Row="0" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="1,0,0,1" Margin="4,0,4,0"
-                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8,0,0,0"/>
-            <ScrollViewer x:Name="_scrollViewer" Grid.Row="0" Focusable="False"
-                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
-                          ScrollChanged="ScrollViewer_ScrollChanged" Background="Transparent">
+            <Border Grid.Column="0" Grid.Row="0" Padding="0,0,8,0" Background="Transparent">
                 <Grid>
-                    <Grid Margin="0,40,0,88" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Canvas x:Name="_canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClipToBounds="True"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,6,0" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{x:Static res:Resource.FanSpeed}">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="-90"/>
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"  HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="100%"/>
+                        <TextBlock Grid.Row="2"  HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="90%"/>
+                        <TextBlock Grid.Row="4"  HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="80%"/>
+                        <TextBlock Grid.Row="6"  HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="70%"/>
+                        <TextBlock Grid.Row="8"  HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="60%"/>
+                        <TextBlock Grid.Row="10" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="50%"/>
+                        <TextBlock Grid.Row="12" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="40%"/>
+                        <TextBlock Grid.Row="14" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="30%"/>
+                        <TextBlock Grid.Row="16" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="20%"/>
+                        <TextBlock Grid.Row="18" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="10%"/>
+                        <TextBlock Grid.Row="20" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="0%"/>
                     </Grid>
-                    <ItemsControl x:Name="_nodeItemsControl" ItemsSource="{Binding CurveNodes}" Margin="0,40,0,0">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid MinWidth="76" Margin="10,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="26"/>
-                                        <RowDefinition Height="*" MinHeight="240"/>
-                                        <RowDefinition Height="34"/>
-                                        <RowDefinition Height="34"/>
-                                    </Grid.RowDefinitions>
-                                    <Button Grid.Row="0" Width="20" Height="20" Margin="0,0,0,4"
-                                            HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                                            Command="{Binding DataContext.RemovePointCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}" Cursor="Hand" FontSize="11"
-                                            ToolTip="{x:Static res:Resource.DeleteNode}">
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Background" Value="Transparent"/>
-                                                <Setter Property="BorderThickness" Value="0"/>
-                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                <Setter Property="Content" Value="✕"/>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Foreground" Value="#E81123"/>
-                                                        <Setter Property="Background" Value="#20E81123"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                    <Slider Grid.Row="1" Width="40" Margin="0,4"
-                                            HorizontalAlignment="Center" VerticalAlignment="Stretch"
-                                            Orientation="Vertical" IsSnapToTickEnabled="True" IsMoveToPointEnabled="False"
-                                            Minimum="0" Maximum="100" TickFrequency="1" Value="{Binding TargetPercent}">
-                                        <Slider.Style><Style TargetType="Slider"><Setter Property="Background" Value="Transparent"/></Style></Slider.Style>
-                                    </Slider>
-                                    <TextBox Grid.Row="2" Style="{StaticResource NodeTextBoxRTL}" Margin="0,4,0,0"
-                                             DataObject.Pasting="NumericTextBox_Pasting"
-                                             PreviewTextInput="NumericTextBox_PreviewTextInput"
-                                             Text="{Binding TargetPercent}"
-                                             ToolTip="{x:Static res:Resource.TargetPercent}"/>
-                                    <TextBox Grid.Row="3" Style="{StaticResource NodeTextBoxRTL}" Margin="0,2,0,0"
-                                             DataObject.Pasting="NumericTextBox_Pasting"
-                                             PreviewTextInput="TemperatureTextBox_PreviewTextInput"
-                                             Text="{Binding Temperature, StringFormat=N0}"
-                                             ToolTip="{x:Static res:Resource.TemperatureUnit}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
                 </Grid>
-            </ScrollViewer>
+            </Border>
+
+            <Grid x:Name="_graphContainer" Grid.Column="1" Grid.Row="0" MinHeight="240" PreviewMouseLeftButtonDown="GraphContainer_PreviewMouseLeftButtonDown">
+                <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1,0,0,1"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="8,0,0,0"/>
+
+                <Canvas x:Name="_canvas" ClipToBounds="False" Background="Transparent"
+                        SizeChanged="Canvas_SizeChanged"/>
+
+                <ItemsControl x:Name="_dotItemsControl"
+                              ItemsSource="{Binding CurveNodeDisplays}"
+                              IsHitTestVisible="True"
+                              Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas IsItemsHost="True" Background="Transparent"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding DisplayX}"/>
+                            <Setter Property="Canvas.Top"  Value="{Binding DisplayY}"/>
+                            <Setter Property="Panel.ZIndex" Value="0"/>
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform X="-7" Y="-7"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Panel.ZIndex" Value="99"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Thumb Width="14" Height="14" Cursor="Hand" DragDelta="Thumb_DragDelta">
+                                <Thumb.Style>
+                                    <Style TargetType="Thumb">
+                                        <Setter Property="ToolTipService.IsEnabled" Value="True"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="ToolTipService.IsEnabled" Value="False"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Thumb.Style>
+                                <Thumb.ToolTip>
+                                    <ToolTip>
+                                        <TextBlock FontSize="12">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0:F0}°C / {1}% ({2} RPM)">
+                                                    <Binding Path="Node.Temperature"/>
+                                                    <Binding Path="Node.TargetPercent"/>
+                                                    <Binding Path="Rpm"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </ToolTip>
+                                </Thumb.ToolTip>
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Grid>
+                                            <Ellipse x:Name="HighlightRing" Width="22" Height="22"
+                                                     Stroke="{DynamicResource GraphAccentPrimaryBrush}"
+                                                     StrokeThickness="2.5" Opacity="0" Margin="-4"/>
+                                            <Ellipse x:Name="Dot" Width="14" Height="14"
+                                                     Fill="{DynamicResource GraphAccentPrimaryBrush}"
+                                                     Stroke="{DynamicResource TextFillColorPrimaryBrush}"
+                                                     StrokeThickness="2"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter TargetName="HighlightRing" Property="Opacity" Value="0.8"/>
+                                            </DataTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Canvas ClipToBounds="False" Background="{x:Null}">
+                    <Grid Canvas.Left="{Binding SelectedNodeDisplay.DisplayX}"
+                          Canvas.Top="{Binding SelectedNodeDisplay.DisplayY}"
+                          Width="300" Height="80" Margin="-150,-90,0,0"
+                          Background="{x:Null}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedNodeDisplay}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Border x:Name="_floatingEditor" Padding="6,4" Height="32"
+                                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="6"
+                                IsHitTestVisible="True">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="6" ShadowDepth="2" Opacity="0.25" Color="Black"/>
+                            </Border.Effect>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <wpfui:TextBox Width="42" Height="22" Padding="2,0" FontSize="11" VerticalContentAlignment="Center"
+                                               local:TextBoxBehavior.NumericOnly="True" ClearButtonEnabled="False"
+                                               Text="{Binding SelectedNodeDisplay.Node.Temperature, StringFormat=N0, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock VerticalAlignment="Center" FontSize="11" Margin="2,0,6,0"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="°C"/>
+
+                                <Border Width="1" Height="14" Background="{DynamicResource ControlStrokeColorDefaultBrush}" Margin="0,0,6,0"/>
+
+                                <wpfui:TextBox Width="42" Height="22" Padding="2,0" FontSize="11" VerticalContentAlignment="Center"
+                                               local:TextBoxBehavior.NumericOnly="True" ClearButtonEnabled="False"
+                                               Text="{Binding SelectedNodeDisplay.Node.TargetPercent, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock VerticalAlignment="Center" FontSize="11" Margin="2,0,6,0"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="%"/>
+
+                                <TextBlock VerticalAlignment="Center" FontSize="11" Margin="2,0,8,0"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="{Binding SelectedNodeDisplay.Rpm, StringFormat=({0} RPM)}"/>
+
+                                <wpfui:Button Width="18" Height="18" Padding="0" Appearance="Transparent" Cursor="Hand"
+                                              Command="{Binding RemovePointCommand}"
+                                              CommandParameter="{Binding SelectedNodeDisplay.Node}"
+                                              ToolTip="{x:Static res:Resource.DeleteNode}">
+                                    <wpfui:SymbolIcon Symbol="Delete24" FontSize="10"
+                                                      Foreground="{DynamicResource SystemFillColorCriticalBrush}"/>
+                                </wpfui:Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Canvas>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" Margin="0,6,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="0 °C"/>
+                <TextBlock Grid.Column="2" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="10"/>
+                <TextBlock Grid.Column="4" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="20"/>
+                <TextBlock Grid.Column="6" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="30"/>
+                <TextBlock Grid.Column="8" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="40"/>
+                <TextBlock Grid.Column="10" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="50"/>
+                <TextBlock Grid.Column="12" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="60"/>
+                <TextBlock Grid.Column="14" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="70"/>
+                <TextBlock Grid.Column="16" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="80"/>
+                <TextBlock Grid.Column="18" HorizontalAlignment="Center" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="90"/>
+                <TextBlock Grid.Column="20" HorizontalAlignment="Right" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="100 °C"/>
+            </Grid>
+            <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,0,0" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{x:Static res:Resource.Temperature}"/>
         </Grid>
 
-        <Grid Grid.Row="0" Grid.Column="2" Width="256" Margin="12,0,0,0">
+        <Grid Grid.Column="1" Margin="12,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="8"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Padding="14,12"
-                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8">
+            <wpfui:Card Grid.Row="0" Padding="14,12" Margin="0">
                 <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="{x:Static res:Resource.LiveMonitor}"/>
+                    <TextBlock FontSize="13" FontWeight="SemiBold"
+                               Text="{x:Static res:Resource.LiveMonitor}" Margin="0,0,0,8"/>
                     <Separator Margin="0,0,0,8" Opacity="0.3"/>
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
@@ -171,7 +283,8 @@
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Text="{x:Static res:Resource.Temperature}"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding DisplayTemp}"/>
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Text="{Binding DisplayTemp}"/>
                     </Grid>
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
@@ -181,7 +294,8 @@
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Text="{x:Static res:Resource.CurrentSpeed}"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Text="{Binding ActualRpmDisplay}"/>
+                                   Foreground="{DynamicResource GraphAccentSecondaryBrush}"
+                                   Text="{Binding ActualRpmDisplay}"/>
                     </Grid>
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
@@ -191,43 +305,32 @@
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Text="{x:Static res:Resource.TargetSpeed}"/>
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding TargetRpmDisplay}"/>
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Text="{Binding TargetRpmDisplay}"/>
                     </Grid>
                     <ProgressBar Height="4" Margin="0,8,0,0" Maximum="6400"
-                                 Value="{Binding CurrentRpmValue}"
-                                 Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                 Background="{DynamicResource ControlFillColorDefaultBrush}" BorderThickness="0"/>
+                                 Value="{Binding CurrentRpmValue}"/>
                 </StackPanel>
-            </Border>
-            <Border Grid.Row="2" Padding="14,12"
-                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8">
+            </wpfui:Card>
+
+            <wpfui:Card Grid.Row="2" Margin="0" Padding="14,12">
                 <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="{x:Static res:Resource.SensorSource}"/>
-                    <TextBlock Text="{x:Static res:Resource.SensorSourceDesc}" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+                    <TextBlock FontSize="13" FontWeight="SemiBold"
+                               Text="{x:Static res:Resource.SensorSource}" Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static res:Resource.SensorSourceDesc}"
+                               FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               TextWrapping="Wrap" Margin="0,0,0,8"/>
                     <ComboBox x:Name="_sensorSourceSelector" HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding SensorSources}"
-                              SelectedItem="{Binding SensorSource, Mode=TwoWay}"
-                              Background="Transparent" Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                              Padding="8,6" FontSize="13">
+                               ItemsSource="{Binding SensorSources}"
+                               SelectedItem="{Binding SensorSource, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Converter={StaticResource EnumDisplayNameConverter}}" />
+                                <TextBlock Text="{Binding Converter={StaticResource EnumDisplayNameConverter}}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
-            </Border>
-        </Grid>
-
-        <Grid Grid.Row="1" Grid.Column="1" Margin="4,6,4,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                       FontSize="11" FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="100 °C"/>
+            </wpfui:Card>
         </Grid>
     </Grid>
 </UserControl>

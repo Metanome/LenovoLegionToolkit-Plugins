@@ -1,32 +1,46 @@
-<Page x:Class="LenovoLegionToolkit.Plugin.CustomFanCurve.CustomFanCurvePage"
+<wpfui:UiPage x:Class="LenovoLegionToolkit.Plugin.CustomFanCurve.CustomFanCurvePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve"
       xmlns:res="clr-namespace:LenovoLegionToolkit.Plugin.CustomFanCurve.Resources"
-      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
       Title="{x:Static res:Resource.WindowTitle}"
-      Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+      Scrollable="False">
+
     <Page.Resources>
-        <Style x:Key="ToolBarButton" TargetType="Button">
-            <Setter Property="Height" Value="36"/><Setter Property="MinWidth" Value="110"/>
-            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="14,5"/>
-            <Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/><Setter Property="VerticalAlignment" Value="Center"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <SolidColorBrush x:Key="PageAccentSecondaryBrush" Color="{DynamicResource SystemAccentColorSecondary}"/>
+        
+        <Style x:Key="ThermalStateTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}"/>
-                </Trigger>
+                <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Critical">
+                    <Setter Property="Foreground" Value="#FF453A" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Hot">
+                    <Setter Property="Foreground" Value="#FF9F0A" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Warm">
+                    <Setter Property="Foreground" Value="#FFD60A" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Cold">
+                    <Setter Property="Foreground" Value="#30D158" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="ToolBarAccentButton" TargetType="Button" BasedOn="{StaticResource ToolBarButton}">
-            <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}"/>
-            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBackground}"/>
+
+        <Style x:Key="PowerLoadTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Opacity" Value="0.85"/></Trigger>
+                <DataTrigger Binding="{Binding DashboardPowerLoadRaw}" Value="Heavy">
+                    <Setter Property="Foreground" Value="#FF453A" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DashboardPowerLoadRaw}" Value="Light">
+                    <Setter Property="Foreground" Value="#FF9F0A" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DashboardPowerLoadRaw}" Value="Idle">
+                    <Setter Property="Foreground" Value="#30D158" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
     </Page.Resources>
@@ -36,87 +50,144 @@
             <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Padding="16,12" Margin="0,0,0,12"
-                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
+        <wpfui:Card Grid.Row="0" Margin="0,0,0,12" Padding="16,12" IsEnabled="{Binding IsUiEnabled, FallbackValue=False}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox x:Name="_enableCustomFanToggle" Grid.Column="0" VerticalAlignment="Center"
-                          Checked="EnableCustomFan_Changed" Unchecked="EnableCustomFan_Changed"
-                          FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
-                    <TextBlock Text="{x:Static res:Resource.EnableCustomFanCurve}"
-                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                               FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                </CheckBox>
+                <wpfui:ToggleSwitch x:Name="_enableCustomFanToggle" Grid.Column="0" VerticalAlignment="Center"
+                          IsChecked="{Binding IsCustomFanEnabled}"
+                          Content="{x:Static res:Resource.EnableCustomFanCurve}"
+                          FontSize="14" FontWeight="SemiBold" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Border Padding="6,0" CornerRadius="6" Background="{DynamicResource ControlFillColorDefaultBrush}"
-                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
-                        <StackPanel Orientation="Horizontal">
-                            <ComboBox x:Name="_fanSelector" Width="100" VerticalAlignment="Center"
-                                      SelectionChanged="FanSelector_SelectionChanged" Background="Transparent"
-                                      Foreground="{DynamicResource TextFillColorPrimaryBrush}" BorderThickness="0"
-                                      Padding="6,4" FontSize="13"/>
-                            <Separator Style="{x:Null}" Width="1" Margin="4,6"
-                                       Background="{DynamicResource ControlStrokeColorDefaultBrush}"/>
-                            <Button x:Name="_addNodeButton" Height="32" MinWidth="36" VerticalAlignment="Center"
-                                    Click="AddNode_Click" Background="Transparent"
-                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}" BorderThickness="0"
-                                    FontSize="18" FontWeight="Bold" Cursor="Hand"
-                                    ToolTip="{x:Static res:Resource.AddNodeTooltip}" Padding="8,0">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
-                                                <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                                <ui:SymbolIcon Symbol="Add24" />
-                            </Button>
-                        </StackPanel>
-                    </Border>
-                    <Border Width="1" Margin="14,6" VerticalAlignment="Stretch"
-                            Background="{DynamicResource ControlStrokeColorDefaultBrush}"/>
-                    <Button x:Name="_maxFanButton" Style="{StaticResource ToolBarButton}" MinWidth="140"
-                            Click="MaxFan_Click" ToolTip="{x:Static res:Resource.MaxSpeedTooltip}">
-                        <StackPanel Orientation="Horizontal">
-                            <ui:SymbolIcon Symbol="Flash24" Margin="0,0,6,0" FontSize="15" />
-                            <TextBlock Text="{x:Static res:Resource.MaxSpeed}"/>
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="_globalSettingsButton" Style="{StaticResource ToolBarAccentButton}"
-                            Margin="10,0,0,0" Click="GlobalSettings_Click"
-                            ToolTip="{x:Static res:Resource.GlobalSettingsTooltip}">
-                        <StackPanel Orientation="Horizontal">
-                            <ui:SymbolIcon Symbol="Settings24" Margin="0,0,6,0" FontSize="15" />
-                            <TextBlock Text="{x:Static res:Resource.GlobalSettings}"/>
-                        </StackPanel>
-                    </Button>
+                    <StackPanel.Resources>
+                        <Style TargetType="wpfui:Button" BasedOn="{StaticResource {x:Type wpfui:Button}}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Resources>
+                    
+                    <ComboBox x:Name="_fanSelector" Width="110" Height="36" MinHeight="36" VerticalAlignment="Center"
+                               ItemsSource="{Binding FanViewModels}"
+                               SelectedItem="{Binding SelectedFanViewModel, Mode=TwoWay}"
+                               IsEnabled="{Binding IsSettingsEnabled}" Padding="8,4" FontSize="13"
+                               VerticalContentAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <wpfui:Button x:Name="_addNodeButton" Appearance="Secondary" Height="36" Width="36" Padding="0"
+                            VerticalAlignment="Center" Margin="6,0,0,0"
+                            Icon="Add24"
+                            Command="{Binding AddNodeCommand}" ToolTip="{x:Static res:Resource.AddNodeTooltip}"
+                            IsEnabled="{Binding IsSettingsEnabled}" />
+
+                    <Border Width="1" Height="48" Margin="12,0" VerticalAlignment="Center" Background="{DynamicResource ControlStrokeColorDefaultBrush}"/>
+
+                    <wpfui:Button x:Name="_maxFanButton" Appearance="Secondary" Height="36" MinWidth="130" VerticalAlignment="Center"
+                            Command="{Binding ToggleFullSpeedCommand}" IsEnabled="{Binding IsSettingsEnabled}">
+                        <wpfui:Button.Style>
+                            <Style TargetType="wpfui:Button" BasedOn="{StaticResource {x:Type wpfui:Button}}">
+                                <Setter Property="ToolTip" Value="{x:Static res:Resource.MaxSpeedTooltip}" />
+                                <Setter Property="Icon" Value="Flash24" />
+                                <Setter Property="Content" Value="{x:Static res:Resource.MaxSpeed}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFullSpeed}" Value="True">
+                                        <Setter Property="ToolTip" Value="{x:Static res:Resource.RecoverCurve}" />
+                                        <Setter Property="Icon" Value="ArrowSync24" />
+                                        <Setter Property="Content" Value="{x:Static res:Resource.FullSpeedActive}" />
+                                        <Setter Property="Foreground" Value="OrangeRed" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                    </DataTrigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                        <Setter Property="FontWeight" Value="Normal" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </wpfui:Button.Style>
+                    </wpfui:Button>
+
+                    <wpfui:Button x:Name="_settingsButton" Appearance="Secondary" Height="36" VerticalAlignment="Center"
+                            Margin="8,0,0,0" Click="Settings_Click"
+                            Icon="Settings24" Content="{x:Static res:Resource.Settings}"
+                            ToolTip="{x:Static res:Resource.SettingsTooltip}" />
                 </StackPanel>
             </Grid>
-        </Border>
+        </wpfui:Card>
 
-        <Grid x:Name="_loadingOverlay" Grid.Row="1" Visibility="Collapsed"
-              Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
-            <ui:ProgressRing Width="40" Height="40" IsIndeterminate="True"
-                             HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Grid x:Name="_loadingOverlay" Grid.Row="1" Visibility="{Binding IsProbing, Converter={StaticResource BoolToVis}, FallbackValue=Visible}" Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <wpfui:ProgressRing Width="40" Height="40" IsIndeterminate="True" HorizontalAlignment="Center" />
+                <TextBlock Text="{x:Static res:Resource.ProbingHardware}" Margin="0,12,0,0" FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+            </StackPanel>
         </Grid>
 
-        <StackPanel x:Name="_fanControlStackPanel" Grid.Row="1" Visibility="Collapsed"/>
+        <local:CustomFanCurveControlV3 Grid.Row="1" DataContext="{Binding SelectedFanViewModel}">
+            <local:CustomFanCurveControlV3.Style>
+                <Style TargetType="local:CustomFanCurveControlV3">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="IsEnabled" Value="True" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DataContext.IsSmartAutoEnabled, RelativeSource={RelativeSource AncestorType={x:Type wpfui:UiPage}}}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DataContext.IsCustomFanEnabled, RelativeSource={RelativeSource AncestorType={x:Type wpfui:UiPage}}}" Value="False">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </local:CustomFanCurveControlV3.Style>
+        </local:CustomFanCurveControlV3>
 
-        <Grid x:Name="_smartAutoDashboard" Grid.Row="1" Visibility="Collapsed" Margin="0,20,0,0">
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="24">
+        <Grid x:Name="_smartAutoDashboard" Grid.Row="1" Visibility="{Binding IsSmartAutoEnabled, Converter={StaticResource BoolToVis}}" Margin="0">
+            <wpfui:Card Padding="24" VerticalAlignment="Top">
+                <wpfui:Card.Style>
+                    <Style TargetType="wpfui:Card" BasedOn="{StaticResource {x:Type wpfui:Card}}">
+                        <Setter Property="Opacity" Value="1.0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCustomFanEnabled}" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </wpfui:Card.Style>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <ui:SymbolIcon x:Name="_dashboardIcon" Symbol="BrainCircuit24" FontSize="48" Margin="0,0,0,16" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
-                    <TextBlock x:Name="_dashboardTitle" Text="{x:Static res:Resource.SmartAutoDashboardTitle}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <wpfui:SymbolIcon x:Name="_dashboardIcon" Symbol="BrainCircuit24" FontSize="48" Margin="0,0,0,16">
+                        <wpfui:SymbolIcon.Style>
+                            <Style TargetType="wpfui:SymbolIcon" BasedOn="{StaticResource {x:Type wpfui:SymbolIcon}}">
+                                <Setter Property="Foreground" Value="{DynamicResource PageAccentSecondaryBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Critical">
+                                        <Setter Property="Foreground" Value="#FF453A" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Hot">
+                                        <Setter Property="Foreground" Value="#FF9F0A" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Warm">
+                                        <Setter Property="Foreground" Value="#FFD60A" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DashboardThermalStateRaw}" Value="Cold">
+                                        <Setter Property="Foreground" Value="#30D158" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </wpfui:SymbolIcon.Style>
+                    </wpfui:SymbolIcon>
+                    
+                    <TextBlock x:Name="_dashboardTitle" Text="{x:Static res:Resource.SmartAutoDashboardTitle}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource ThermalStateTextStyle}">
+                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <TextBlock Text="{x:Static res:Resource.SmartAutoDashboardSubtitle}" FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="500" Margin="0,0,0,32"/>
                     
                     <Grid>
@@ -129,19 +200,19 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoThermalState}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
-                        <TextBlock x:Name="_dashboardThermalState" Grid.Row="0" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock x:Name="_dashboardThermalState" Grid.Row="0" Grid.Column="2" Text="{Binding DashboardThermalState}" FontSize="16" FontWeight="Bold" Style="{StaticResource ThermalStateTextStyle}"/>
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoPowerLoad}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
-                        <TextBlock x:Name="_dashboardPowerLoad" Grid.Row="2" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock x:Name="_dashboardPowerLoad" Grid.Row="2" Grid.Column="2" Text="{Binding DashboardPowerLoad}" FontSize="16" FontWeight="Bold" Style="{StaticResource PowerLoadTextStyle}"/>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoDecision}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
-                        <TextBlock x:Name="_dashboardDecision" Grid.Row="4" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock x:Name="_dashboardDecision" Grid.Row="4" Grid.Column="2" Text="{Binding DashboardDecision}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoTargetOutput}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
-                        <TextBlock x:Name="_dashboardOutput" Grid.Row="6" Grid.Column="2" Text="-" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock x:Name="_dashboardOutput" Grid.Row="6" Grid.Column="2" Text="{Binding DashboardOutput}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     </Grid>
                 </StackPanel>
-            </Border>
+            </wpfui:Card>
         </Grid>
     </Grid>
-</Page>
+</wpfui:UiPage>

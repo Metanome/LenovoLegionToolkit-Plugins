@@ -6,11 +6,12 @@ using LenovoLegionToolkit.Lib.Controllers.Sensors;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
-    internal class SensorProvider
+    internal class SensorProvider : IDisposable
     {
         private readonly SensorsGroupController _controller;
         private readonly ISensorsController? _sensorsController;
         private bool _started;
+        private bool _disposed;
 
         public event Action<HardwareSensorSnapshot>? SensorUpdated;
         public bool IsRunning
@@ -33,12 +34,20 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             _controller = controller;
             _sensorsController = sensorsController;
-            _controller.SensorsUpdated += s => SensorUpdated?.Invoke(s);
+            _controller.SensorsUpdated += OnSensorsUpdated;
+        }
+
+        private void OnSensorsUpdated(HardwareSensorSnapshot snapshot)
+        {
+            if (!_disposed)
+            {
+                SensorUpdated?.Invoke(snapshot);
+            }
         }
 
         public void Start(int intervalMs)
         {
-            if (_started)
+            if (_started || _disposed)
             {
                 return;
             }
@@ -82,6 +91,18 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             catch { /* Ignore */ }
 
             return result;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            Stop();
+            _controller.SensorsUpdated -= OnSensorsUpdated;
         }
     }
 }
