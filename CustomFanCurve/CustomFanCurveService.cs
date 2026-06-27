@@ -539,15 +539,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             if (lastFp != fp)
             {
                 _lastFingerprint[fanId] = fp;
-                _lastCalcRpm.TryRemove(fanId, out _);
                 _lastTemp.TryRemove(fanId, out _);
                 _lastCalcTick.TryRemove(fanId, out _);
-                _lastIdealRpm.TryRemove(fanId, out _);
                 _lastWriteTick.TryRemove(fanId, out _);
-                cachedRpm = 0;
                 lastTemp = 0;
                 elapsed = true;
-                Logger.Debug($"Fan{fanId}: fingerprint changed, cachedRpm=0");
+                Logger.Debug($"Fan{fanId}: fingerprint changed, preserving cached RPM state");
             }
 
             bool isSteppingDown = _lastIdealRpm.ContainsKey(fanId) && _lastCalcRpm.ContainsKey(fanId) && _lastIdealRpm[fanId] < _lastCalcRpm[fanId];
@@ -611,7 +608,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 int minRpm = _hardware.GetMinRpm(fanId);
                 if (targetRpm > 0 && targetRpm < minRpm)
                 {
-                    targetRpm = idealRpm <= 0 ? 0 : minRpm;
+                    targetRpm = 0;
                 }
 
                 _lastIdealRpm[fanId] = idealRpm;
@@ -629,24 +626,31 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
             if (targetRpm <= 0 && currentRpm > 0)
             {
-                int baseRpm = _lastCalcRpm.TryGetValue(fanId, out int lc) && lc > 0 ? lc : currentRpm;
-                int minRpm = _hardware.GetMinRpm(fanId);
-
-                if (baseRpm <= minRpm)
+                if (_lastCalcRpm.TryGetValue(fanId, out int lc) && lc == 0)
                 {
                     targetRpm = 0;
                 }
-                else if (baseRpm - 100 <= minRpm)
-                {
-                    targetRpm = minRpm;
-                }
                 else
                 {
-                    targetRpm = baseRpm - 100;
+                    int baseRpm = lc > 0 ? lc : currentRpm;
+                    int minRpm = _hardware.GetMinRpm(fanId);
+
+                    if (baseRpm <= minRpm)
+                    {
+                        targetRpm = 0;
+                    }
+                    else if (baseRpm - 100 <= minRpm)
+                    {
+                        targetRpm = minRpm;
+                    }
+                    else
+                    {
+                        targetRpm = baseRpm - 100;
+                    }
                 }
 
                 _lastCalcRpm[fanId] = targetRpm;
-                Logger.Debug($"Fan{fanId}: softLanding baseRpm={baseRpm} minRpm={minRpm} currentRpm={currentRpm} -> targetRpm={targetRpm}");
+                Logger.Debug($"Fan{fanId}: softLanding targetRpm={targetRpm} currentRpm={currentRpm}");
             }
 
             var hadLast = _lastAppliedRpm.TryGetValue(fanId, out var lastApplied);
