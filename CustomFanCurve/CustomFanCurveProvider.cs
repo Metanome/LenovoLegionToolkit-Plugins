@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Controllers.Sensors;
@@ -8,7 +9,8 @@ using LenovoLegionToolkit.Lib.Station.Core;
 using LenovoLegionToolkit.Lib.Station.Services;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.Lib.Station.Logging;
-using LenovoLegionToolkit.Plugin.CustomFanCurve.Resources;
+using HostResource = LenovoLegionToolkit.Lib.Resources.Resource;
+using PluginResource = LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
@@ -136,9 +138,9 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 Id = "custom-fan-curve-wmi",
                 TitleGetter = () => 
                 {
-                    var rc = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
-                    LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.Culture = rc;
-                    return LenovoLegionToolkit.Plugin.CustomFanCurve.Resources.Resource.WindowTitle;
+                    var rc = HostResource.Culture ?? Thread.CurrentThread.CurrentUICulture;
+                    PluginResource.Culture = rc;
+                    return PluginResource.WindowTitle;
                 },
                 Icon = ExtensionIcon.Gauge,
                 PageTag = "customFanCurveWmi",

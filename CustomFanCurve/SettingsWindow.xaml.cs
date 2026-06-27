@@ -1,4 +1,7 @@
+using System.Threading;
 using System.Windows;
+using System.Windows.Markup;
+using LenovoLegionToolkit.Lib.Resources;
 using Wpf.Ui.Controls;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
@@ -9,8 +12,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public SettingsWindow(CustomFanCurveConfigManager configManager, bool isLegionDevice, bool isITSModeDevice)
         {
-            var realCulture = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
-            this.Language = System.Windows.Markup.XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
+            var realCulture = Resource.Culture ?? Thread.CurrentThread.CurrentUICulture;
+            this.Language = XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
             InitializeComponent();
             _viewModel = new SettingsViewModel(configManager, isLegionDevice, isITSModeDevice);
             DataContext = _viewModel;

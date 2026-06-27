@@ -1,8 +1,9 @@
 using System;
+using LenovoLegionToolkit.Lib.Messaging.Messages;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
-    public class SmartAutoTelemetryMessage : LenovoLegionToolkit.Lib.Messaging.Messages.IMessage
+    public class SmartAutoTelemetryMessage : IMessage
     {
         public string ThermalState { get; }
         public string PowerLoad { get; }

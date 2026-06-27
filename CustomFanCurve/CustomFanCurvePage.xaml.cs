@@ -1,11 +1,15 @@
 using System;
+using System.Threading;
 using System.Windows;
+using System.Windows.Markup;
 using LenovoLegionToolkit.Lib;
+using LenovoLegionToolkit.Lib.Resources;
 using LenovoLegionToolkit.Lib.Utils;
+using Wpf.Ui.Controls;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
-    public partial class CustomFanCurvePage : Wpf.Ui.Controls.UiPage
+    public partial class CustomFanCurvePage : UiPage
     {
         private CustomFanCurvePageViewModel? _viewModel;
         private CustomFanCurveConfigManager? _configManager;
@@ -13,8 +17,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public CustomFanCurvePage()
         {
-            var realCulture = LenovoLegionToolkit.Lib.Resources.Resource.Culture ?? System.Threading.Thread.CurrentThread.CurrentUICulture;
-            this.Language = System.Windows.Markup.XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
+            var realCulture = Resource.Culture ?? Thread.CurrentThread.CurrentUICulture;
+            this.Language = XmlLanguage.GetLanguage(realCulture.IetfLanguageTag);
             InitializeComponent();
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;

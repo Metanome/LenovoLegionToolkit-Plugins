@@ -9,7 +9,8 @@
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
-    FlowDirection="LeftToRight">
+    FlowDirection="LeftToRight"
+    PreviewMouseLeftButtonDown="UserControl_PreviewMouseLeftButtonDown">
     <UserControl.Resources>
         <local:EnumDisplayNameConverter x:Key="EnumDisplayNameConverter"/>
         <SolidColorBrush x:Key="GraphAccentPrimaryBrush" Color="{DynamicResource SystemAccentColorPrimary}"/>
@@ -171,7 +172,7 @@
                 <Canvas ClipToBounds="False" Background="{x:Null}">
                     <Grid Canvas.Left="{Binding SelectedNodeDisplay.DisplayX}"
                           Canvas.Top="{Binding SelectedNodeDisplay.DisplayY}"
-                          Width="300" Height="80" Margin="-150,-90,0,0"
+                          Width="300" Height="80" Margin="-150,-105,0,0"
                           Background="{x:Null}">
                         <Grid.Style>
                             <Style TargetType="Grid">

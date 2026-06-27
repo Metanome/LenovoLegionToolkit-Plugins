@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -186,5 +187,31 @@ public partial class CustomFanCurveControlV3 : UserControl
             d.IsSelected = (d == display);
         }
         _viewModel.SelectedNodeDisplay = display;
+    }
+
+    private void UserControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var hitElement = e.OriginalSource as DependencyObject;
+        while (hitElement != null)
+        {
+            if (hitElement == _floatingEditor)
+            {
+                return;
+            }
+            hitElement = VisualTreeHelper.GetParent(hitElement);
+        }
+
+        var focused = Keyboard.FocusedElement as DependencyObject;
+        while (focused != null)
+        {
+            if (focused is TextBox textBox)
+            {
+                textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+                break;
+            }
+            focused = VisualTreeHelper.GetParent(focused);
+        }
+
+        Keyboard.ClearFocus();
     }
 }
