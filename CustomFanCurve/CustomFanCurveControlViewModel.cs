@@ -20,6 +20,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private int _fanId;
         private double _graphWidth, _graphHeight;
         private CancellationTokenSource? _saveCts;
+        private bool _isEnforcingMonotonicity;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -51,17 +52,55 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             RefreshGraphPoints();
         }
 
+        private void EnforceMonotonicity(CurveNode changedNode, string propertyName)
+        {
+            if (CurveNodes.Count < 2) return;
+
+            var otherNodes = CurveNodes.Where(n => n != changedNode).OrderBy(n => n.Temperature).ToList();
+            var prevNode = otherNodes.LastOrDefault(n => n.Temperature <= changedNode.Temperature);
+            var nextNode = otherNodes.FirstOrDefault(n => n.Temperature >= changedNode.Temperature);
+
+            int safeMinPercent = CustomFanCurveCalculator.GetSafeMinPercent(changedNode.Temperature);
+            int minPercent = Math.Max(safeMinPercent, prevNode != null ? prevNode.TargetPercent : 0);
+            int maxPercent = nextNode != null ? nextNode.TargetPercent : 100;
+
+            if (propertyName == nameof(CurveNode.TargetPercent) || propertyName == nameof(CurveNode.Temperature))
+            {
+                int clamped = Math.Clamp(changedNode.TargetPercent, minPercent, maxPercent);
+                if (changedNode.TargetPercent != clamped)
+                {
+                    changedNode.TargetPercent = clamped;
+                }
+            }
+        }
+
         private async void OnCurveNodePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (sender is CurveNode changedNode && _graphWidth > 0 && _graphHeight > 0)
+            if (sender is CurveNode changedNode)
             {
-                var display = CurveNodeDisplays.FirstOrDefault(d => d.Node == changedNode);
-                if (display != null)
+                if (!_isEnforcingMonotonicity)
                 {
-                    double nx = Math.Clamp(changedNode.Temperature / 100.0, 0, 1);
-                    double ny = 1.0 - Math.Clamp(changedNode.TargetPercent / 100.0, 0, 1);
-                    display.DisplayX = nx * _graphWidth;
-                    display.DisplayY = ny * _graphHeight;
+                    _isEnforcingMonotonicity = true;
+                    try
+                    {
+                        EnforceMonotonicity(changedNode, e.PropertyName ?? string.Empty);
+                    }
+                    finally
+                    {
+                        _isEnforcingMonotonicity = false;
+                    }
+                }
+
+                if (_graphWidth > 0 && _graphHeight > 0)
+                {
+                    var display = CurveNodeDisplays.FirstOrDefault(d => d.Node == changedNode);
+                    if (display != null)
+                    {
+                        double nx = Math.Clamp(changedNode.Temperature / 100.0, 0, 1);
+                        double ny = 1.0 - Math.Clamp(changedNode.TargetPercent / 100.0, 0, 1);
+                        display.DisplayX = nx * _graphWidth;
+                        display.DisplayY = ny * _graphHeight;
+                    }
                 }
             }
 
@@ -153,10 +192,20 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             if (display?.Node == null) return;
             temperature = Math.Clamp(temperature, 0, 100);
+
+            var otherNodes = CurveNodes.Where(n => n != display.Node).OrderBy(n => n.Temperature).ToList();
+            var prevNode = otherNodes.LastOrDefault(n => n.Temperature <= temperature);
+            var nextNode = otherNodes.FirstOrDefault(n => n.Temperature >= temperature);
+
             int safeMinPercent = CustomFanCurveCalculator.GetSafeMinPercent(temperature);
-            targetPercent = Math.Clamp(targetPercent, safeMinPercent, 100);
-            
-            display.Node.Temperature = temperature; display.Node.TargetPercent = targetPercent;
+            int minPercent = Math.Max(safeMinPercent, prevNode != null ? prevNode.TargetPercent : 0);
+            int maxPercent = nextNode != null ? nextNode.TargetPercent : 100;
+
+            targetPercent = Math.Clamp(targetPercent, minPercent, maxPercent);
+
+            display.Node.Temperature = temperature;
+            display.Node.TargetPercent = targetPercent;
+
             UpdateGraphPointsFromNodes();
             if (_graphWidth > 0 && _graphHeight > 0) { display.DisplayX = temperature / 100.0 * _graphWidth; display.DisplayY = (1.0 - targetPercent / 100.0) * _graphHeight; }   
         }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using LenovoLegionToolkit.Lib;
@@ -118,42 +117,6 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             CurveNodes.Add(new CurveNode { Temperature = 90, TargetPercent = 90 });
             CurveNodes.Add(new CurveNode { Temperature = 100, TargetPercent = 100 });
             CurveNodes.CollectionChanged += (s, e) => OnPropertyChanged(nameof(CurveNodes));
-        }
-
-        public string ExportToJson()
-        {
-            return JsonConvert.SerializeObject(new { FanId, SensorSource, CurveNodes = CurveNodes.ToList() }, Formatting.Indented);
-        }
-
-        public static CustomFanCurveEntry ImportFromJson(string json)
-        {
-            dynamic? data = JsonConvert.DeserializeObject(json);
-            if (data == null)
-            {
-                throw new InvalidOperationException("Invalid JSON");
-            }
-
-            var entry = new CustomFanCurveEntry();
-            if (data.FanId != null)
-            {
-                entry.FanId = (int)data.FanId;
-            }
-
-            if (data.SensorSource != null)
-            {
-                entry.SensorSource = (SensorSource)Enum.Parse(typeof(SensorSource), (string)data.SensorSource, true);
-            }
-
-            entry.CurveNodes.Clear();
-            if (data.CurveNodes != null)
-            {
-                foreach (var node in data.CurveNodes)
-                {
-                    entry.CurveNodes.Add(new CurveNode { Temperature = node.Temperature, TargetPercent = node.TargetPercent });
-                }
-            }
-
-            return entry;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
