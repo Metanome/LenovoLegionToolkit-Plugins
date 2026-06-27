@@ -192,13 +192,27 @@ public partial class CustomFanCurveControlV3 : UserControl
     private void UserControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         var hitElement = e.OriginalSource as DependencyObject;
-        while (hitElement != null)
+        bool isInsideEditor = false;
+        bool isInsideFocusableControl = false;
+
+        var temp = hitElement;
+        while (temp != null)
         {
-            if (hitElement == _floatingEditor)
+            if (temp == _floatingEditor)
             {
-                return;
+                isInsideEditor = true;
+                break;
             }
-            hitElement = VisualTreeHelper.GetParent(hitElement);
+            if (temp is ComboBox || temp is Button || temp is TextBox || (temp is UIElement ui && ui.Focusable))
+            {
+                isInsideFocusableControl = true;
+            }
+            temp = VisualTreeHelper.GetParent(temp);
+        }
+
+        if (isInsideEditor)
+        {
+            return;
         }
 
         var focused = Keyboard.FocusedElement as DependencyObject;
@@ -212,6 +226,9 @@ public partial class CustomFanCurveControlV3 : UserControl
             focused = VisualTreeHelper.GetParent(focused);
         }
 
-        Keyboard.ClearFocus();
+        if (!isInsideFocusableControl)
+        {
+            Keyboard.ClearFocus();
+        }
     }
 }
