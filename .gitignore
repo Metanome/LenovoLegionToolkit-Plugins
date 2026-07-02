@@ -12,7 +12,7 @@
 *.env
 
 # Project-specific exclusions
-
+FanCurveCustom/
 
 # AI Tooling and Agents
 # (Standard ignore patterns for AI caches, history, and state)
