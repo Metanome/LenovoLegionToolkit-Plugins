@@ -16,15 +16,15 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             if (evalTemp >= 90) return maxRpm;
 
             float temp = evalTemp;
-            float power = snapshot.CpuPower;
+            float power = snapshot[SensorItem.CpuPower];
 
             if (fanIndex == 1)
             {
-                power = snapshot.GpuPower > 0 ? snapshot.GpuPower : snapshot.CpuPower;
+                power = snapshot[SensorItem.GpuPower] > 0 ? snapshot[SensorItem.GpuPower] : snapshot[SensorItem.CpuPower];
             }
             else if (fanIndex > 1)
             {
-                power = Math.Max(snapshot.CpuPower, snapshot.GpuPower);
+                power = Math.Max(snapshot[SensorItem.CpuPower], snapshot[SensorItem.GpuPower]);
             }
 
             float targetPercent = 0f;
@@ -32,7 +32,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             float loadFactor;
             if (power < 0)
             {
-                float usage = fanIndex == 1 ? snapshot.GpuUsage : (fanIndex == 0 ? snapshot.CpuUsage : Math.Max(snapshot.CpuUsage, snapshot.GpuUsage));
+                float usage = fanIndex == 1 ? snapshot[SensorItem.GpuUtilization] : (fanIndex == 0 ? snapshot[SensorItem.CpuUtilization] : Math.Max(snapshot[SensorItem.CpuUtilization], snapshot[SensorItem.GpuUtilization]));
                 loadFactor = Math.Clamp((usage - 20f) / (70f - 20f), 0f, 1f);
             }
             else
@@ -61,8 +61,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public static (string ThermalState, string PowerLoad, string Decision) GetGlobalTelemetryStrings(HardwareSensorSnapshot snapshot)
         {
-            float maxTemp = Math.Max(snapshot.CpuTemp, snapshot.GpuTemp);
-            float maxPower = Math.Max(snapshot.CpuPower, snapshot.GpuPower);
+            float maxTemp = Math.Max(snapshot[SensorItem.CpuTemperature], snapshot[SensorItem.GpuCoreTemperature]);
+            float maxPower = Math.Max(snapshot[SensorItem.CpuPower], snapshot[SensorItem.GpuPower]);
 
             string thermalState = maxTemp >= 90 ? "Critical" : maxTemp >= 75 ? "Hot" : maxTemp >= 55 ? "Warm" : "Cold";
             string powerLoad;
@@ -70,7 +70,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
             if (maxPower < 0)
             {
-                float maxUsage = Math.Max(snapshot.CpuUsage, snapshot.GpuUsage);
+                float maxUsage = Math.Max(snapshot[SensorItem.CpuUtilization], snapshot[SensorItem.GpuUtilization]);
                 if (maxUsage < 0)
                 {
                     powerLoad = maxTemp >= 75 ? "Heavy Load" : maxTemp >= 55 ? "Light Load" : "Idle";

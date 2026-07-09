@@ -286,8 +286,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             if (!_isEnabled && !_isFullSpeed) return;
 
-            var cpuTemp = Math.Max(0, snapshot.CpuTemp);
-            var gpuTemp = Math.Max(0, snapshot.GpuTemp);
+            var cpuTemp = Math.Max(0, snapshot[SensorItem.CpuTemperature]);
+            var gpuTemp = Math.Max(0, snapshot[SensorItem.GpuCoreTemperature]);
 
             if (_configManager.Settings.IgnoreZeroTemperature && cpuTemp <= 0 && gpuTemp <= 0)
             {
@@ -550,7 +550,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             bool isSteppingDown = _lastIdealRpm.ContainsKey(fanId) && _lastCalcRpm.ContainsKey(fanId) && _lastIdealRpm[fanId] < _lastCalcRpm[fanId];
 
             _lastPower.TryGetValue(fanId, out var lastPower);
-            float currentRelevantPower = fanId == 2 ? snapshot.GpuPower : snapshot.CpuPower;
+            float currentRelevantPower = fanId == 2 ? snapshot[SensorItem.GpuPower] : snapshot[SensorItem.CpuPower];
             var powerDelta = _lastPower.ContainsKey(fanId) ? Math.Abs(lastPower - currentRelevantPower) : double.MaxValue;
 
             var needRecalc = !_lastTemp.ContainsKey(fanId) || !_lastCalcRpm.ContainsKey(fanId) || isSteppingDown
@@ -585,7 +585,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                 }
 
                 
-                float hardwareMax = Math.Max(snapshot.CpuTemp, snapshot.GpuTemp);
+                float hardwareMax = Math.Max(snapshot[SensorItem.CpuTemperature], snapshot[SensorItem.GpuCoreTemperature]);
                 float safetyEvalTemp = Math.Max(calcTemp, hardwareMax);
                 int safeMinPercent = CustomFanCurveCalculator.GetSafeMinPercent(safetyEvalTemp);
                 
@@ -732,8 +732,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         private async Task UpdateMonitoringOnlyAsync(HardwareSensorSnapshot snapshot)
         {
-            var cpuTemp = Math.Max(0, snapshot.CpuTemp);
-            var gpuTemp = Math.Max(0, snapshot.GpuTemp);
+            var cpuTemp = Math.Max(0, snapshot[SensorItem.CpuTemperature]);
+            var gpuTemp = Math.Max(0, snapshot[SensorItem.GpuCoreTemperature]);
 
             foreach (var fanId in _hardware.AvailableFanIds)
             {

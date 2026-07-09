@@ -9,6 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <Nullable>enable</Nullable>
+    <LLT_SOURCE Condition="'$(LLT_SOURCE)' == ''">..\..</LLT_SOURCE>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +18,7 @@
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
 
-    <PackageReference Include="System.Management" Version="10.0.7" />
+    <PackageReference Include="System.Management" Version="10.0.9" />
 
     <PackageReference Include="WPF-UI" Version="2.1.0">
       <Private>false</Private>
