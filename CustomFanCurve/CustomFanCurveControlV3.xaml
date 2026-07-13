@@ -213,7 +213,7 @@
                                            Text="{Binding SelectedNodeDisplay.Rpm, StringFormat=({0} RPM)}"/>
 
                                 <wpfui:Button Width="18" Height="18" Padding="0" Appearance="Transparent" Cursor="Hand"
-                                              Command="{Binding RemovePointCommand}"
+                                              Command="{Binding RemoveNodeCommand}"
                                               CommandParameter="{Binding SelectedNodeDisplay.Node}"
                                               ToolTip="{x:Static res:Resource.DeleteNode}">
                                     <wpfui:SymbolIcon Symbol="Delete24" FontSize="10"

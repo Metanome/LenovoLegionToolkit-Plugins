@@ -47,14 +47,21 @@
                                     </wpfui:CardControl>
                                     
                                     <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
-                                        <wpfui:CardControl.Header>
-                                            <StackPanel Margin="0,0,16,0">
-                                                <TextBlock Text="{x:Static res:Resource.DebugMode}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                                <TextBlock Text="{x:Static res:Resource.DebugModeDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                        </wpfui:CardControl.Header>
-                                        <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding DebugMode}"/>
-                                    </wpfui:CardControl>
+                                         <wpfui:CardControl.Header>
+                                             <StackPanel Margin="0,0,16,0">
+                                                 <TextBlock Text="{x:Static res:Resource.DebugMode}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                 <TextBlock Text="{x:Static res:Resource.DebugModeDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                             </StackPanel>
+                                         </wpfui:CardControl.Header>
+                                         <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding DebugMode}"/>
+                                     </wpfui:CardControl>
+
+                                     <wpfui:CardAction Margin="0,0,0,8" Padding="16,12" Command="{Binding ResetToDefaultsCommand}">
+                                         <StackPanel Margin="0,0,16,0">
+                                             <TextBlock Text="{x:Static res:Resource.ResetToDefaults}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                             <TextBlock Text="{x:Static res:Resource.ResetToDefaultsDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                         </StackPanel>
+                                     </wpfui:CardAction>
                                 
         </StackPanel>
     </wpfui:DynamicScrollViewer>

@@ -36,8 +36,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             CurveNodes = entry.CurveNodes;
             CurveNodeDisplays = new ObservableCollection<CurveNodeDisplay>();
 
-            AddPointCommand = new RelayCommand(AddPoint);
-            RemovePointCommand = new RelayCommand<object>(RemovePoint, CanRemovePoint);
+            AddNodeCommand = new RelayCommand(AddNode);
+            RemoveNodeCommand = new RelayCommand<object>(RemoveNode, CanRemoveNode);
 
             _monitoring.MonitoringUpdated += OnMonitoringUpdated;
             CurveNodes.CollectionChanged += OnCurveNodesCollectionChanged;
@@ -164,12 +164,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public int MaxRpm => _configManager.Settings.FanMaxRpms.TryGetValue(FanId, out var rpm) && rpm > 0 ? rpm : 6400;
 
-        public ICommand AddPointCommand { get; }
-        public ICommand RemovePointCommand { get; }
+        public ICommand AddNodeCommand { get; }
+        public ICommand RemoveNodeCommand { get; }
 
-        private bool CanRemovePoint(object? param) => param is CurveNode && CurveNodes.Count > 2;
+        private bool CanRemoveNode(object? param) => param is CurveNode && CurveNodes.Count > 2;
 
-        private void RemovePoint(object? param)
+        private void RemoveNode(object? param)
         {
             if (param is CurveNode node && CurveNodes.Contains(node))
             {
@@ -189,7 +189,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _graphWidth = width; _graphHeight = height; RefreshGraphPoints();
         }
 
-        public void MovePoint(CurveNodeDisplay display, float temperature, int targetPercent)
+        public void MoveNode(CurveNodeDisplay display, float temperature, int targetPercent)
         {
             if (display?.Node == null) return;
             temperature = Math.Clamp(temperature, 0, 100);
@@ -211,7 +211,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             if (_graphWidth > 0 && _graphHeight > 0) { display.DisplayX = temperature / 100.0 * _graphWidth; display.DisplayY = (1.0 - targetPercent / 100.0) * _graphHeight; }   
         }
 
-        private void AddPoint()
+        private void AddNode()
         {
             float temp;
             int targetPercent;

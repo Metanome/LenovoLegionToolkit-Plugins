@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AcousticOffsetAddRpm" xml:space="preserve">
-    <value>Acoustic Offset Value (RPM)</value>
+    <value>声学偏移值</value>
   </data>
   <data name="AcousticOffsetAddRpmDesc" xml:space="preserve">
-    <value>The exact RPM amount added to offset the secondary fan.</value>
+    <value>为副风扇应用声学偏移时所增加的转速量 (RPM)，用于避免共振声。</value>
   </data>
   <data name="AcousticOffsetDeltaRpm" xml:space="preserve">
-    <value>Acoustic Offset Delta (RPM)</value>
+    <value>声学偏移触发差值</value>
   </data>
   <data name="AcousticOffsetDeltaRpmDesc" xml:space="preserve">
-    <value>Maximum difference in RPM between fans before acoustic offsetting triggers.</value>
+    <value>触发声学偏移前，双风扇之间的最大目标转速差值 (RPM)。</value>
   </data>
   <data name="AcousticTuning" xml:space="preserve">
     <value>声学偏移</value>
   </data>
   <data name="AddNodeTooltip" xml:space="preserve">
-    <value>在曲线末尾添加一个新的控制节点</value>
+    <value>添加新节点</value>
   </data>
   <data name="Advanced" xml:space="preserve">
     <value>高级</value>
   </data>
   <data name="AlwaysWriteRpm" xml:space="preserve">
-    <value>Always Write RPM</value>
+    <value>始终写入 RPM</value>
   </data>
   <data name="AlwaysWriteRpmDesc" xml:space="preserve">
-    <value>Force write the fan speed to the EC every cycle even if unchanged.</value>
+    <value>在每个周期强制将风扇转速写入 EC，即使目标转速未发生改变。</value>
   </data>
   <data name="ApplyToAllModes" xml:space="preserve">
     <value>应用到所有性能模式</value>
   </data>
   <data name="ApplyToAllModesDesc" xml:space="preserve">
-    <value>为拯救者设备在任意模式下启用自定义风扇控制</value>
+    <value>在所有电源模式下启用自定义风扇控制。</value>
   </data>
   <data name="CalcInterval" xml:space="preserve">
-    <value>RPM 计算间隔 (ms)</value>
+    <value>RPM 计算间隔</value>
   </data>
   <data name="CalcIntervalDesc" xml:space="preserve">
-    <value>两次 RPM 计算之间的最小延迟，默认 500ms</value>
+    <value>重新计算风扇转速的最小延迟时间 (ms)。</value>
   </data>
   <data name="CalcScheduling" xml:space="preserve">
     <value>计算调度</value>
@@ -172,10 +172,10 @@
     <value>CPU 风扇</value>
   </data>
   <data name="CriticalTemp" xml:space="preserve">
-    <value>Critical Temperature (°C)</value>
+    <value>临界温度</value>
   </data>
   <data name="CriticalTempDesc" xml:space="preserve">
-    <value>Force maximum fan speed regardless of curve at this temperature.</value>
+    <value>强制风扇以最大转速运行的临界温度阈值（°C）。</value>
   </data>
   <data name="CriticalTempSafety" xml:space="preserve">
     <value>安全与覆盖设置</value>
@@ -193,31 +193,31 @@
     <value>删除此节点</value>
   </data>
   <data name="DerivativeLookaheadSeconds" xml:space="preserve">
-    <value>Predictive Lookahead (Seconds)</value>
+    <value>预测展望时间</value>
   </data>
   <data name="DerivativeLookaheadSecondsDesc" xml:space="preserve">
-    <value>How far into the future to predict temperatures when a spike is detected.</value>
+    <value>当检测到温度突变时，预测未来温度的时间跨度（秒）。</value>
   </data>
   <data name="DerivativeSpikeThreshold" xml:space="preserve">
-    <value>Temperature Spike Threshold (°C/s)</value>
+    <value>温度突变阈值</value>
   </data>
   <data name="DerivativeSpikeThresholdDesc" xml:space="preserve">
-    <value>Sudden temperature spike rate required to activate predictive cooling.</value>
+    <value>触发预测性冷却所需的温度突变变化率阈值（每秒 °C）。</value>
   </data>
   <data name="EmaAlpha" xml:space="preserve">
-    <value>Temperature Smoothing (EMA Alpha)</value>
+    <value>温度平滑系数</value>
   </data>
   <data name="EmaAlphaDesc" xml:space="preserve">
-    <value>Weight of new temperature readings. Lower = smoother but slower.</value>
+    <value>新温度读数的权重参数（EMA 滤波系数）。较低的数值会更平滑，但响应会更慢。</value>
   </data>
   <data name="EmaDesc" xml:space="preserve">
     <value>启用指数移动平均 (EMA) 算法来平滑瞬时温度波动。</value>
   </data>
   <data name="EnableAcousticOffset" xml:space="preserve">
-    <value>Acoustic Offsetting</value>
+    <value>声学偏移</value>
   </data>
   <data name="EnableAcousticOffsetDesc" xml:space="preserve">
-    <value>Prevents annoying beat frequencies by shifting fan speeds when they are too similar.</value>
+    <value>当风扇转速非常接近时，通过微调转速来避免产生共振拍频。</value>
   </data>
   <data name="EnableCurve" xml:space="preserve">
     <value>自定义风扇曲线</value>
@@ -234,20 +234,38 @@
   <data name="EnableHysteresis" xml:space="preserve">
     <value>温度滞后</value>
   </data>
+  <data name="EnableMinimumRpmChangeToApply" xml:space="preserve">
+    <value>启用写入抑制</value>
+  </data>
+  <data name="EnableMinimumRpmChangeToApplyDesc" xml:space="preserve">
+    <value>若风扇目标转速变化量小于设定阈值，则跳过写入 WMI。</value>
+  </data>
+  <data name="EnablePowerDeltaThreshold" xml:space="preserve">
+    <value>启用功率变化过滤</value>
+  </data>
+  <data name="EnablePowerDeltaThresholdDesc" xml:space="preserve">
+    <value>若功耗变化小于阈值，则跳过重新计算风扇转速。</value>
+  </data>
   <data name="EnablePredictiveEngine" xml:space="preserve">
     <value>预测引擎</value>
   </data>
   <data name="EnableSmartAuto" xml:space="preserve">
-    <value>Smart Auto (Experimental)</value>
+    <value>智能自动控制 (实验性)</value>
   </data>
   <data name="EnableSpinUp" xml:space="preserve">
     <value>加速启动</value>
   </data>
   <data name="EnableSpinUpDesc" xml:space="preserve">
-    <value>Briefly pulses the fans at high speed to overcome static friction before settling to low targets.</value>
+    <value>风扇起步时，先短暂以较高速度运转以克服静摩擦力，然后再降至设定的低目标值。</value>
   </data>
   <data name="EnableStepDownGlide" xml:space="preserve">
     <value>降速平滑</value>
+  </data>
+  <data name="EnableTemperatureDeltaThreshold" xml:space="preserve">
+    <value>启用温度变化过滤</value>
+  </data>
+  <data name="EnableTemperatureDeltaThresholdDesc" xml:space="preserve">
+    <value>若温度变化小于阈值，则跳过重新计算风扇转速。</value>
   </data>
   <data name="EnableThermalSafetyNet" xml:space="preserve">
     <value>温度安全网</value>
@@ -259,7 +277,7 @@
     <value>启用时强制刷新</value>
   </data>
   <data name="ForceRefreshOnEnableDesc" xml:space="preserve">
-    <value>Immediately synchronizes the hardware cooling state when the custom curve is activated.</value>
+    <value>在自定义曲线激活时，立即同步风扇冷却状态。</value>
   </data>
   <data name="ForceRefreshOnSwitch" xml:space="preserve">
     <value>模式切换后强制刷新</value>
@@ -268,10 +286,10 @@
     <value>切换电源模式后重新应用风扇控制</value>
   </data>
   <data name="ForceWriteWhenRpmZero" xml:space="preserve">
-    <value>Force Write When Target is 0</value>
+    <value>目标为 0 时强制写入</value>
   </data>
   <data name="ForceWriteWhenRpmZeroDesc" xml:space="preserve">
-    <value>Always write to the EC if the target RPM is 0 to ensure fans actually stop.</value>
+    <value>当目标转速为 0 时，始终向 EC 写入控制信号以确保风扇确实停转。</value>
   </data>
   <data name="FullSpeedActive" xml:space="preserve">
     <value>全速中...</value>
@@ -289,10 +307,10 @@
     <value>温度迟滞</value>
   </data>
   <data name="HysteresisDeadzoneTemp" xml:space="preserve">
-    <value>Hysteresis Deadzone Temp (°C)</value>
+    <value>迟滞温度死区</value>
   </data>
   <data name="HysteresisDeadzoneTempDesc" xml:space="preserve">
-    <value>Temperature padding to prevent fans from aggressively ramping up and down when hovering on a curve node.</value>
+    <value>在曲线节点附近徘徊时，温度的缓冲值（°C），用于防止风扇转速频繁波动。</value>
   </data>
   <data name="HysteresisDesc" xml:space="preserve">
     <value>当温度波动较小时，通过维持目标风扇转速来平滑风扇行为。</value>
@@ -313,10 +331,10 @@
     <value>立刻以最大转速运行所有风扇</value>
   </data>
   <data name="MinimumRpmChangeToApply" xml:space="preserve">
-    <value>Minimum RPM Change to Apply</value>
+    <value>最小 RPM 写入变化量</value>
   </data>
   <data name="MinimumRpmChangeToApplyDesc" xml:space="preserve">
-    <value>Ignore target RPM changes smaller than this value to reduce EC writes.</value>
+    <value>若目标转速 (RPM) 变化量小于此值，则跳过写入 WMI 以减少硬件操作开销。</value>
   </data>
   <data name="ModeSwitch" xml:space="preserve">
     <value>模式切换</value>
@@ -325,10 +343,10 @@
     <value>模式切换行为</value>
   </data>
   <data name="PowerDeltaThreshold" xml:space="preserve">
-    <value>Power Delta Threshold (W)</value>
+    <value>功耗变化阈值</value>
   </data>
   <data name="PowerDeltaThresholdDesc" xml:space="preserve">
-    <value>Minimum change in wattage before forcing a recalculation</value>
+    <value>触发风扇转速重新计算所需的最小功耗变化量 (W)。</value>
   </data>
   <data name="PredictiveEngine" xml:space="preserve">
     <value>预测引擎</value>
@@ -346,31 +364,37 @@
     <value>刷新次数</value>
   </data>
   <data name="RefreshCountDesc" xml:space="preserve">
-    <value>模式切换后的刷新执行次数，默认 2</value>
+    <value>电源模式切换后执行的刷新循环次数。</value>
   </data>
   <data name="RefreshInterval" xml:space="preserve">
-    <value>刷新间隔 (ms)</value>
+    <value>刷新间隔</value>
   </data>
   <data name="RefreshIntervalDesc" xml:space="preserve">
-    <value>多次刷新之间的延迟，默认 250ms</value>
+    <value>多次刷新循环之间的延迟时间 (ms)。</value>
+  </data>
+  <data name="ResetToDefaults" xml:space="preserve">
+    <value>恢复默认设置</value>
+  </data>
+  <data name="ResetToDefaultsDesc" xml:space="preserve">
+    <value>将所有自定义风扇曲线设置恢复为初始出厂值。</value>
   </data>
   <data name="SafeMaxPercentAtMaxTemp" xml:space="preserve">
-    <value>Safe Minimum Fan Percentage (%)</value>
+    <value>安全转速下限比例</value>
   </data>
   <data name="SafeMaxPercentAtMaxTempDesc" xml:space="preserve">
-    <value>The guaranteed minimum fan percentage when the hardware reaches the critical maximum temperature.</value>
+    <value>当达到安全最高温度时，安全网保证的最低风扇转速比例（%）。</value>
   </data>
   <data name="SafeMaxTemp" xml:space="preserve">
-    <value>Safe Maximum Temperature (°C)</value>
+    <value>安全最高温度</value>
   </data>
   <data name="SafeMaxTempDesc" xml:space="preserve">
-    <value>The temperature at which the safety net enforces its maximum guaranteed minimum fan speed.</value>
+    <value>安全网强制执行最大安全转速下限的温度阈值（°C）。</value>
   </data>
   <data name="SafeMinTemp" xml:space="preserve">
-    <value>Safe Minimum Temperature (°C)</value>
+    <value>安全最低温度</value>
   </data>
   <data name="SafeMinTempDesc" xml:space="preserve">
-    <value>The minimum bound for safe hardware temperature evaluation.</value>
+    <value>安全网转速下限开始随温度向上缩放的起始温度阈值（°C）。</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>保存</value>
@@ -382,28 +406,28 @@
     <value>传感器 &amp; 计算</value>
   </data>
   <data name="SensorInterval" xml:space="preserve">
-    <value>传感器轮询间隔 (ms)</value>
+    <value>传感器轮询间隔</value>
   </data>
   <data name="SensorIntervalDesc" xml:space="preserve">
-    <value>从硬件读取温度数据的间隔，默认 500ms</value>
+    <value>轮询温度传感器数据的间隔时间 (ms)。</value>
   </data>
   <data name="SensorPolling" xml:space="preserve">
     <value>传感器轮询</value>
   </data>
   <data name="SensorSource" xml:space="preserve">
-    <value>Sensor Source</value>
+    <value>温度传感器源</value>
   </data>
   <data name="SensorSourceAverageCpuGpu" xml:space="preserve">
-    <value>Average of CPU / GPU</value>
+    <value>CPU / GPU 中的平均值</value>
   </data>
   <data name="SensorSourceDefault" xml:space="preserve">
-    <value>System Default (Auto)</value>
+    <value>系统默认 (自动)</value>
   </data>
   <data name="SensorSourceDesc" xml:space="preserve">
-    <value>Selects which hardware temperature this fan curve actively monitors and responds to.</value>
+    <value>选择此风扇曲线监测的温度源。</value>
   </data>
   <data name="SensorSourceMaxCpuGpu" xml:space="preserve">
-    <value>Maximum of CPU / GPU</value>
+    <value>CPU / GPU 中的最大值</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>设置</value>
@@ -412,16 +436,16 @@
     <value>打开设置</value>
   </data>
   <data name="SmartAutoDashboardSubtitle" xml:space="preserve">
-    <value>Manual fan curves are disabled. The Fuzzy Logic engine is managing thermals based on power consumption.</value>
+    <value>手动风扇曲线已禁用。散热模块目前由模糊逻辑引擎基于功耗自动接管。</value>
   </data>
   <data name="SmartAutoDashboardTitle" xml:space="preserve">
-    <value>Autonomous Thermal Control</value>
+    <value>自动散热控制</value>
   </data>
   <data name="SmartAutoDecision" xml:space="preserve">
-    <value>Decision:</value>
+    <value>决策：</value>
   </data>
   <data name="SmartAutoDescription" xml:space="preserve">
-    <value>Autonomously controls fan speeds using Fuzzy Logic based on hardware temperature and power draw. Disables manual fan curves.</value>
+    <value>基于硬件温度和功耗负载，使用模糊逻辑自主调节风扇转速。该功能将覆盖并禁用手动曲线。</value>
   </data>
   <data name="SmartAutoHardwareNotSupported" xml:space="preserve">
     <value>硬件不支持</value>
@@ -430,13 +454,13 @@
     <value>未激活 (需要自定义模式或应用至所有模式)</value>
   </data>
   <data name="SmartAutoPowerLoad" xml:space="preserve">
-    <value>Power Load:</value>
+    <value>功耗负载：</value>
   </data>
   <data name="SmartAutoTargetOutput" xml:space="preserve">
-    <value>Fan Speed:</value>
+    <value>目标转速：</value>
   </data>
   <data name="SmartAutoThermalState" xml:space="preserve">
-    <value>Thermal State:</value>
+    <value>温度状态：</value>
   </data>
   <data name="SpinUpBoost" xml:space="preserve">
     <value>加速启动</value>
@@ -446,16 +470,16 @@
 启用加速启动后，系统会先短暂以较高 RPM 启动风扇，再降至目标值。</value>
   </data>
   <data name="SpinUpDuration" xml:space="preserve">
-    <value>启动持续时间 (ms)</value>
+    <value>起步加速持续时间</value>
   </data>
   <data name="SpinUpDurationDesc" xml:space="preserve">
-    <value>加速启动 RPM 的持续时间，默认 300ms</value>
+    <value>起步加速阶段的持续时间 (ms)。</value>
   </data>
   <data name="SpinUpRpm" xml:space="preserve">
-    <value>启动 RPM</value>
+    <value>起步加速 RPM</value>
   </data>
   <data name="SpinUpRpmDesc" xml:space="preserve">
-    <value>加速启动时的临时 RPM 值，默认 3000</value>
+    <value>起步加速阶段应用的目标转速 (RPM)。</value>
   </data>
   <data name="StepDownGlideDesc" xml:space="preserve">
     <value>使风扇逐渐减速，避免转速突然下降产生的噪音变化。</value>
@@ -464,22 +488,22 @@
     <value>降速平滑</value>
   </data>
   <data name="StepDownRate" xml:space="preserve">
-    <value>Step-Down Glide Rate (RPM/sec)</value>
+    <value>降速平滑变化率</value>
   </data>
   <data name="StepDownRateDesc" xml:space="preserve">
-    <value>Maximum RPM drop per second while cooling down.</value>
+    <value>降温时，每秒允许的最大风扇转速下降量 (RPM)。</value>
   </data>
   <data name="StepDownSpamDelta" xml:space="preserve">
-    <value>Step-Down Protection Delta (RPM)</value>
+    <value>降速保护差值</value>
   </data>
   <data name="StepDownSpamDeltaDesc" xml:space="preserve">
-    <value>Minimum RPM drop required before sending a hardware command.</value>
+    <value>进行减速调节时，触发 WMI 写入所需的最小目标转速变化量 (RPM)。</value>
   </data>
   <data name="SyncFanLevel" xml:space="preserve">
-    <value>Sync Fan Level</value>
+    <value>同步风扇级别</value>
   </data>
   <data name="SyncFanLevelDesc" xml:space="preserve">
-    <value>All fans respond to the highest result.</value>
+    <value>所有风扇的转速将同步至计算结果中的最高值。</value>
   </data>
   <data name="SystemFan" xml:space="preserve">
     <value>系统风扇</value>
@@ -488,16 +512,16 @@
     <value>目标转速</value>
   </data>
   <data name="TempDeltaThreshold" xml:space="preserve">
-    <value>温度变化阈值 (°C)</value>
+    <value>温度变化阈值</value>
   </data>
   <data name="TempDeltaThresholdDesc" xml:space="preserve">
-    <value>触发 RPM 重算的最小温度变化，默认 0.5°C</value>
+    <value>触发风扇转速重新计算所需的最小温度变化量（°C）。</value>
   </data>
   <data name="Temperature" xml:space="preserve">
     <value>温度</value>
   </data>
   <data name="ThermalSafetyNetDesc" xml:space="preserve">
-    <value>在硬件处于高负荷高温时强制执行安全风扇最低速度。请谨慎关闭！</value>
+    <value>高温下强制执行安全风扇最低转速阈值。</value>
   </data>
   <data name="Tuning" xml:space="preserve">
     <value>微调</value>
@@ -506,16 +530,16 @@
     <value>UI 与监控</value>
   </data>
   <data name="UiDebounceDelay" xml:space="preserve">
-    <value>UI Save Debounce Delay (ms)</value>
+    <value>UI 保存防抖延迟</value>
   </data>
   <data name="UiDebounceDelayDesc" xml:space="preserve">
-    <value>Delay before writing to disk after dragging a curve node.</value>
+    <value>调整曲线节点后，将配置提交并写入磁盘前的延迟时间 (ms)。</value>
   </data>
   <data name="UiUpdateInterval" xml:space="preserve">
-    <value>UI 更新间隔 (ms)</value>
+    <value>UI 更新间隔</value>
   </data>
   <data name="UiUpdateIntervalDesc" xml:space="preserve">
-    <value>监控面板数据刷新间隔，默认 1000ms</value>
+    <value>监控面板的刷新间隔时间 (ms)。</value>
   </data>
   <data name="UseCachedSnapshot" xml:space="preserve">
     <value>强制刷新使用缓存快照</value>

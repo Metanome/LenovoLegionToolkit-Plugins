@@ -82,15 +82,25 @@
                                         <wpfui:TextBox Width="80" VerticalAlignment="Center" local:TextBoxBehavior.NumericOnly="True" Text="{Binding UiUpdateIntervalMs, UpdateSourceTrigger=PropertyChanged}"/>
                                     </wpfui:CardControl>
                                     
-                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12" >
-                                        <wpfui:CardControl.Header>
-                                            <StackPanel Margin="0,0,16,0">
-                                                <TextBlock Text="{x:Static res:Resource.MinimumRpmChangeToApply}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                                <TextBlock Text="{x:Static res:Resource.MinimumRpmChangeToApplyDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                        </wpfui:CardControl.Header>
-                                        <wpfui:TextBox Width="80" VerticalAlignment="Center" local:TextBoxBehavior.NumericOnly="True" Text="{Binding MinimumRpmChangeToApply, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </wpfui:CardControl>
+                                    <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
+                                         <wpfui:CardControl.Header>
+                                             <StackPanel Margin="0,0,16,0">
+                                                 <TextBlock Text="{x:Static res:Resource.EnableMinimumRpmChangeToApply}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                 <TextBlock Text="{x:Static res:Resource.EnableMinimumRpmChangeToApplyDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                             </StackPanel>
+                                         </wpfui:CardControl.Header>
+                                         <wpfui:ToggleSwitch VerticalAlignment="Center" IsChecked="{Binding EnableMinimumRpmChangeToApply}"/>
+                                     </wpfui:CardControl>
+
+                                     <wpfui:CardControl Margin="0,0,0,8" Padding="16,12" IsEnabled="{Binding EnableMinimumRpmChangeToApply}">
+                                         <wpfui:CardControl.Header>
+                                             <StackPanel Margin="0,0,16,0">
+                                                 <TextBlock Text="{x:Static res:Resource.MinimumRpmChangeToApply}" FontSize="13" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                 <TextBlock Text="{x:Static res:Resource.MinimumRpmChangeToApplyDesc}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                             </StackPanel>
+                                         </wpfui:CardControl.Header>
+                                         <wpfui:TextBox Width="80" VerticalAlignment="Center" local:TextBoxBehavior.NumericOnly="True" Text="{Binding MinimumRpmChangeToApply, UpdateSourceTrigger=PropertyChanged}"/>
+                                     </wpfui:CardControl>
                                     
                                     <wpfui:CardControl Margin="0,0,0,8" Padding="16,12">
                                         <wpfui:CardControl.Header>

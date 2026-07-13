@@ -61,7 +61,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acoustic Offset Value (RPM).
+        ///   Looks up a localized string similar to Acoustic Offset Value.
         /// </summary>
         public static string AcousticOffsetAddRpm {
             get {
@@ -70,7 +70,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The exact RPM amount added to offset the secondary fan..
+        ///   Looks up a localized string similar to The target RPM offset added to the secondary fan to mitigate harmonic resonance..
         /// </summary>
         public static string AcousticOffsetAddRpmDesc {
             get {
@@ -79,7 +79,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acoustic Offset Delta (RPM).
+        ///   Looks up a localized string similar to Acoustic Offset Delta.
         /// </summary>
         public static string AcousticOffsetDeltaRpm {
             get {
@@ -88,7 +88,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum difference in RPM between fans before acoustic offsetting triggers..
+        ///   Looks up a localized string similar to Maximum target RPM difference between fans below which acoustic offsetting will trigger..
         /// </summary>
         public static string AcousticOffsetDeltaRpmDesc {
             get {
@@ -106,7 +106,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add a new control point at the end of the curve.
+        ///   Looks up a localized string similar to Add a new node.
         /// </summary>
         public static string AddNodeTooltip {
             get {
@@ -133,7 +133,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Force write the fan speed to the EC every cycle even if unchanged..
+        ///   Looks up a localized string similar to Forces writing the target RPM to the EC on every calculation cycle, regardless of speed changes..
         /// </summary>
         public static string AlwaysWriteRpmDesc {
             get {
@@ -151,7 +151,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable custom fan control in all power modes on Legion devices.
+        ///   Looks up a localized string similar to Enable custom fan control in all power modes..
         /// </summary>
         public static string ApplyToAllModesDesc {
             get {
@@ -160,7 +160,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RPM Calculation Interval (ms).
+        ///   Looks up a localized string similar to RPM Calculation Interval.
         /// </summary>
         public static string CalcInterval {
             get {
@@ -169,7 +169,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum delay between two RPM calculations, default 500ms.
+        ///   Looks up a localized string similar to Minimum delay (ms) between speed recalculations..
         /// </summary>
         public static string CalcIntervalDesc {
             get {
@@ -205,7 +205,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear cached RPM/temperature state.
+        ///   Looks up a localized string similar to Clears cached RPM and temperature state when custom fan control is disabled..
         /// </summary>
         public static string ClearCacheOnLeaveDesc {
             get {
@@ -223,7 +223,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Critical Temperature (°C).
+        ///   Looks up a localized string similar to Critical Temperature.
         /// </summary>
         public static string CriticalTemp {
             get {
@@ -232,7 +232,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Force maximum fan speed regardless of curve at this temperature..
+        ///   Looks up a localized string similar to Enforces maximum fan speed regardless of the current fan curve once this temperature threshold (°C) is reached..
         /// </summary>
         public static string CriticalTempDesc {
             get {
@@ -268,7 +268,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output detailed debug logs when enabled.
+        ///   Looks up a localized string similar to Outputs detailed diagnostics and behavior logs when enabled..
         /// </summary>
         public static string DebugModeDesc {
             get {
@@ -286,7 +286,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Predictive Lookahead (Seconds).
+        ///   Looks up a localized string similar to Predictive Lookahead.
         /// </summary>
         public static string DerivativeLookaheadSeconds {
             get {
@@ -295,7 +295,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to How far into the future to predict temperatures when a spike is detected..
+        ///   Looks up a localized string similar to Time interval (s) to project future temperatures when a spike is detected..
         /// </summary>
         public static string DerivativeLookaheadSecondsDesc {
             get {
@@ -304,7 +304,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Temperature Spike Threshold (°C/s).
+        ///   Looks up a localized string similar to Temperature Spike Threshold.
         /// </summary>
         public static string DerivativeSpikeThreshold {
             get {
@@ -313,7 +313,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sudden temperature spike rate required to activate predictive cooling..
+        ///   Looks up a localized string similar to Temperature rate-of-change threshold (°C/s) required to trigger predictive cooling..
         /// </summary>
         public static string DerivativeSpikeThresholdDesc {
             get {
@@ -322,7 +322,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Temperature Smoothing (EMA Alpha).
+        ///   Looks up a localized string similar to EMA Smoothing Coefficient.
         /// </summary>
         public static string EmaAlpha {
             get {
@@ -331,7 +331,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weight of new temperature readings. Lower = smoother but slower..
+        ///   Looks up a localized string similar to Weight of new temperature readings in the Exponential Moving Average filter. Lower values increase smoothing but introduce response latency..
         /// </summary>
         public static string EmaAlphaDesc {
             get {
@@ -340,7 +340,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enables smoothing temperature fluctuations using Exponential Moving Average..
+        ///   Looks up a localized string similar to Smooths temperature reading fluctuations using an Exponential Moving Average (EMA) filter..
         /// </summary>
         public static string EmaDesc {
             get {
@@ -358,7 +358,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Prevents annoying beat frequencies by shifting fan speeds when they are too similar..
+        ///   Looks up a localized string similar to Mitigates audible beat frequencies and harmonic resonance by applying a speed offset when fan targets are too similar..
         /// </summary>
         public static string EnableAcousticOffsetDesc {
             get {
@@ -376,7 +376,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restore BIOS auto fan control when disabled.
+        ///   Looks up a localized string similar to Restores default BIOS automatic fan control when disabled..
         /// </summary>
         public static string EnableCurveDesc {
             get {
@@ -412,6 +412,42 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable Write Suppression.
+        /// </summary>
+        public static string EnableMinimumRpmChangeToApply {
+            get {
+                return ResourceManager.GetString("EnableMinimumRpmChangeToApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suppresses WMI updates if the change in target RPM is below the specified threshold..
+        /// </summary>
+        public static string EnableMinimumRpmChangeToApplyDesc {
+            get {
+                return ResourceManager.GetString("EnableMinimumRpmChangeToApplyDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Power Delta Filter.
+        /// </summary>
+        public static string EnablePowerDeltaThreshold {
+            get {
+                return ResourceManager.GetString("EnablePowerDeltaThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters out recalculations if the power draw change is smaller than the threshold..
+        /// </summary>
+        public static string EnablePowerDeltaThresholdDesc {
+            get {
+                return ResourceManager.GetString("EnablePowerDeltaThresholdDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Predictive Engine.
         /// </summary>
         public static string EnablePredictiveEngine {
@@ -439,7 +475,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Briefly pulses the fans at high speed to overcome static friction before settling to low targets..
+        ///   Looks up a localized string similar to Briefly accelerates the fans to a higher speed to overcome static friction before settling to low targets..
         /// </summary>
         public static string EnableSpinUpDesc {
             get {
@@ -453,6 +489,24 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         public static string EnableStepDownGlide {
             get {
                 return ResourceManager.GetString("EnableStepDownGlide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Temperature Delta Filter.
+        /// </summary>
+        public static string EnableTemperatureDeltaThreshold {
+            get {
+                return ResourceManager.GetString("EnableTemperatureDeltaThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters out recalculations if the temperature change is smaller than the threshold..
+        /// </summary>
+        public static string EnableTemperatureDeltaThresholdDesc {
+            get {
+                return ResourceManager.GetString("EnableTemperatureDeltaThresholdDesc", resourceCulture);
             }
         }
         
@@ -502,7 +556,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Re-apply fan control after switching power modes.
+        ///   Looks up a localized string similar to Re-applies custom fan curve targets after switching power modes..
         /// </summary>
         public static string ForceRefreshOnSwitchDesc {
             get {
@@ -520,7 +574,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Always write to the EC if the target RPM is 0 to ensure fans actually stop..
+        ///   Looks up a localized string similar to Forces writing to the EC when target RPM is 0 to ensure fans halt completely..
         /// </summary>
         public static string ForceWriteWhenRpmZeroDesc {
             get {
@@ -574,7 +628,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hysteresis Deadzone Temp (°C).
+        ///   Looks up a localized string similar to Hysteresis Deadzone Temp.
         /// </summary>
         public static string HysteresisDeadzoneTemp {
             get {
@@ -583,7 +637,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Temperature padding to prevent fans from aggressively ramping up and down when hovering on a curve node..
+        ///   Looks up a localized string similar to Temperature threshold buffer (°C) to prevent fan speed oscillation when temperature fluctuates around a curve node..
         /// </summary>
         public static string HysteresisDeadzoneTempDesc {
             get {
@@ -610,7 +664,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skip processing when sensor returns 0.
+        ///   Looks up a localized string similar to Skips speed calculations when temperature sensors temporarily return zero..
         /// </summary>
         public static string IgnoreZeroTempDesc {
             get {
@@ -637,7 +691,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Run all fans at maximum speed.
+        ///   Looks up a localized string similar to Runs all fans at maximum speed..
         /// </summary>
         public static string MaxSpeedTooltip {
             get {
@@ -655,7 +709,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ignore target RPM changes smaller than this value to reduce EC writes..
+        ///   Looks up a localized string similar to Suppress writes to WMI if the target RPM change is smaller than this value to reduce WMI call overhead..
         /// </summary>
         public static string MinimumRpmChangeToApplyDesc {
             get {
@@ -682,7 +736,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Power Delta Threshold (W).
+        ///   Looks up a localized string similar to Power Delta Threshold.
         /// </summary>
         public static string PowerDeltaThreshold {
             get {
@@ -691,7 +745,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum change in wattage before forcing a recalculation.
+        ///   Looks up a localized string similar to Minimum change in power consumption (W) required to trigger a recalculation..
         /// </summary>
         public static string PowerDeltaThresholdDesc {
             get {
@@ -709,7 +763,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enables anticipating temperature spikes and spinning up fans proactively..
+        ///   Looks up a localized string similar to Anticipates temperature spikes based on rate-of-change and proactively accelerates fans..
         /// </summary>
         public static string PredictiveEngineDesc {
             get {
@@ -727,7 +781,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click to restore custom curve.
+        ///   Looks up a localized string similar to Restore Custom Curve.
         /// </summary>
         public static string RecoverCurve {
             get {
@@ -745,7 +799,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Number of refresh cycles after mode switch, default 2.
+        ///   Looks up a localized string similar to Number of refresh cycles executed after a power mode switch..
         /// </summary>
         public static string RefreshCountDesc {
             get {
@@ -754,7 +808,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Refresh Interval (ms).
+        ///   Looks up a localized string similar to Refresh Interval.
         /// </summary>
         public static string RefreshInterval {
             get {
@@ -763,7 +817,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delay between multiple refreshes, default 250ms.
+        ///   Looks up a localized string similar to Delay (ms) between multiple refresh cycles..
         /// </summary>
         public static string RefreshIntervalDesc {
             get {
@@ -772,7 +826,25 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Safe Minimum Fan Percentage (%).
+        ///   Looks up a localized string similar to Reset to Defaults.
+        /// </summary>
+        public static string ResetToDefaults {
+            get {
+                return ResourceManager.GetString("ResetToDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reverts all custom fan curve settings to their original factory values..
+        /// </summary>
+        public static string ResetToDefaultsDesc {
+            get {
+                return ResourceManager.GetString("ResetToDefaultsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Safe Minimum Fan Percentage.
         /// </summary>
         public static string SafeMaxPercentAtMaxTemp {
             get {
@@ -781,7 +853,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The guaranteed minimum fan percentage when the hardware reaches the critical maximum temperature..
+        ///   Looks up a localized string similar to Guaranteed minimum fan speed percentage when the safe maximum temperature is reached..
         /// </summary>
         public static string SafeMaxPercentAtMaxTempDesc {
             get {
@@ -790,7 +862,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Safe Maximum Temperature (°C).
+        ///   Looks up a localized string similar to Safe Maximum Temperature.
         /// </summary>
         public static string SafeMaxTemp {
             get {
@@ -799,7 +871,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The temperature at which the safety net enforces its maximum guaranteed minimum fan speed..
+        ///   Looks up a localized string similar to The temperature threshold (°C) at which the safety net enforces the maximum safety fan speed floor..
         /// </summary>
         public static string SafeMaxTempDesc {
             get {
@@ -808,7 +880,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Safe Minimum Temperature (°C).
+        ///   Looks up a localized string similar to Safe Minimum Temperature.
         /// </summary>
         public static string SafeMinTemp {
             get {
@@ -817,7 +889,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The minimum bound for safe hardware temperature evaluation..
+        ///   Looks up a localized string similar to The temperature threshold (°C) above which the safety net speed floor begins scaling upward..
         /// </summary>
         public static string SafeMinTempDesc {
             get {
@@ -844,7 +916,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor &amp; Calc.
+        ///   Looks up a localized string similar to Sensor &amp; Calculation.
         /// </summary>
         public static string SensorAndCalc {
             get {
@@ -853,7 +925,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor Polling Interval (ms).
+        ///   Looks up a localized string similar to Sensor Polling Interval.
         /// </summary>
         public static string SensorInterval {
             get {
@@ -862,7 +934,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Interval for reading temperature data, default 500ms.
+        ///   Looks up a localized string similar to Interval (ms) for polling temperature sensor data..
         /// </summary>
         public static string SensorIntervalDesc {
             get {
@@ -907,7 +979,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Selects which hardware temperature this fan curve actively monitors and responds to..
+        ///   Looks up a localized string similar to Selects the temperature sensor monitored by this fan curve..
         /// </summary>
         public static string SensorSourceDesc {
             get {
@@ -934,7 +1006,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open settings.
+        ///   Looks up a localized string similar to Opens settings panel..
         /// </summary>
         public static string SettingsTooltip {
             get {
@@ -943,7 +1015,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Manual fan curves are disabled. The Fuzzy Logic engine is managing thermals based on power consumption..
+        ///   Looks up a localized string similar to Manual fan curves are disabled. The autonomous thermal controller is managing fan speeds based on real-time temperature and power consumption..
         /// </summary>
         public static string SmartAutoDashboardSubtitle {
             get {
@@ -970,7 +1042,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Autonomously controls fan speeds using Fuzzy Logic based on hardware temperature and power draw. Disables manual fan curves..
+        ///   Looks up a localized string similar to Autonomously manages fan speeds using fuzzy logic based on real-time temperature and power consumption. Manual fan curves are bypassed..
         /// </summary>
         public static string SmartAutoDescription {
             get {
@@ -979,7 +1051,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hardware not supported.
+        ///   Looks up a localized string similar to Hardware not supported..
         /// </summary>
         public static string SmartAutoHardwareNotSupported {
             get {
@@ -988,7 +1060,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Inactive (requires Custom Mode or Apply to All Modes).
+        ///   Looks up a localized string similar to Inactive (requires Custom Mode or &quot;Apply to All Power Modes&quot; to be enabled)..
         /// </summary>
         public static string SmartAutoInactiveRequiresCustom {
             get {
@@ -1043,7 +1115,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Spin-Up Duration (ms).
+        ///   Looks up a localized string similar to Spin-Up Duration.
         /// </summary>
         public static string SpinUpDuration {
             get {
@@ -1052,7 +1124,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to How long the spin-up RPM lasts, default 300ms.
+        ///   Looks up a localized string similar to Duration (ms) of the spin-up boost phase..
         /// </summary>
         public static string SpinUpDurationDesc {
             get {
@@ -1070,7 +1142,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Temporary RPM during spin-up, default 3000.
+        ///   Looks up a localized string similar to Target RPM applied during the spin-up boost phase..
         /// </summary>
         public static string SpinUpRpmDesc {
             get {
@@ -1097,7 +1169,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step-Down Glide Rate (RPM/sec).
+        ///   Looks up a localized string similar to Step-Down Glide Rate.
         /// </summary>
         public static string StepDownRate {
             get {
@@ -1115,7 +1187,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step-Down Protection Delta (RPM).
+        ///   Looks up a localized string similar to Step-Down Protection Delta.
         /// </summary>
         public static string StepDownSpamDelta {
             get {
@@ -1124,7 +1196,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum RPM drop required before sending a hardware command..
+        ///   Looks up a localized string similar to Minimum target RPM change required before updating WMI during deceleration..
         /// </summary>
         public static string StepDownSpamDeltaDesc {
             get {
@@ -1142,7 +1214,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All fans respond to the highest result..
+        ///   Looks up a localized string similar to Synchronizes all fans to the highest calculated speed target..
         /// </summary>
         public static string SyncFanLevelDesc {
             get {
@@ -1169,7 +1241,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Temperature Change Threshold (°C).
+        ///   Looks up a localized string similar to Temperature Change Threshold.
         /// </summary>
         public static string TempDeltaThreshold {
             get {
@@ -1178,7 +1250,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum temperature change to trigger recalculation, default 0.5°C.
+        ///   Looks up a localized string similar to Minimum temperature change (°C) required to trigger a fan speed recalculation..
         /// </summary>
         public static string TempDeltaThresholdDesc {
             get {
@@ -1196,7 +1268,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enforces safe minimum fan speeds at high temperatures. Disable at your own risk!.
+        ///   Looks up a localized string similar to Enforces safe minimum fan speed thresholds at high temperatures..
         /// </summary>
         public static string ThermalSafetyNetDesc {
             get {
@@ -1223,7 +1295,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UI Save Debounce Delay (ms).
+        ///   Looks up a localized string similar to UI Save Debounce Delay.
         /// </summary>
         public static string UiDebounceDelay {
             get {
@@ -1232,7 +1304,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delay before writing to disk after dragging a curve node..
+        ///   Looks up a localized string similar to Delay (ms) before committing configuration changes to disk after curve node adjustments..
         /// </summary>
         public static string UiDebounceDelayDesc {
             get {
@@ -1241,7 +1313,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UI Update Interval (ms).
+        ///   Looks up a localized string similar to UI Update Interval.
         /// </summary>
         public static string UiUpdateInterval {
             get {
@@ -1250,7 +1322,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Monitor panel refresh interval, default 1000ms.
+        ///   Looks up a localized string similar to Refresh interval (ms) for the monitoring panel..
         /// </summary>
         public static string UiUpdateIntervalDesc {
             get {
@@ -1268,7 +1340,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instead of waiting for new sensor readings.
+        ///   Looks up a localized string similar to Uses the cached sensor snapshot instead of waiting for a new polling cycle during forced refresh..
         /// </summary>
         public static string UseCachedSnapshotDesc {
             get {

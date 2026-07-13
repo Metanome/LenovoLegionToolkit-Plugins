@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 {
@@ -63,6 +64,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _enableStepDownGlide = s.EnableStepDownGlide;
             _enableThermalSafetyNet = s.EnableThermalSafetyNet;
             _enableEma = s.EnableEma;
+            
+            _enableTemperatureDeltaThreshold = s.EnableTemperatureDeltaThreshold;
+            _enablePowerDeltaThreshold = s.EnablePowerDeltaThreshold;
+            _enableMinimumRpmChangeToApply = s.EnableMinimumRpmChangeToApply;
+            ResetToDefaultsCommand = new RelayCommand(ResetToDefaults);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -115,6 +121,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             Save(nameof(CustomFanCurveSettings.EnableStepDownGlide), _enableStepDownGlide);
             Save(nameof(CustomFanCurveSettings.EnableThermalSafetyNet), _enableThermalSafetyNet);
             Save(nameof(CustomFanCurveSettings.EnableEma), _enableEma);
+            
+            Save(nameof(CustomFanCurveSettings.EnableTemperatureDeltaThreshold), _enableTemperatureDeltaThreshold);
+            Save(nameof(CustomFanCurveSettings.EnablePowerDeltaThreshold), _enablePowerDeltaThreshold);
+            Save(nameof(CustomFanCurveSettings.EnableMinimumRpmChangeToApply), _enableMinimumRpmChangeToApply);
         }
 
         private void Save<T>(string name, T value) => _configManager.UpdateSetting(name, value);
@@ -586,6 +596,85 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         {
             get => _enableEma;
             set { if (_enableEma != value) { _enableEma = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enableTemperatureDeltaThreshold;
+        public bool EnableTemperatureDeltaThreshold
+        {
+            get => _enableTemperatureDeltaThreshold;
+            set { if (_enableTemperatureDeltaThreshold != value) { _enableTemperatureDeltaThreshold = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enablePowerDeltaThreshold;
+        public bool EnablePowerDeltaThreshold
+        {
+            get => _enablePowerDeltaThreshold;
+            set { if (_enablePowerDeltaThreshold != value) { _enablePowerDeltaThreshold = value; OnPropertyChanged(); } }
+        }
+
+        private bool _enableMinimumRpmChangeToApply;
+        public bool EnableMinimumRpmChangeToApply
+        {
+            get => _enableMinimumRpmChangeToApply;
+            set { if (_enableMinimumRpmChangeToApply != value) { _enableMinimumRpmChangeToApply = value; OnPropertyChanged(); } }
+        }
+
+        public ICommand ResetToDefaultsCommand { get; }
+
+        public void ResetToDefaults()
+        {
+            var defaultSettings = new CustomFanCurveSettings();
+
+            IsCustomFanEnabled = defaultSettings.IsCustomFanEnabled;
+            ApplyToAllPowerModes = defaultSettings.ApplyToAllPowerModes;
+            DebugMode = defaultSettings.DebugMode;
+            SensorIntervalMs = defaultSettings.SensorIntervalMs;
+            CalculationDelayMs = defaultSettings.CalculationDelayMs;
+            IsSmartAutoEnabled = defaultSettings.IsSmartAutoEnabled;
+            SyncFanLevel = defaultSettings.SyncFanLevel;
+            PowerDeltaThreshold = defaultSettings.PowerDeltaThreshold;
+            TemperatureDeltaThreshold = defaultSettings.TemperatureDeltaThreshold;
+            IgnoreZeroTemperature = defaultSettings.IgnoreZeroTemperature;
+            AlwaysWriteRpm = defaultSettings.AlwaysWriteRpm;
+            ForceWriteWhenRpmZero = defaultSettings.ForceWriteWhenRpmZero;
+            MinimumRpmChangeToApply = defaultSettings.MinimumRpmChangeToApply;
+            SpinUpBoostEnabled = defaultSettings.SpinUpBoostEnabled;
+            SpinUpBoostRpm = defaultSettings.SpinUpBoostRpm;
+            SpinUpBoostDurationMs = defaultSettings.SpinUpBoostDurationMs;
+            ForceRefreshOnModeSwitch = defaultSettings.ForceRefreshOnModeSwitch;
+            ModeSwitchRefreshCount = defaultSettings.ModeSwitchRefreshCount;
+            ModeSwitchRefreshDelayMs = defaultSettings.ModeSwitchRefreshDelayMs;
+            ForceRefreshOnEnable = defaultSettings.ForceRefreshOnEnable;
+            ClearCachedStateWhenLeavingCustomMode = defaultSettings.ClearCachedStateWhenLeavingCustomMode;
+            UiUpdateIntervalMs = defaultSettings.UiUpdateIntervalMs;
+            UseCachedSnapshotForForcedRefresh = defaultSettings.UseCachedSnapshotForForcedRefresh;
+            EnableMaxFanWriteEachCycle = defaultSettings.EnableMaxFanWriteEachCycle;
+            
+            EmaAlpha = defaultSettings.EmaAlpha;
+            StepDownRateRpmPerSec = defaultSettings.StepDownRateRpmPerSec;
+            StepDownSpamProtectionDelta = defaultSettings.StepDownSpamProtectionDelta;
+            UiDebounceDelayMs = defaultSettings.UiDebounceDelayMs;
+            SafeMinTemp = defaultSettings.SafeMinTemp;
+            SafeMaxTemp = defaultSettings.SafeMaxTemp;
+            CriticalTemp = defaultSettings.CriticalTemp;
+            SafeMaxPercentAtMaxTemp = defaultSettings.SafeMaxPercentAtMaxTemp;
+
+            EnableAcousticOffset = defaultSettings.EnableAcousticOffset;
+            AcousticOffsetDeltaRpm = defaultSettings.AcousticOffsetDeltaRpm;
+            AcousticOffsetAddRpm = defaultSettings.AcousticOffsetAddRpm;
+            HysteresisDeadzoneTemp = defaultSettings.HysteresisDeadzoneTemp;
+            DerivativeSpikeThreshold = defaultSettings.DerivativeSpikeThreshold;
+            DerivativeLookaheadSeconds = defaultSettings.DerivativeLookaheadSeconds;
+
+            EnablePredictiveEngine = defaultSettings.EnablePredictiveEngine;
+            EnableHysteresis = defaultSettings.EnableHysteresis;
+            EnableStepDownGlide = defaultSettings.EnableStepDownGlide;
+            EnableThermalSafetyNet = defaultSettings.EnableThermalSafetyNet;
+            EnableEma = defaultSettings.EnableEma;
+
+            EnableTemperatureDeltaThreshold = defaultSettings.EnableTemperatureDeltaThreshold;
+            EnablePowerDeltaThreshold = defaultSettings.EnablePowerDeltaThreshold;
+            EnableMinimumRpmChangeToApply = defaultSettings.EnableMinimumRpmChangeToApply;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

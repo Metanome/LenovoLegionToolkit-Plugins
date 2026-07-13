@@ -155,7 +155,7 @@ public partial class CustomFanCurveControlV3 : UserControl
         float temp = (float)(newX / _canvas.ActualWidth * 100.0);
         int pct = (int)Math.Round((1.0 - newY / _canvas.ActualHeight) * 100.0);
 
-        _viewModel?.MovePoint(display, temp, pct);
+        _viewModel?.MoveNode(display, temp, pct);
         RequestDraw();
     }
 

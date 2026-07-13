@@ -35,6 +35,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private bool _powerModeFeatureBroken;
         private int _uiOpenCount;
         private int _isProcessing;
+        private int _activeSensorIntervalMs;
 
         private readonly ConcurrentDictionary<int, int> _lastAppliedRpm = new();
         private readonly ConcurrentDictionary<int, float> _lastTemp = new();
@@ -142,7 +143,29 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
             _configManager.SettingsChanged += () =>
             {
-                if (!_disposed) { _ = ReevaluateStateAsync(); }
+                if (!_disposed)
+                {
+                    var settings = _configManager.Settings;
+                    
+                    if (settings.SensorIntervalMs != _activeSensorIntervalMs)
+                    {
+                        _activeSensorIntervalMs = settings.SensorIntervalMs;
+                        if (_sensorProvider.IsRunning)
+                        {
+                            _sensorProvider.Stop();
+                            _sensorProvider.Start(_activeSensorIntervalMs);
+                        }
+                    }
+
+                    if (settings.IsFullSpeed != _isFullSpeed)
+                    {
+                        _ = SetFullSpeed(settings.IsFullSpeed, updateSettings: false);
+                    }
+                    else
+                    {
+                        _ = ReevaluateStateAsync();
+                    }
+                }
             };
 
             MessagingCenter.Subscribe<FanStateMessage>(this, m => 
@@ -157,21 +180,29 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public async Task InitializeAsync()
         {
-            Logger.Debug("Service initialization starting...");
-            var saved = _configManager.Settings.FanMaxRpms;
-            await _hardware.InitializeAsync(saved).ConfigureAwait(false);
-            Logger.Debug($"Hardware initialization complete: IsSupported={_hardware.IsSupported}, AvailableFanIds=[{string.Join(", ", _hardware.AvailableFanIds)}]");
-            if (saved.Count > 0 && !_configManager.Settings.FallbackProbeDone)
+            try
             {
-                _configManager.UpdateSetting(nameof(CustomFanCurveSettings.FallbackProbeDone), true);
-                Logger.Debug("Fallback probe completed and saved");
-            }
+                Logger.Debug("Service initialization starting...");
+                var settings = _configManager.Settings;
+                _activeSensorIntervalMs = settings.SensorIntervalMs;
+                var saved = settings.FanMaxRpms;
+                await _hardware.InitializeAsync(saved).ConfigureAwait(false);
+                Logger.Debug($"Hardware initialization complete: IsSupported={_hardware.IsSupported}, AvailableFanIds=[{string.Join(", ", _hardware.AvailableFanIds)}]");
+                if (saved.Count > 0 && !_configManager.Settings.FallbackProbeDone)
+                {
+                    _configManager.UpdateSetting(nameof(CustomFanCurveSettings.FallbackProbeDone), true);
+                    Logger.Debug("Fallback probe completed and saved");
+                }
 
-            _configManager.EnsureEntriesForFans(_hardware.AvailableFanIds);
-            Logger.Debug($"Fan entries ensured for {_hardware.AvailableFanIds.Count} fan(s)");
-            await ReevaluateStateAsync();
-            Logger.Debug("Service initialization complete");
-            _initTcs.TrySetResult();
+                _configManager.EnsureEntriesForFans(_hardware.AvailableFanIds);
+                Logger.Debug($"Fan entries ensured for {_hardware.AvailableFanIds.Count} fan(s)");
+                await ReevaluateStateAsync();
+                Logger.Debug("Service initialization complete");
+            }
+            finally
+            {
+                _initTcs.TrySetResult();
+            }
         }
 
         public void OnUIOpened()
@@ -191,10 +222,13 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
         }
 
-        public async Task SetFullSpeed(bool isFullSpeed)
+        public async Task SetFullSpeed(bool isFullSpeed, bool updateSettings = true)
         {
             _isFullSpeed = isFullSpeed;
-            _configManager.UpdateSetting(nameof(CustomFanCurveSettings.IsFullSpeed), isFullSpeed);
+            if (updateSettings)
+            {
+                _configManager.UpdateSetting(nameof(CustomFanCurveSettings.IsFullSpeed), isFullSpeed);
+            }
             if (_isFullSpeed)
             {
                 StartSensorsIfNeeded();
@@ -252,7 +286,10 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private void StartSensorsIfNeeded()
         {
             if (!_sensorProvider.IsRunning)
-                _sensorProvider.Start(_configManager.Settings.SensorIntervalMs);
+            {
+                _activeSensorIntervalMs = _configManager.Settings.SensorIntervalMs;
+                _sensorProvider.Start(_activeSensorIntervalMs);
+            }
         }
 
         private void StopSensorsIfNeeded()
@@ -353,7 +390,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                         var hadLast = _lastAppliedRpm.TryGetValue(fan1, out var lastApplied);
                         var delta = hadLast ? Math.Abs(lastApplied - newTargetRpm1) : int.MaxValue;
                         bool isSteppingDown = _lastIdealRpm.TryGetValue(fan1, out var ideal) && _lastCalcRpm.TryGetValue(fan1, out var calc) && ideal < calc;
-                        var requiredDelta = isSteppingDown ? _configManager.Settings.StepDownSpamProtectionDelta : _configManager.Settings.MinimumRpmChangeToApply;
+                        var minRpmChange = _configManager.Settings.EnableMinimumRpmChangeToApply ? _configManager.Settings.MinimumRpmChangeToApply : 0;
+                        var requiredDelta = isSteppingDown ? _configManager.Settings.StepDownSpamProtectionDelta : minRpmChange;
                         
                         var isSameOrClose = hadLast && (delta < requiredDelta || newTargetRpm1 == lastApplied);
                         if (isSameOrClose)
@@ -553,8 +591,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             float currentRelevantPower = fanId == 2 ? snapshot[SensorItem.GpuPower] : snapshot[SensorItem.CpuPower];
             var powerDelta = _lastPower.ContainsKey(fanId) ? Math.Abs(lastPower - currentRelevantPower) : double.MaxValue;
 
+            var tempThreshold = settings.EnableTemperatureDeltaThreshold ? settings.TemperatureDeltaThreshold : 0.0;
+            var powerThreshold = settings.EnablePowerDeltaThreshold ? settings.PowerDeltaThreshold : 0.0;
+
             var needRecalc = !_lastTemp.ContainsKey(fanId) || !_lastCalcRpm.ContainsKey(fanId) || isSteppingDown
-                || (elapsed && (tempDelta >= settings.TemperatureDeltaThreshold || powerDelta >= settings.PowerDeltaThreshold
+                || (elapsed && (tempDelta >= tempThreshold || powerDelta >= powerThreshold
                     || !_lastAppliedRpm.ContainsKey(fanId) || _lastAppliedRpm[fanId] != cachedRpm));
             if (!elapsed && _lastCalcRpm.ContainsKey(fanId) && !isSteppingDown)
                 needRecalc = false;
@@ -656,7 +697,8 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             var hadLast = _lastAppliedRpm.TryGetValue(fanId, out var lastApplied);
             var delta = hadLast ? Math.Abs(lastApplied - targetRpm) : int.MaxValue;
 
-            var requiredDelta = isSteppingDown ? settings.StepDownSpamProtectionDelta : settings.MinimumRpmChangeToApply;
+            var minRpmChange = settings.EnableMinimumRpmChangeToApply ? settings.MinimumRpmChangeToApply : 0;
+            var requiredDelta = isSteppingDown ? settings.StepDownSpamProtectionDelta : minRpmChange;
             var isSameOrClose = hadLast && (delta < requiredDelta || targetRpm == lastApplied);
             if (isSameOrClose)
             {
@@ -690,10 +732,12 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
             try
             {
-                if (settings.SpinUpBoostEnabled && currentRpm == 0 && targetRpm < settings.SpinUpBoostRpm)
+                var hasLastApplied = _lastAppliedRpm.TryGetValue(fanId, out var lastAppliedVal);
+                var isPreviouslyStopped = !hasLastApplied || lastAppliedVal == 0;
+                if (settings.SpinUpBoostEnabled && targetRpm > 0 && isPreviouslyStopped && targetRpm < settings.SpinUpBoostRpm)
                 {
                     await _hardware.SetFanRpmAsync(fanId, settings.SpinUpBoostRpm).ConfigureAwait(false);
-                    await Task.Delay(settings.SpinUpBoostDurationMs);
+                    await Task.Delay(settings.SpinUpBoostDurationMs).ConfigureAwait(false);
                 }
 
                 await _hardware.SetFanRpmAsync(fanId, targetRpm).ConfigureAwait(false);
@@ -811,8 +855,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             }
             finally
             {
-                if (_modeLock.CurrentCount == 0)
-                    _modeLock.Release();
+                _modeLock.Release();
             }
         }
 

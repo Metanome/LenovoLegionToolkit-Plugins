@@ -82,7 +82,7 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     
-                    <wpfui:Button x:Name="_addNodeButton" Appearance="Secondary" Height="36" Width="36" Padding="0"
+                    <wpfui:Button x:Name="_addNodeButton" Appearance="Primary" Height="36" Width="36" Padding="0"
                             VerticalAlignment="Center" Margin="6,0,0,0"
                             Icon="Add24"
                             Command="{Binding AddNodeCommand}" ToolTip="{x:Static res:Resource.AddNodeTooltip}"

@@ -103,7 +103,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _monitoring = monitoring;
 
             ToggleFullSpeedCommand = new RelayCommand(() => IsFullSpeed = !IsFullSpeed);
-            AddNodeCommand = new RelayCommand(() => SelectedFanViewModel?.AddPointCommand.Execute(null));
+            AddNodeCommand = new RelayCommand(() => SelectedFanViewModel?.AddNodeCommand.Execute(null));
 
             _configManager.SettingsChanged += OnSettingsChanged;
             MessagingCenter.Subscribe<SmartAutoTelemetryMessage>(this, OnSmartAutoTelemetry);

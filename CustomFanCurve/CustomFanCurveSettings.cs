@@ -12,7 +12,9 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public int SensorIntervalMs { get; set; } = 500;
         public int CalculationDelayMs { get; set; } = 1000;
         public double TemperatureDeltaThreshold { get; set; } = 0.5;
+        public bool EnableTemperatureDeltaThreshold { get; set; } = true;
         public double PowerDeltaThreshold { get; set; } = 5.0;
+        public bool EnablePowerDeltaThreshold { get; set; } = true;
         public bool IgnoreZeroTemperature { get; set; } = true;
 
         public Dictionary<int, int> FanMaxRpms { get; set; } = new();
@@ -20,6 +22,7 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         public bool AlwaysWriteRpm { get; set; } = true;
         public bool ForceWriteWhenRpmZero { get; set; } = true;
         public int MinimumRpmChangeToApply { get; set; } = 50;
+        public bool EnableMinimumRpmChangeToApply { get; set; } = true;
 
         public bool SpinUpBoostEnabled { get; set; }
         public int SpinUpBoostRpm { get; set; } = 3000;
