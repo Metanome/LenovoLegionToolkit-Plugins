@@ -12,5 +12,10 @@ if exist "%LOCALAPPDATA%\LenovoLegionToolkit\Plugins\%PLUGIN_NAME%\UniversalFanC
     del /q "%LOCALAPPDATA%\LenovoLegionToolkit\Plugins\%PLUGIN_NAME%\UniversalFanControl.Lib.dll"
 )
 
+rmdir /s /q "..\BuildLLT\obj" 2>nul
+rmdir /s /q "..\BuildLLT\bin" 2>nul
+rmdir /s /q "%PLUGIN_NAME%\bin" 2>nul
+rmdir /s /q "%PLUGIN_NAME%\obj" 2>nul
+
 echo.
 echo Build and deployment completed successfully!
