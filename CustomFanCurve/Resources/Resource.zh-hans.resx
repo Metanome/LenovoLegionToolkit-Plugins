@@ -550,6 +550,12 @@
   <data name="WindowTitle" xml:space="preserve">
     <value>自定义风扇曲线(WMI)</value>
   </data>
+  <data name="HardwareSensorsWarningDescription" xml:space="preserve">
+    <value>必须在设置中启用硬件传感器后台轮询，自定义风扇曲线才能正常工作。</value>
+  </data>
+  <data name="PawnIOWarningDescription" xml:space="preserve">
+    <value>您需要先安装 PawnIO 才能使用硬件传感器！</value>
+  </data>
   <data name="WriteEachCycle" xml:space="preserve">
     <value>全速模式每周期写入</value>
   </data>

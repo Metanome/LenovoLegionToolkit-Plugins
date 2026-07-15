@@ -10,6 +10,7 @@
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <SolidColorBrush x:Key="PageAccentSecondaryBrush" Color="{DynamicResource SystemAccentColorSecondary}"/>
+        <SolidColorBrush x:Key="TextOnAccentBrush" Color="{DynamicResource TextOnAccentFillColorPrimary}"/>
         
         <Style x:Key="ThermalStateTextStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
@@ -47,7 +48,9 @@
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <wpfui:Card Grid.Row="0" Margin="0,0,0,12" Padding="16,12" IsEnabled="{Binding IsUiEnabled, FallbackValue=False}">
@@ -198,21 +201,44 @@
                             <RowDefinition Height="Auto"/><RowDefinition Height="12"/><RowDefinition Height="Auto"/>
                             <RowDefinition Height="12"/><RowDefinition Height="Auto"/><RowDefinition Height="12"/><RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
+ 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoThermalState}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
                         <TextBlock x:Name="_dashboardThermalState" Grid.Row="0" Grid.Column="2" Text="{Binding DashboardThermalState}" FontSize="16" FontWeight="Bold" Style="{StaticResource ThermalStateTextStyle}"/>
-
+ 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoPowerLoad}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
                         <TextBlock x:Name="_dashboardPowerLoad" Grid.Row="2" Grid.Column="2" Text="{Binding DashboardPowerLoad}" FontSize="16" FontWeight="Bold" Style="{StaticResource PowerLoadTextStyle}"/>
-
+ 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoDecision}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
                         <TextBlock x:Name="_dashboardDecision" Grid.Row="4" Grid.Column="2" Text="{Binding DashboardDecision}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
-
+ 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static res:Resource.SmartAutoTargetOutput}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right"/>
                         <TextBlock x:Name="_dashboardOutput" Grid.Row="6" Grid.Column="2" Text="{Binding DashboardOutput}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     </Grid>
                 </StackPanel>
             </wpfui:Card>
         </Grid>
+
+        <Border Grid.Row="2"
+                Padding="8,6"
+                Background="{DynamicResource PageAccentSecondaryBrush}"
+                CornerRadius="6"
+                Margin="0,12,0,0"
+                Visibility="{Binding IsHardwareSensorsWarningVisible, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Opacity" Value="1.0" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCustomFanEnabled}" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <wpfui:SymbolIcon Margin="0,0,6,0" Foreground="{DynamicResource TextOnAccentBrush}" Symbol="Warning24" VerticalAlignment="Center"/>
+                <TextBlock Foreground="{DynamicResource TextOnAccentBrush}" FontWeight="SemiBold" VerticalAlignment="Center"
+                           Text="{Binding HardwareSensorsWarningDescription}" />
+            </StackPanel>
+        </Border>
     </Grid>
 </wpfui:UiPage>

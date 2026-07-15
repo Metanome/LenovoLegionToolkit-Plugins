@@ -14,12 +14,20 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
         private readonly CustomFanCurveConfigManager _configManager;
         private readonly CustomFanCurveService _controlService;
         private readonly ICustomFanMonitoringService _monitoring;
+        private readonly LenovoLegionToolkit.Lib.Settings.ApplicationSettings? _appSettings;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<CustomFanCurveControlViewModel> FanViewModels { get; } = new();
 
         private static int _lastSelectedFanId = 1;
+
+        public bool IsHardwareSensorsEnabled => _appSettings?.Store.EnableHardwareSensors ?? false;
+        public bool IsHardwareSensorsWarningVisible => !IsHardwareSensorsEnabled;
+
+        public string HardwareSensorsWarningDescription => LenovoLegionToolkit.Lib.Utils.PawnIOHelper.IsPawnIOInstalled()
+            ? (Resource.ResourceManager.GetString("HardwareSensorsWarningDescription") ?? "Hardware sensors background polling must be enabled in settings for Custom Fan Curve to function.")
+            : (Resource.ResourceManager.GetString("PawnIOWarningDescription") ?? "You need to install PawnIO first to use hardware sensors!");
 
         private CustomFanCurveControlViewModel? _selectedFanViewModel;
         public CustomFanCurveControlViewModel? SelectedFanViewModel
@@ -111,6 +119,11 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
             _configManager = configManager;
             _controlService = controlService;
             _monitoring = monitoring;
+            try
+            {
+                _appSettings = LenovoLegionToolkit.Lib.IoCContainer.Resolve<LenovoLegionToolkit.Lib.Settings.ApplicationSettings>();
+            }
+            catch { /* Ignore */ }
 
             ToggleFullSpeedCommand = new RelayCommand(() => IsFullSpeed = !IsFullSpeed);
             AddNodeCommand = new RelayCommand(() => SelectedFanViewModel?.AddNodeCommand.Execute(null));

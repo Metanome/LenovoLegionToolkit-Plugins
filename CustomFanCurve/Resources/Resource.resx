@@ -550,6 +550,12 @@ With spin-up boost enabled, the system briefly runs the fan at a higher RPM befo
   <data name="WindowTitle" xml:space="preserve">
     <value>Custom Fan Curve (WMI)</value>
   </data>
+  <data name="HardwareSensorsWarningDescription" xml:space="preserve">
+    <value>Hardware sensors background polling must be enabled in settings for Custom Fan Curve to function.</value>
+  </data>
+  <data name="PawnIOWarningDescription" xml:space="preserve">
+    <value>You need to install PawnIO first to use hardware sensors!</value>
+  </data>
   <data name="WriteEachCycle" xml:space="preserve">
     <value>Write Max Each Cycle in Full Speed</value>
   </data>
