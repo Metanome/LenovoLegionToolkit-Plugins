@@ -19,11 +19,21 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
 
         public ObservableCollection<CustomFanCurveControlViewModel> FanViewModels { get; } = new();
 
+        private static int _lastSelectedFanId = 1;
+
         private CustomFanCurveControlViewModel? _selectedFanViewModel;
         public CustomFanCurveControlViewModel? SelectedFanViewModel
         {
             get => _selectedFanViewModel;
-            set { _selectedFanViewModel = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedFanViewModel = value;
+                OnPropertyChanged();
+                if (value != null)
+                {
+                    _lastSelectedFanId = value.FanId;
+                }
+            }
         }
 
         public bool IsCustomFanEnabled
@@ -138,7 +148,19 @@ namespace LenovoLegionToolkit.Plugin.CustomFanCurve
                     FanViewModels.Add(new CustomFanCurveControlViewModel(entry, _configManager, _monitoring, displayName));
                 }
             }
-            if (FanViewModels.Count > 0) SelectedFanViewModel = FanViewModels[0];
+            if (FanViewModels.Count > 0)
+            {
+                var selected = FanViewModels[0];
+                foreach (var vm in FanViewModels)
+                {
+                    if (vm.FanId == _lastSelectedFanId)
+                    {
+                        selected = vm;
+                        break;
+                    }
+                }
+                SelectedFanViewModel = selected;
+            }
         }
 
         private void OnSettingsChanged()
