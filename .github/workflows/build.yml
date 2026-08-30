@@ -8,8 +8,20 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'assets/**'
+      - '.github/workflows/stale.yml'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'assets/**'
+      - '.github/workflows/stale.yml'
+
+concurrency:
+  group: plugin-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:

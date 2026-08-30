@@ -21,6 +21,10 @@ on:
   release:
     types: [published]
 
+concurrency:
+  group: plugin-release-${{ github.ref }}-${{ github.event.inputs.tag_name || github.event.release.tag_name }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
